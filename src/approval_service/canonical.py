@@ -1,5 +1,7 @@
 """Canonical JSON extracted from the existing B2 profile (MIT source in LICENSE)."""
+
 from __future__ import annotations
+
 import json
 from typing import Any
 
@@ -7,8 +9,10 @@ MAX_INTEGER = 2**53 - 1
 MAX_BYTES = 1 << 20
 MAX_DEPTH = 32
 
+
 class InvalidJSON(ValueError):
     pass
+
 
 def _pairs(items):
     result = {}
@@ -18,8 +22,10 @@ def _pairs(items):
         result[key] = value
     return result
 
+
 def _noninteger(raw):
     raise InvalidJSON("integer_required")
+
 
 def _integer(raw):
     if raw == "-0":
@@ -28,6 +34,7 @@ def _integer(raw):
     if abs(value) > MAX_INTEGER:
         raise InvalidJSON("unsafe_integer")
     return value
+
 
 def canonical(value: Any) -> bytes:
     def check(item, depth=0):
@@ -49,22 +56,31 @@ def canonical(value: Any) -> bytes:
                 check(v, depth + 1)
             return
         if isinstance(item, list):
-            for v in item: check(v, depth + 1)
+            for v in item:
+                check(v, depth + 1)
             return
         raise InvalidJSON("invalid_value")
+
     check(value)
     try:
-        return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        return json.dumps(
+            value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")
     except (UnicodeError, ValueError, TypeError) as exc:
         raise InvalidJSON("invalid_text") from exc
+
 
 def parse(raw: bytes) -> dict:
     if not isinstance(raw, bytes) or len(raw) > MAX_BYTES:
         raise InvalidJSON("body_too_large")
     try:
-        value = json.loads(raw.decode("utf-8"), object_pairs_hook=_pairs,
-                           parse_int=_integer, parse_float=_noninteger,
-                           parse_constant=_noninteger)
+        value = json.loads(
+            raw.decode("utf-8"),
+            object_pairs_hook=_pairs,
+            parse_int=_integer,
+            parse_float=_noninteger,
+            parse_constant=_noninteger,
+        )
     except (ValueError, UnicodeError, RecursionError) as exc:
         raise InvalidJSON("invalid_json") from exc
     if not isinstance(value, dict):
