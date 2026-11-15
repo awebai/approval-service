@@ -2,7 +2,7 @@
 name = "aweb-approval-service"
 version = "0.0.0"
 requires-python = ">=3.12"
-dependencies = ["cryptography>=46,<51", "cbor2>=5.6,<7", "webauthn>=3.0.1,<4", "fastapi>=0.116,<1", "uvicorn>=0.35,<1", "psycopg[binary]>=3.2,<4"]
+dependencies = ["pynacl>=1.6.2,<2", "jsonschema>=4.23,<5", "cryptography>=46,<51", "cbor2>=6.1.2,<7", "webauthn>=3.0.1,<4", "fastapi>=0.116,<1", "uvicorn>=0.35,<1", "psycopg[binary]>=3.2,<4"]
 
 [dependency-groups]
 dev = ["pytest>=8,<10", "httpx>=0.28,<1"]
