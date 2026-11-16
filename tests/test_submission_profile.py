@@ -29,6 +29,8 @@ def packet():
     body = parse(decode(case["body"]))
     request = parse(decode(body["request_bytes"]))
     request["enforcer"]["audience"] = "https://holder.example.test"
+    request["not_before"] = int(time.time()) - 1
+    request["deadline"] = int(time.time()) + 120
     body["admission"] = {"team_certificate": None, "id_chain": []}
     return case, body, request
 
@@ -45,6 +47,8 @@ def packet():
         ("person", "did:key:z6Mkfake", "act_identifier_invalid"),
         ("identity_key", "did:aw:Someone", "act_identifier_invalid"),
         ("identity_key", "did:key:fake", "act_identifier_invalid"),
+        ("lifetime", 601, "request_lifetime_invalid"),
+        ("lifetime", 600, "identity_chain_required"),
         (None, None, "identity_chain_required"),
     ],
 )
@@ -53,6 +57,8 @@ async def test_profile_is_checked_before_public_admission(field, value, code):
     request = copy.deepcopy(request)
     if field == "audience":
         request["enforcer"]["audience"] = value
+    elif field == "lifetime":
+        request["deadline"] = request["not_before"] + value
     elif field:
         request["act"]["target"][field] = value
     body["request_bytes"] = encode(canonical(request))

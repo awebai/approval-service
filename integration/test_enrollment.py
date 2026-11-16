@@ -119,10 +119,21 @@ def confirmation_request(intent, binding):
     return r
 
 
-async def confirmed_person(store, *, lifetime=120, later=False):
+async def confirmed_person(
+    store,
+    *,
+    lifetime=120,
+    later=False,
+    service_grading=None,
+    issuer_grading=None,
+    vendor=None,
+):
     intent, issuer, trust, caller, w = enrollment_world(lifetime=lifetime)
     service = Enrollments(
-        store, origin=ORIGIN, rp_id=RP, grading=EnrollmentGrading("passkey_only", None)
+        store,
+        origin=ORIGIN,
+        rp_id=RP,
+        grading=service_grading or EnrollmentGrading("passkey_only", None),
     )
     public = PublicIssuer(trust.issuer, trust.observed_at)
     if later:
@@ -157,7 +168,7 @@ async def confirmed_person(store, *, lifetime=120, later=False):
         browser["public_key"]["authenticatorSelection"]["userVerification"]
         == "required"
     )
-    registered, _ = Vendor().registration(
+    registered, _ = (vendor or Vendor()).registration(
         challenge=decode(intent["intent"]["challenge"]),
         credential=w["receipt"]["binding"]["binding"]["credentials"][0],
     )
@@ -173,7 +184,7 @@ async def confirmed_person(store, *, lifetime=120, later=False):
         expected_challenge=decode(intent["intent"]["challenge"]),
         origin=ORIGIN,
         rp_id=RP,
-        snapshot=None,
+        snapshot=issuer_grading,
         now=datetime.now(UTC),
     )
     binding = sign_binding(intent, issuer, [checked.binding_entry()])
