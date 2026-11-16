@@ -1,0 +1,3630 @@
+{
+  "version": 1,
+  "source": "aweb docs/vectors/id-certificates-v1.json at dab88fbe72b590a0bd4828dd20fa30d55c81604c. Public synthetic signatures/status only. Status/DNS objects are independently supplied trust inputs, not an HTTP carrier or live registry qualification.",
+  "cases": [
+    {
+      "id": "current-root-human",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:221e308452d77573197827ea77fbaba8e988edb1c46e37f86fca84357843ac06",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:01:00Z"
+                  },
+                  "signature": "Oluz1HZhQvyjCvWAZBe0bVXOCHPqS3sSb3FjCbVvzMB2-oL1SJ1b0d3nhxZ5Z0V-rbRQpFOWax9YKwfP0zwOBQ"
+                },
+                "registered_at": "2026-10-26T00:02:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 1000,
+      "organisation": "example.com",
+      "accept": true,
+      "person": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+      "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+      "expected_issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "expected_issuer_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+      "expected_certificate": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9"
+    },
+    {
+      "id": "current-child-human",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+        },
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "domain": "example.com",
+            "parent": {
+              "kind": "identity",
+              "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+            "issued_at": "2026-10-26T00:02:00Z"
+          },
+          "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:221e308452d77573197827ea77fbaba8e988edb1c46e37f86fca84357843ac06",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:01:00Z"
+                  },
+                  "signature": "Oluz1HZhQvyjCvWAZBe0bVXOCHPqS3sSb3FjCbVvzMB2-oL1SJ1b0d3nhxZ5Z0V-rbRQpFOWax9YKwfP0zwOBQ"
+                },
+                "registered_at": "2026-10-26T00:02:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 1000,
+      "organisation": "example.com",
+      "accept": true,
+      "person": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+      "identity_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+      "expected_issuer": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+      "expected_issuer_key": "7UkoxijRwsbq6QM4kFmVYSlZJzpcY_k2NsFGFKyHN9E",
+      "expected_certificate": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971"
+    },
+    {
+      "id": "agent-is-not-person",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+        },
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "domain": "example.com",
+            "parent": {
+              "kind": "identity",
+              "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+            },
+            "kind": "agent",
+            "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+            "issued_at": "2026-10-26T00:03:00Z"
+          },
+          "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:221e308452d77573197827ea77fbaba8e988edb1c46e37f86fca84357843ac06",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:01:00Z"
+                  },
+                  "signature": "Oluz1HZhQvyjCvWAZBe0bVXOCHPqS3sSb3FjCbVvzMB2-oL1SJ1b0d3nhxZ5Z0V-rbRQpFOWax9YKwfP0zwOBQ"
+                },
+                "registered_at": "2026-10-26T00:02:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 1000,
+      "organisation": "example.com",
+      "accept": false,
+      "person": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+      "identity_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3"
+    },
+    {
+      "id": "revoked-person",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": {
+              "revoked_at": "2026-10-26T00:20:00.000000Z",
+              "effective_from": "2026-10-26T00:20:00.000000Z"
+            }
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:221e308452d77573197827ea77fbaba8e988edb1c46e37f86fca84357843ac06",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:01:00Z"
+                  },
+                  "signature": "Oluz1HZhQvyjCvWAZBe0bVXOCHPqS3sSb3FjCbVvzMB2-oL1SJ1b0d3nhxZ5Z0V-rbRQpFOWax9YKwfP0zwOBQ"
+                },
+                "registered_at": "2026-10-26T00:02:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 1000,
+      "organisation": "example.com",
+      "accept": false,
+      "person": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+      "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2"
+    },
+    {
+      "id": "rotated-person-old-key",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 2,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              },
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6Mkt6316e2PN3mZdB6N9CrzomJYUd1s5yBZi1XYHmwT9TUP",
+                  "operation": "rotate_key",
+                  "prev_entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "previous_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "seq": 2,
+                  "state_hash": "61023505fd38615398528f06df54f61f7666ad112c6b724113e01e30ea3477a9",
+                  "timestamp": "2026-10-26T00:10:00Z",
+                  "entry_hash": "28a0c877bb93aed8cbf50886df9685d87939aac5f8ffac43a55b7f4660e7d033",
+                  "signature": "np/68OE3iNthRKsrTLSpUF0xMWXaOo/tjH/xObH9X/JTPx2Xc4iKy+FFk/TItO0wZ78q20CllF7RjWdRMjAEDQ"
+                },
+                "registered_at": "2026-10-26T00:10:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:221e308452d77573197827ea77fbaba8e988edb1c46e37f86fca84357843ac06",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:01:00Z"
+                  },
+                  "signature": "Oluz1HZhQvyjCvWAZBe0bVXOCHPqS3sSb3FjCbVvzMB2-oL1SJ1b0d3nhxZ5Z0V-rbRQpFOWax9YKwfP0zwOBQ"
+                },
+                "registered_at": "2026-10-26T00:02:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 1000,
+      "organisation": "example.com",
+      "accept": false,
+      "person": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+      "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2"
+    },
+    {
+      "id": "broken-public-key-history",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "02xM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:221e308452d77573197827ea77fbaba8e988edb1c46e37f86fca84357843ac06",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:01:00Z"
+                  },
+                  "signature": "Oluz1HZhQvyjCvWAZBe0bVXOCHPqS3sSb3FjCbVvzMB2-oL1SJ1b0d3nhxZ5Z0V-rbRQpFOWax9YKwfP0zwOBQ"
+                },
+                "registered_at": "2026-10-26T00:02:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 1000,
+      "organisation": "example.com",
+      "accept": false,
+      "person": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+      "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2"
+    },
+    {
+      "id": "wrong-exact-namespace",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:221e308452d77573197827ea77fbaba8e988edb1c46e37f86fca84357843ac06",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:01:00Z"
+                  },
+                  "signature": "Oluz1HZhQvyjCvWAZBe0bVXOCHPqS3sSb3FjCbVvzMB2-oL1SJ1b0d3nhxZ5Z0V-rbRQpFOWax9YKwfP0zwOBQ"
+                },
+                "registered_at": "2026-10-26T00:02:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 1000,
+      "organisation": "child.example.com",
+      "accept": false,
+      "person": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+      "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2"
+    },
+    {
+      "id": "wrong-person",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:221e308452d77573197827ea77fbaba8e988edb1c46e37f86fca84357843ac06",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:01:00Z"
+                  },
+                  "signature": "Oluz1HZhQvyjCvWAZBe0bVXOCHPqS3sSb3FjCbVvzMB2-oL1SJ1b0d3nhxZ5Z0V-rbRQpFOWax9YKwfP0zwOBQ"
+                },
+                "registered_at": "2026-10-26T00:02:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 1000,
+      "organisation": "example.com",
+      "accept": false,
+      "person": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+      "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2"
+    },
+    {
+      "id": "wrong-current-key",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:221e308452d77573197827ea77fbaba8e988edb1c46e37f86fca84357843ac06",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:01:00Z"
+                  },
+                  "signature": "Oluz1HZhQvyjCvWAZBe0bVXOCHPqS3sSb3FjCbVvzMB2-oL1SJ1b0d3nhxZ5Z0V-rbRQpFOWax9YKwfP0zwOBQ"
+                },
+                "registered_at": "2026-10-26T00:02:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 1000,
+      "organisation": "example.com",
+      "accept": false,
+      "person": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+      "identity_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2"
+    },
+    {
+      "id": "cached-status-exact-60",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:221e308452d77573197827ea77fbaba8e988edb1c46e37f86fca84357843ac06",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:01:00Z"
+                  },
+                  "signature": "Oluz1HZhQvyjCvWAZBe0bVXOCHPqS3sSb3FjCbVvzMB2-oL1SJ1b0d3nhxZ5Z0V-rbRQpFOWax9YKwfP0zwOBQ"
+                },
+                "registered_at": "2026-10-26T00:02:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 30,
+      "now": 1030,
+      "organisation": "example.com",
+      "accept": true,
+      "person": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+      "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+      "expected_issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "expected_issuer_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+      "expected_certificate": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9"
+    },
+    {
+      "id": "cached-status-older-than-60",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:221e308452d77573197827ea77fbaba8e988edb1c46e37f86fca84357843ac06",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:01:00Z"
+                  },
+                  "signature": "Oluz1HZhQvyjCvWAZBe0bVXOCHPqS3sSb3FjCbVvzMB2-oL1SJ1b0d3nhxZ5Z0V-rbRQpFOWax9YKwfP0zwOBQ"
+                },
+                "registered_at": "2026-10-26T00:02:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 30,
+      "now": 1031,
+      "organisation": "example.com",
+      "accept": false,
+      "person": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+      "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2"
+    },
+    {
+      "id": "future-local-acquisition",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:221e308452d77573197827ea77fbaba8e988edb1c46e37f86fca84357843ac06",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:01:00Z"
+                  },
+                  "signature": "Oluz1HZhQvyjCvWAZBe0bVXOCHPqS3sSb3FjCbVvzMB2-oL1SJ1b0d3nhxZ5Z0V-rbRQpFOWax9YKwfP0zwOBQ"
+                },
+                "registered_at": "2026-10-26T00:02:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 999,
+      "organisation": "example.com",
+      "accept": false,
+      "person": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+      "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2"
+    },
+    {
+      "id": "namespace-controller-substitution",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:221e308452d77573197827ea77fbaba8e988edb1c46e37f86fca84357843ac06",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:01:00Z"
+                  },
+                  "signature": "Oluz1HZhQvyjCvWAZBe0bVXOCHPqS3sSb3FjCbVvzMB2-oL1SJ1b0d3nhxZ5Z0V-rbRQpFOWax9YKwfP0zwOBQ"
+                },
+                "registered_at": "2026-10-26T00:02:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 1000,
+      "organisation": "example.com",
+      "accept": false,
+      "person": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+      "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2"
+    },
+    {
+      "id": "altered-certificate-signature",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:221e308452d77573197827ea77fbaba8e988edb1c46e37f86fca84357843ac06",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:01:00Z"
+                  },
+                  "signature": "Oluz1HZhQvyjCvWAZBe0bVXOCHPqS3sSb3FjCbVvzMB2-oL1SJ1b0d3nhxZ5Z0V-rbRQpFOWax9YKwfP0zwOBQ"
+                },
+                "registered_at": "2026-10-26T00:02:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 1000,
+      "organisation": "example.com",
+      "accept": false,
+      "person": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+      "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2"
+    },
+    {
+      "id": "rotated-namespace-current-issuer",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": "2026-10-26T00:10:00.000000Z",
+              "continuity": "replaced"
+            },
+            {
+              "seq": 2,
+              "did_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "registered_at": "2026-10-26T00:10:00.000000Z",
+              "retired_at": null,
+              "continuity": "rotated"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:221e308452d77573197827ea77fbaba8e988edb1c46e37f86fca84357843ac06",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:01:00Z"
+                  },
+                  "signature": "Oluz1HZhQvyjCvWAZBe0bVXOCHPqS3sSb3FjCbVvzMB2-oL1SJ1b0d3nhxZ5Z0V-rbRQpFOWax9YKwfP0zwOBQ"
+                },
+                "registered_at": "2026-10-26T00:02:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 1000,
+      "organisation": "example.com",
+      "accept": true,
+      "person": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+      "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+      "expected_issuer": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+      "expected_issuer_key": "gTl3Dqh9F19Wo1Rmw0x-zMuNipG07jeiXfYPW4_Js5Q",
+      "expected_certificate": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9"
+    }
+  ]
+}
