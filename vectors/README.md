@@ -5,6 +5,9 @@ starts the first person's enrollment; the first person approves adding a
 DISTINCT second person. Test keys and identities are synthetic and public.
 The JSON schema and all domains, routes and limits live in
 `src/approval_service/data/format-v1.json`; Go embeds its generated projection.
+The same source bundles the closed `human.add` and limited
+`enrollment.confirm` act/display definitions. R carries the actual canonical
+content hash of that definition; no example hash or fetched definition is used.
 `tests/test_seams.py` and `verify/seams_test.go` consume these exact files.
 
 `requester-service-v1.json` pins the `Authorization: Awsign <base64url>` header,
@@ -21,7 +24,9 @@ original deadlines. A checked signature is not current requester admission.
 `issuer-service-enrollment-v1.json` pins the exact issuer-signed intent, proposed
 ID certificate and issuer challenge, pending binding, separate creation
 assertion/receipt and acyclic issuer-signed human creation evidence. The intent
-only produces `pending`; activation also requires the independently acquired,
+only produces `pending`; the issuer's shared creation-proof check validates its
+own nonce/deadline and still returns pending. It consumes the nonce with its
+certificate-issuance transaction. Activation also requires the independently acquired,
 current COMMITTED identity Trust and matching evidence/proof. The service must
 compare the credential set against its private pending registration rows. The
 same shared registration verifier checks the raw create response at service and
