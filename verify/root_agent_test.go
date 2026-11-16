@@ -5,6 +5,9 @@ import "testing"
 func TestRootAgentSeam(t *testing.T) {
 	for _, item := range seamCases(t, "root-agent") {
 		c := item.(map[string]any)
+		if text(c, "phase") == "prepare-read" {
+			continue
+		}
 		t.Run(text(c, "id"), func(t *testing.T) {
 			trust := *seamTrust(t, c["trust"])
 			r := object(c, "root")
@@ -18,10 +21,10 @@ func TestRootAgentSeam(t *testing.T) {
 					n := number(h, "since")
 					since = &n
 				}
-				got, err = VerifyRootAgentProof(object(c, "proof"), root, text(c, "parent_person"), trust, PersonContinuity{FromKey: text(h, "from_key"), CurrentKey: text(h, "current_key"), Mode: text(h, "mode"), Since: since})
+				got, err = VerifyRootAgentProof(object(c, "proof"), root, text(c, "parent_person"), trust, PersonContinuity{FromKey: text(h, "from_key"), Mode: text(h, "mode"), Since: since})
 			} else {
 				secret, _ := decode(text(c, "nonce_key"))
-				got, err = CheckRootAgentPresentation(object(c, "presentation"), RootAgentInput{ExpectedRequest: object(c, "request"), Root: root, Trust: trust, Now: number(c, "now"), Presenter: object(c, "presenter"), RequiredGrade: text(c, "required_grade"), NonceKeys: map[string][]byte{"k1": secret}, Origin: text(c, "origin"), Audience: text(c, "audience"), EnforcerKind: text(c, "enforcer_kind"), OwnedTeams: stringList(c["owned_teams"]), Revision: number(c, "revision")})
+				got, err = CheckRootAgentPresentation(object(c, "presentation"), RootAgentInput{ExpectedRequest: object(c, "request"), Root: root, ParentPerson: text(c, "parent_person"), Trust: trust, Now: number(c, "now"), Presenter: object(c, "presenter"), RequiredGrade: text(c, "required_grade"), NonceKeys: map[string][]byte{"k1": secret}, Origin: text(c, "origin"), Audience: text(c, "audience"), EnforcerKind: text(c, "enforcer_kind"), OwnedTeams: stringList(c["owned_teams"]), Revision: number(c, "revision")})
 			}
 			if (err == nil) != c["accept"].(bool) {
 				t.Fatalf("accept=%v want=%v: %v", err == nil, c["accept"], err)
@@ -48,6 +51,24 @@ func TestRootAgentSeam(t *testing.T) {
 				if e != nil || f != nil || string(a) != string(b) {
 					t.Fatalf("%s: got=%v want=%v", k, actual[k], want)
 				}
+			}
+		})
+	}
+}
+
+func TestRootGrantRevisionRead(t *testing.T) {
+	for _, item := range seamCases(t, "root-agent") {
+		c := item.(map[string]any)
+		if text(c, "phase") != "prepare-read" {
+			continue
+		}
+		t.Run(text(c, "id"), func(t *testing.T) {
+			r, err := ReadNeedsHuman(object(c, "needs_human"), object(c, "presenter"), text(c, "origin"), number(c, "now"), 428)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !equalValue(r, c["request"]) || number(object(r, "act"), "expected_revision") != number(c, "revision") {
+				t.Fatal("prepare did not carry the exact current grant revision")
 			}
 		})
 	}

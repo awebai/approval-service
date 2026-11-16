@@ -20,7 +20,9 @@ CASES = json.loads(
 )["cases"]
 
 
-@pytest.mark.parametrize("case", CASES, ids=lambda c: c["id"])
+@pytest.mark.parametrize(
+    "case", [c for c in CASES if c["phase"] != "prepare-read"], ids=lambda c: c["id"]
+)
 def test_root_agent_shared_cases(case):
     trust = Trust(
         **{
@@ -43,6 +45,7 @@ def test_root_agent_shared_cases(case):
             case["presentation"],
             expected_request=case["request"],
             root=root,
+            parent_person=case["parent_person"],
             trust=trust,
             now=case["now"],
             presenter=case["presenter"],
@@ -66,3 +69,21 @@ def test_root_agent_shared_cases(case):
         if "previous_teams" in case:
             # The checked target is a full replacement, never an additive union.
             assert result["teams"] == case["expected"]["teams"]
+
+
+@pytest.mark.parametrize(
+    "case", [c for c in CASES if c["phase"] == "prepare-read"], ids=lambda c: c["id"]
+)
+def test_revision_is_read_from_enforcer_built_prepare(case):
+    from approval_service.canonical import canonical
+    from approval_service.seams import read_needs_human
+
+    request = read_needs_human(
+        case["needs_human"],
+        requester=case["presenter"],
+        origin=case["origin"],
+        now=case["now"],
+        status=428,
+    )
+    assert canonical(request) == canonical(case["request"])
+    assert request["act"]["expected_revision"] == case["revision"]

@@ -36,7 +36,6 @@ class PersonContinuity:
     """
 
     from_key: str
-    current_key: str
     mode: str
     since: int | None
 
@@ -74,10 +73,6 @@ def _target(request, root, trust, parent_person):
         raise Refused("root_history_unavailable")
     if t["root_key"] not in root.continuous_keys:
         raise Refused("root_key_discontinuous")
-    # Full canonical team IDs have their lexical shape/uniqueness checked by
-    # the single bundled definition; exact namespace equality is semantic.
-    if any(team.partition(":")[2] != request["organisation"] for team in t["teams"]):
-        raise Refused("root_team_organisation_mismatch")
     return t
 
 
@@ -101,6 +96,7 @@ def check_root_agent_presentation(
     *,
     expected_request,
     root,
+    parent_person,
     trust,
     now,
     presenter,
@@ -115,17 +111,22 @@ def check_root_agent_presentation(
     """Check a live exact grant; return the ENTIRE replacement list, not a union.
 
     The custody owner supplies its own audience/kind, owned team descriptors,
-    revision and SDK-checked root identity. It atomically consumes the nonce and
-    records this replacement (empty withdraws) with its own effect transaction.
+    revision and SDK-checked registered root identity. parent_person is the
+    immediate person parent of its checked, registered link, never a value
+    copied from the request or from a nearest-human ancestor.
+    It atomically consumes the nonce and records this replacement (empty
+    withdraws) with its own effect transaction.
     aw has no team-key effect here and therefore accepts ONLY teams=[].
     """
-    t = _target(expected_request, root, trust, trust.person)
+    t = _target(expected_request, root, trust, parent_person)
     if expected_request["enforcer"]["audience"] != audience:
         raise Refused("root_enforcer_mismatch")
     if enforcer_kind not in ("aw", "key_holder", "cloud_key_process"):
         raise Refused("root_enforcer_invalid")
     if enforcer_kind == "aw" and t["teams"]:
         raise Refused("root_teams_not_supported")
+    if enforcer_kind == "aw" and revision != 0:
+        raise Refused("root_revision_mismatch")
     if any(team not in owned_teams for team in t["teams"]):
         raise Refused("root_team_not_owned")
     if (
@@ -174,7 +175,6 @@ def verify_root_agent_proof(value, *, root, parent_person, trust, continuity):
     checked = verify_historical(receipt, expected_request=request, trust=trust)
     if (
         continuity.from_key != trust.identity_key
-        or not continuity.current_key
         or continuity.mode not in ("unbroken", "assisted", "recreated", "unknown")
         or (
             continuity.mode != "unknown"

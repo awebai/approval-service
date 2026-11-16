@@ -3,6 +3,8 @@
 import copy
 import hashlib
 
+from awid.did import public_key_from_did, validate_stable_id
+from awid.team_ids import build_team_id, parse_team_id
 from jsonschema import ValidationError
 
 from .canonical import canonical
@@ -35,6 +37,20 @@ def check_definition(request):
         if request["purpose"] != value["purpose"]:
             raise Refused("purpose_invalid")
         WireValidator(value["act_schema"]).validate(request["act"])
+        if value["id"] == "agent.root.authorize":
+            target = request["act"]["target"]
+            for identifier in (target["person"], target["root_id"]):
+                if validate_stable_id(identifier) != identifier:
+                    raise ValueError("noncanonical ID")
+            public_key_from_did(target["root_key"])
+            if target["teams"] != sorted(target["teams"]):
+                raise ValueError("teams must be sorted")
+            for team in target["teams"]:
+                domain, name = parse_team_id(team)
+                if build_team_id(domain, name) != team:
+                    raise ValueError("noncanonical team ID")
+                if domain != request["organisation"]:
+                    raise Refused("root_team_organisation_mismatch")
         return value
     except Refused:
         raise

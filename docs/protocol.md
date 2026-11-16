@@ -709,9 +709,23 @@ owners; no generic service API marks external effects applied.
 ### 9.1 A person approves a deployment root
 
 `agent.root.authorize@1` covers exactly `{person, root_id, root_key, mode, teams}`,
-where mode is `issue` or `adopt` and teams is at most 128 distinct canonical
-full team IDs in the request's exact organisation. The approver is that person.
-The existing act-level `expected_revision` fences the enforcer's state.
+where mode is `issue` or `adopt`. `person` and `root_id` are registered
+`did:aw` IDs; `root_key` is the root's current Ed25519 `did:key` when the request
+is built. Teams are unique, sorted canonical lowercase `name:domain` IDs in
+the request's exact organisation, at most 128. The shared act schema carries
+one lexical rule (names allow dots, underscores and hyphens, at most
+128 characters); each language also uses its existing AWID SDK parser and
+builder for canonical equality. Released team-ID parsers are unchanged.
+The approver is that person.
+
+`expected_revision` is the revision of the enforcer's grant record for
+`(organisation, person, root_id)`: 0 when none exists, incremented once for each
+committed replacement, including withdrawal. An idempotent retry does not
+increment it. Withdrawal retains the revision. The current value is read from
+the enforcer's prepare response: its `428 needs_human` contains canonical R,
+whose `act.expected_revision` is that value. The caller carries R unchanged;
+there is no new registry record or bare-ID revision lookup. An aw enforcer has
+no grant record: its teams are empty and its revision is 0.
 
 For a holder or hosted organisation, the team-key holder/Cloud key process is
 the enforcer. It owns every listed team, verifies the receipt live, and records
@@ -721,11 +735,21 @@ is no separate revoke act and no union with the previous list. Nonce consumption
 and the grant change are atomic in that enforcer. A self-held aw enforcer accepts
 only `teams=[]`; its receipt is evidence, not a lock on the person's key. The
 person's own identity key signs the person-to-root certificate wherever it lives.
-That ordinary signing step needs no second receipt.
+That ordinary signing step needs no second receipt. The certificate must exist
+and be registered BEFORE presenting the receipt to the enforcer. For adoption
+of an organisation-parented root, reissue under the person comes first. Both
+live and historical checks take the immediate person parent from that exact
+SDK-checked link, never from R or a nearest-human ancestor. A different parent
+or no person parent refuses with `root_person_mismatch`. The live RootIdentity
+is a real SDK-checked registered identity, never assembled from the request.
+The holder's routine admission route rechecks that same immediate person-to-root
+link and continuous root history at use time.
 
 Adoption attaches the receipt to an existing person-to-root link. A root directly
 under the organisation instead gets a person-parented certificate with the same
-ID and key. A root rotates unattended through the existing SDK's checked old-key
+ID, key and agents, as the approval page states. Existing local-agent chains
+continue to verify; absence of this registered-root proof is reported neutrally.
+A root rotates unattended through the existing SDK's checked old-key
 continuity proof. The grant and receipt follow its stable root ID while the
 approved root key remains in that continuous history; a different ID or broken
 key history cannot inherit them. No certificate digest is added to this act, so

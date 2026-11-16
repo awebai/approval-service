@@ -2,7 +2,6 @@ package verify
 
 import (
 	"encoding/json"
-	"strings"
 )
 
 // These are independently checked SDK/lifecycle ports, NEVER fields trusted
@@ -16,8 +15,8 @@ type RootIdentity struct {
 // the person's whole creation history. Since is the existing checked history
 // basis; it is never a WebAuthn signing time or a date inferred from R.
 type PersonContinuity struct {
-	FromKey, CurrentKey, Mode string
-	Since                     *int64
+	FromKey, Mode string
+	Since         *int64
 }
 
 type CheckedRootAgent struct {
@@ -36,6 +35,7 @@ type RootAgentInput struct {
 	RequiredGrade                  string
 	NonceKeys                      map[string][]byte
 	Origin, Audience, EnforcerKind string
+	ParentPerson                   string
 	OwnedTeams                     []string
 	Revision                       int64
 }
@@ -69,12 +69,6 @@ func rootTarget(request map[string]any, root RootIdentity, trust Trust, parentPe
 	if !contains(root.ContinuousKeys, text(t, "root_key")) {
 		return nil, refuse("root_key_discontinuous")
 	}
-	for _, team := range t["teams"].([]any) {
-		_, domain, _ := strings.Cut(team.(string), ":")
-		if domain != text(request, "organisation") {
-			return nil, refuse("root_team_organisation_mismatch")
-		}
-	}
 	return t, nil
 }
 
@@ -89,10 +83,12 @@ func rootResult(approval CheckedApproval, request, target map[string]any, status
 // CheckRootAgentPresentation returns the WHOLE replacement list (empty
 // withdraws), never a union. The enforcer commits it with nonce consumption.
 // Its own configuration supplies the audience/kind, owned teams and revision.
+// ParentPerson is the immediate person parent from the registered, SDK-checked
+// root link, never copied from the request or from nearest-human attribution.
 // An aw enforcer accepts ONLY an empty teams list.
 func CheckRootAgentPresentation(value map[string]any, in RootAgentInput) (CheckedRootAgent, error) {
 	var out CheckedRootAgent
-	t, err := rootTarget(in.ExpectedRequest, in.Root, in.Trust, in.Trust.Person)
+	t, err := rootTarget(in.ExpectedRequest, in.Root, in.Trust, in.ParentPerson)
 	if err != nil {
 		return out, err
 	}
@@ -104,6 +100,9 @@ func CheckRootAgentPresentation(value map[string]any, in RootAgentInput) (Checke
 	}
 	if in.EnforcerKind == "aw" && len(t["teams"].([]any)) != 0 {
 		return out, refuse("root_teams_not_supported")
+	}
+	if in.EnforcerKind == "aw" && in.Revision != 0 {
+		return out, refuse("root_revision_mismatch")
 	}
 	for _, team := range t["teams"].([]any) {
 		if !contains(in.OwnedTeams, team.(string)) {
@@ -148,7 +147,7 @@ func VerifyRootAgentProof(value map[string]any, root RootIdentity, parentPerson 
 	if err != nil {
 		return out, err
 	}
-	if history.FromKey != trust.IdentityKey || history.CurrentKey == "" || (history.Mode != "unbroken" && history.Mode != "assisted" && history.Mode != "recreated" && history.Mode != "unknown") || (history.Mode != "unknown" && (history.Since == nil || *history.Since < 0)) {
+	if history.FromKey != trust.IdentityKey || (history.Mode != "unbroken" && history.Mode != "assisted" && history.Mode != "recreated" && history.Mode != "unknown") || (history.Mode != "unknown" && (history.Since == nil || *history.Since < 0)) {
 		return out, refuse("root_history_unavailable")
 	}
 	status := map[string]string{"unbroken": "approved", "assisted": "approval_predates_break", "recreated": "approval_predates_break", "unknown": "continuity_unknown"}[history.Mode]

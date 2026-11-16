@@ -150,3 +150,23 @@ assertion and issuer signature are real. Missing or invalid root evidence never
 changes the caller's independent ID-chain verdict, and ordinary agent-to-agent
 links need no receipt. These vectors do not claim that a holder stored a grant
 or that aw issued a certificate; those consumers own their effect tests.
+
+The root corpus also pins live refusal for another immediate person parent and
+for no person parent, before a grant can be returned. The consumer must register
+the person-to-root certificate before presentation and recheck that link on
+routine admission. Checked input ports do not stand in for that acquisition.
+`prepare-read` cases read revision 0 (first grant) and 7 (replacement) from the
+enforcer-built 428's unchanged R. Replacements advance the per-enforcer
+(organisation, person, root_id) grant revision once, including empty withdrawal;
+idempotent retries do not advance it. aw evidence-only uses revision 0.
+
+Team IDs are sorted, unique lowercase `name:domain`, with dot/underscore name
+neighbors, 128-character name and 128-entry list boundaries. The one lexical
+profile is in the act schema; both languages use SDK Parse/Build canonical
+equality, without narrowing the released SDK parsers. Person/root ID and
+Ed25519 root-key patterns are checked before presentation. The act schema's
+local `$defs` are inside the definition hash, so changing a referenced lexical
+rule changes the definition too; no global uncommitted rule can change a
+published definition under its existing hash. The two malformed-byte cases
+pin `invalid_encoding` for authenticator data and `presentation_invalid` for
+presentation request bytes in both languages.

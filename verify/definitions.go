@@ -4,7 +4,10 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"strings"
 	"sync"
+
+	"github.com/awebai/aw/awid"
 )
 
 var definitionsOnce sync.Once
@@ -64,6 +67,29 @@ func CheckDefinition(request map[string]any) error {
 	spec := wireSchema["x-act-definitions"].(map[string]any)[id].(map[string]any)["act_schema"].(map[string]any)
 	if validateNode(spec, request["act"]) != nil {
 		return refuse("definition_invalid")
+	}
+	if id == "agent.root.authorize" {
+		target := object(object(request, "act"), "target")
+		for _, field := range []string{"person", "root_id"} {
+			if _, err := awid.DecodeStableID(strings.TrimPrefix(text(target, field), "did:aw:")); err != nil {
+				return refuse("definition_invalid")
+			}
+		}
+		if _, err := awid.ExtractPublicKey(text(target, "root_key")); err != nil {
+			return refuse("definition_invalid")
+		}
+		previous := ""
+		for _, item := range target["teams"].([]any) {
+			team := item.(string)
+			domain, name, err := awid.ParseTeamID(team)
+			if err != nil || awid.BuildTeamID(domain, name) != team || team < previous {
+				return refuse("definition_invalid")
+			}
+			if domain != text(request, "organisation") {
+				return refuse("root_team_organisation_mismatch")
+			}
+			previous = team
+		}
 	}
 	return nil
 }

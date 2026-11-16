@@ -1,4 +1,4 @@
-"""Root-agent receipt and grant cases. Real signatures, public test keys. Real signatures, test keys.
+"""Root-agent receipt and grant cases. Real signatures, public test keys.
 
 This generator never calls the seam to select an expected result. Refuse to
 overwrite a corpus. Root/person histories are explicitly independently checked
@@ -111,7 +111,6 @@ base = {
     "parent_person": person,
     "continuity": {
         "from_key": person_key,
-        "current_key": person_key,
         "mode": "unbroken",
         "since": 1000,
     },
@@ -187,6 +186,8 @@ for name, teams in [
     c["presentation"]["request_bytes"] = encode(canonical(c["request"]))
 c = case("aw-evidence-only-empty-teams")
 c["enforcer_kind"] = "aw"
+c["revision"] = 0
+c["request"]["act"]["expected_revision"] = 0
 c["audience"] = "urn:awsign:aw:customer.example"
 c["request"]["enforcer"]["audience"] = c["audience"]
 c["expected"]["enforcer"] = c["audience"]
@@ -310,6 +311,7 @@ for name, enforcer in [
     }[enforcer]
     c["request"]["enforcer"]["audience"] = audience
     if enforcer == "aw":
+        c["request"]["act"]["expected_revision"] = 0
         c["request"]["act"]["target"]["teams"] = []
         c["expected"]["teams"] = []
     c["proof"]["receipt"] = signed(c["request"])
@@ -363,9 +365,7 @@ for mode, status in [
     ("unknown", "continuity_unknown"),
 ]:
     c = case("person-key-change-" + mode, phase="historical")
-    c["continuity"].update(
-        current_key=new_person_key, mode=mode, since=None if mode == "unknown" else 1200
-    )
+    c["continuity"].update(mode=mode, since=None if mode == "unknown" else 1200)
     c["expected"].update(status=status, continuity=mode, since=c["continuity"]["since"])
 
 case(
@@ -395,6 +395,109 @@ for suffix, fault, error in [
             c["request"]["act"]["target"][fault] = rotated_key
 
     case("adopt-" + suffix, error=error, edit=edit_adoption, resign=True)
+
+
+# X1 uses the SDK-checked immediate person parent, never R or nearest-human.
+case(
+    "live-root-under-another-person",
+    error="root_person_mismatch",
+    edit=lambda c: c.update(parent_person=stable_id_from_did_key(new_person_key)),
+)
+case(
+    "live-root-without-person-parent",
+    error="root_person_mismatch",
+    edit=lambda c: c.update(parent_person=""),
+)
+case(
+    "malformed-authenticator-encoding",
+    error="invalid_encoding",
+    edit=lambda c: c["presentation"]["receipt"]["assertion"].update(
+        authenticator_data="A"
+    ),
+)
+case(
+    "malformed-presentation-encoding",
+    error="presentation_invalid",
+    edit=lambda c: c["presentation"].update(request_bytes="A"),
+)
+
+for name, teams, error in [
+    (
+        "dotted-and-underscored-names",
+        ["agents.v2:customer.example", "workers_ext:customer.example"],
+        None,
+    ),
+    ("team-name-128", ["a" * 128 + ":customer.example"], None),
+    ("team-name-129", ["a" * 129 + ":customer.example"], "definition_invalid"),
+    ("exactly-128-teams", [f"team-{i:03d}:customer.example" for i in range(128)], None),
+    (
+        "unsorted-teams",
+        ["workers:customer.example", "agents:customer.example"],
+        "definition_invalid",
+    ),
+]:
+
+    def edit_teams(c, teams=teams, error=error):
+        c["request"]["act"]["target"]["teams"] = teams
+        c["owned_teams"] = teams
+        if error is None:
+            c["expected"]["teams"] = teams
+
+    case(name, error=error, edit=edit_teams, resign=True)
+
+for name, field, value in [
+    ("person-needs-did-aw", "person", "not-a-person"),
+    ("root-needs-registered-did-aw", "root_id", root_key),
+    ("root-needs-did-key", "root_key", root_id),
+    ("person-invalid-base58", "person", "did:aw:" + "0" * 28),
+    ("root-key-invalid-base58", "root_key", "did:key:z6Mk" + "0" * 44),
+]:
+    case(
+        name,
+        error="definition_invalid",
+        edit=lambda c, field=field, value=value: c["request"]["act"]["target"].update(
+            {field: value}
+        ),
+        resign=True,
+    )
+
+case(
+    "first-issue-revision-zero",
+    edit=lambda c: (
+        c.update(revision=0),
+        c["request"]["act"].update(expected_revision=0),
+    ),
+    resign=True,
+)
+c = copy.deepcopy(next(c for c in cases if c["id"] == "aw-evidence-only-empty-teams"))
+c.update(
+    id="aw-has-no-grant-revision",
+    accept=False,
+    revision=1,
+    expected_error="root_revision_mismatch",
+)
+c["request"]["act"]["expected_revision"] = 1
+c["presentation"]["receipt"] = signed(c["request"])
+c["presentation"]["request_bytes"] = encode(canonical(c["request"]))
+c.pop("expected")
+cases.append(c)
+
+# The read is the enforcer-built prepare/428 answer. Clients carry its R; they
+# do not construct a revision from a registry read or infer it from mode.
+for name, number in [("prepare-first-grant-read", 0), ("prepare-replacement-read", 7)]:
+    c = case(name, phase="prepare-read")
+    c["request"]["act"]["expected_revision"] = number
+    signed(c["request"])
+    c["revision"] = number
+    c["needs_human"] = {
+        "version": 1,
+        "status": "needs_human",
+        "approval_origin": c["origin"],
+        "request_bytes": encode(canonical(c["request"])),
+        "digest": hashlib.sha256(
+            domain("request") + canonical(c["request"])
+        ).hexdigest(),
+    }
 
 path.write_text(
     json.dumps(

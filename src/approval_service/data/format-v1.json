@@ -1862,19 +1862,13 @@
             ],
             "properties": {
               "person": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 4096
+                "$ref": "#/$defs/did_aw"
               },
               "root_id": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 4096
+                "$ref": "#/$defs/did_aw"
               },
               "root_key": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 4096
+                "$ref": "#/$defs/ed25519_did_key"
               },
               "mode": {
                 "type": "string",
@@ -1887,10 +1881,7 @@
                 "type": "array",
                 "maxItems": 128,
                 "items": {
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 4096,
-                  "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?:[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$"
+                  "$ref": "#/$defs/canonical_team_id"
                 },
                 "uniqueItems": true
               }
@@ -1901,11 +1892,27 @@
             "minimum": 0,
             "maximum": 9007199254740991
           }
+        },
+        "$defs": {
+          "did_aw": {
+            "type": "string",
+            "pattern": "^did:aw:[1-9A-HJ-NP-Za-km-z]{20,28}$"
+          },
+          "ed25519_did_key": {
+            "type": "string",
+            "pattern": "^did:key:z6Mk[1-9A-HJ-NP-Za-km-z]{44}$"
+          },
+          "canonical_team_id": {
+            "type": "string",
+            "maxLength": 382,
+            "pattern": "^[a-z0-9][a-z0-9._-]{0,127}:[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$",
+            "description": "Canonical lowercase name:domain; SDK ParseTeamID/BuildTeamID owns normalization."
+          }
         }
       },
       "display": {
         "heading": "Approve a root agent",
-        "consequence": "Approve this person’s root. At a team-key enforcer, replace its admission grant with exactly the listed teams; an empty list withdraws the grant. Agent descendants are attributed through the ID chain.",
+        "consequence": "Approve this person’s root. Adoption keeps the root’s ID, key and agents. At a team-key enforcer, replace its admission grant with exactly the listed teams; an empty list withdraws the grant. A team added later needs a new approval of the full list. Agent descendants are attributed through the ID chain.",
         "technical_fields": [
           "organisation",
           "target.person",
@@ -1915,7 +1922,8 @@
           "target.teams",
           "expected_revision"
         ]
-      }
+      },
+      "description": "Team IDs are canonical lowercase name:domain, sorted and unique. Each act replaces the full team list; a later mapped team is outside the grant until a new act lists the full set. expected_revision is the revision of this enforcer’s grant record for (organisation, person, root_id): 0 when absent, then incremented once per committed grant replacement, including empty-list withdrawal. An idempotent retry does not increment it. The enforcer reads its own record and returns the current revision inside the canonical R carried by its 428 needs_human prepare answer. The caller carries that R unchanged; no registry or separate public revision lookup is needed. An aw enforcer has no team grant record, accepts only empty teams and uses revision 0."
     }
   },
   "x-answer-status": {

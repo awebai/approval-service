@@ -24,14 +24,24 @@ func validate(kind string, v any) error {
 	return validateNode(wireSchema["$defs"].(map[string]any)[kind].(map[string]any), v)
 }
 func validateNode(s map[string]any, v any) error {
+	return validateNodeScoped(s, v, wireSchema["$defs"].(map[string]any))
+}
+func validateNodeScoped(s map[string]any, v any, definitions map[string]any) error {
+	if local, ok := s["$defs"].(map[string]any); ok {
+		definitions = local
+	}
 	bad := func() error { return fmt.Errorf("invalid_shape") }
 	if ref, ok := s["$ref"].(string); ok {
-		return validate(strings.TrimPrefix(ref, "#/$defs/"), v)
+		child, ok := definitions[strings.TrimPrefix(ref, "#/$defs/")].(map[string]any)
+		if !ok {
+			return bad()
+		}
+		return validateNodeScoped(child, v, definitions)
 	}
 	if options, ok := s["oneOf"].([]any); ok {
 		n := 0
 		for _, o := range options {
-			if validateNode(o.(map[string]any), v) == nil {
+			if validateNodeScoped(o.(map[string]any), v, definitions) == nil {
 				n++
 			}
 		}
@@ -112,7 +122,7 @@ func validateNode(s map[string]any, v any) error {
 				}
 				continue
 			}
-			if e := validateNode(p.(map[string]any), value); e != nil {
+			if e := validateNodeScoped(p.(map[string]any), value, definitions); e != nil {
 				return e
 			}
 		}
@@ -135,7 +145,7 @@ func validateNode(s map[string]any, v any) error {
 		}
 		if item, ok := s["items"].(map[string]any); ok {
 			for _, v := range x {
-				if e := validateNode(item, v); e != nil {
+				if e := validateNodeScoped(item, v, definitions); e != nil {
 					return e
 				}
 			}

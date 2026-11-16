@@ -235,7 +235,10 @@ func rawVerify(receipt, expected map[string]any, trust Trust) (map[string]any, C
 		return fail("assertion_invalid")
 	}
 	auth, e := decode(text(a, "authenticator_data"))
-	if e != nil || len(auth) < 37 {
+	if e != nil {
+		return fail("invalid_encoding")
+	}
+	if len(auth) < 37 {
 		return fail("assertion_invalid")
 	}
 	rpHash := sha256.Sum256([]byte(rp))

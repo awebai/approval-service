@@ -349,8 +349,11 @@ func CheckPresentation(value map[string]any, in EffectInputs, origin string) (Ch
 		return out, refuse("presentation_invalid")
 	}
 	raw, e := decode(text(value, "request_bytes"))
+	if e != nil {
+		return out, refuse("presentation_invalid")
+	}
 	want, f := Canonical(in.ExpectedRequest)
-	if e != nil || f != nil || !bytes.Equal(raw, want) {
+	if f != nil || !bytes.Equal(raw, want) {
 		return out, refuse("request_mismatch")
 	}
 	checked, e := VerifyForEffect(object(value, "receipt"), in)
