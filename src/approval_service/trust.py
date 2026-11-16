@@ -79,6 +79,7 @@ def derive_trust(chain, *, person, identity_key, organisation, observation, now)
             issuer,
             public_key_from_did(issuer),
             observed_at,
+            status["namespace"]["epochs"][-1]["did_key"],
         )
     except Refused:
         raise

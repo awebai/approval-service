@@ -27,6 +27,8 @@ def statement_definition(name):
 def _check_statement(statement, trust):
     from .seams import _signature
 
+    if not trust.namespace_issuer:
+        raise Refused("namespace_authority_unavailable")
     e = statement.get("evidence") if isinstance(statement, dict) else None
     if not isinstance(e, dict) or type(e.get("version")) is not int:
         raise Refused("enrollment_evidence_invalid")
@@ -37,7 +39,7 @@ def _check_statement(statement, trust):
     except (TypeError, ValueError, ValidationError) as exc:
         raise Refused("enrollment_evidence_invalid") from exc
     _signature(
-        trust.issuer,
+        trust.namespace_issuer,
         statement["signature"],
         domain("later_enrollment_evidence") + canonical(e),
     )
@@ -49,7 +51,7 @@ def _check_statement(statement, trust):
             "key": trust.identity_key,
         }
         or e["organisation"] != trust.organisation
-        or e["issuer"] != trust.issuer
+        or e["issuer"] != trust.namespace_issuer
     ):
         raise Refused("evidence_subject_mismatch")
     return e

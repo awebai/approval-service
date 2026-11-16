@@ -17,6 +17,7 @@ import (
 	"unicode/utf8"
 
 	"filippo.io/edwards25519"
+	"github.com/awebai/aw/awid"
 	"github.com/fxamacker/cbor/v2"
 )
 
@@ -24,6 +25,7 @@ type Trust struct {
 	Person, Organisation, IdentityKey, Certificate, Issuer string
 	IssuerPublicKey                                        []byte
 	ObservedAt                                             int64
+	NamespaceIssuer                                        string
 }
 type CheckedApproval struct {
 	Person, IdentityKey, Credential, Grade, Digest, Origin string
@@ -165,10 +167,21 @@ func rawVerify(receipt, expected map[string]any, trust Trust) (map[string]any, C
 	}
 	signed := object(receipt, "binding")
 	binding := object(signed, "binding")
-	if text(binding, "person") != trust.Person || text(binding, "organisation") != trust.Organisation || text(binding, "identity_key") != trust.IdentityKey || text(binding, "certificate") != trust.Certificate || text(binding, "issuer") != trust.Issuer {
+	if text(binding, "person") != trust.Person || text(binding, "organisation") != trust.Organisation || text(binding, "identity_key") != trust.IdentityKey || text(binding, "certificate") != trust.Certificate {
 		return fail("binding_mismatch")
 	}
-	if !primePoint(trust.IssuerPublicKey) {
+	issuerPublicKey := trust.IssuerPublicKey
+	if text(binding, "issuer") != trust.Issuer {
+		if trust.NamespaceIssuer == "" || text(binding, "issuer") != trust.NamespaceIssuer {
+			return fail("binding_mismatch")
+		}
+		var err error
+		issuerPublicKey, err = awid.ExtractPublicKey(trust.NamespaceIssuer)
+		if err != nil {
+			return fail("issuer_key_invalid")
+		}
+	}
+	if !primePoint(issuerPublicKey) {
 		return fail("issuer_key_invalid")
 	}
 	b, e := Canonical(binding)
@@ -176,7 +189,7 @@ func rawVerify(receipt, expected map[string]any, trust Trust) (map[string]any, C
 		return fail("invalid_encoding")
 	}
 	sig, e := decode(text(signed, "signature"))
-	if e != nil || !ed25519.Verify(trust.IssuerPublicKey, append(domain("binding"), b...), sig) {
+	if e != nil || !ed25519.Verify(issuerPublicKey, append(domain("binding"), b...), sig) {
 		return fail("issuer_signature_invalid")
 	}
 	origin := text(binding, "origin")

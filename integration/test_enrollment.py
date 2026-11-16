@@ -314,6 +314,7 @@ async def test_pending_sweep_retains_only_approved_confirmation_for_30_days(
             intent,
             issuer=PublicIssuer(trust.issuer, trust.observed_at),
             requester=caller,
+            observation=creation_status(intent),
         )
     deadline = intent["intent"]["deadline"]
     assert await service.cleanup(deadline - 1) == 0
@@ -364,6 +365,7 @@ async def test_new_start_replaces_confirmed_generation_after_original_deadline(s
         retry,
         issuer=PublicIssuer(context["trust"].issuer, int(time.time())),
         requester=context["caller"],
+        observation=creation_status(retry),
     )
     assert started["locator"] != old
     assert await store.db.fetch_all(
@@ -403,7 +405,10 @@ async def test_registration_requires_original_browser_token_and_discoverability(
         store, origin=ORIGIN, rp_id=RP, grading=EnrollmentGrading("passkey_only", None)
     )
     started = await service.start(
-        intent, issuer=PublicIssuer(trust.issuer, trust.observed_at), requester=caller
+        intent,
+        issuer=PublicIssuer(trust.issuer, trust.observed_at),
+        requester=caller,
+        observation=creation_status(intent),
     )
     browser = await service.browser_options(started["locator"])
     registered, _ = Vendor().registration(
@@ -434,7 +439,9 @@ async def test_issuer_cannot_upgrade_the_services_private_registration_grade(sto
         store, origin=ORIGIN, rp_id=RP, grading=EnrollmentGrading("passkey_only", None)
     )
     public = PublicIssuer(trust.issuer, trust.observed_at)
-    started = await service.start(intent, issuer=public, requester=caller)
+    started = await service.start(
+        intent, issuer=public, requester=caller, observation=creation_status(intent)
+    )
     browser = await service.browser_options(started["locator"])
     registered, _ = Vendor().registration(
         challenge=decode(intent["intent"]["challenge"])
@@ -506,9 +513,13 @@ async def test_foreign_organisation_cannot_reserve_another_organisations_person_
         foreign,
         issuer=PublicIssuer(trust.issuer, trust.observed_at),
         requester=foreign_caller,
+        observation=creation_status(foreign),
     )
     second = await service.start(
-        intent, issuer=PublicIssuer(trust.issuer, trust.observed_at), requester=caller
+        intent,
+        issuer=PublicIssuer(trust.issuer, trust.observed_at),
+        requester=caller,
+        observation=creation_status(intent),
     )
     assert first["locator"] != second["locator"]
     rows = await store.db.fetch_all(
@@ -537,7 +548,9 @@ async def test_pending_enrollment_refuses_more_than_24_hours_and_expired_attempt
         issuer.sign(domain("enrollment_intent") + canonical(long["intent"]))
     )
     with pytest.raises(Refused, match="enrollment_lifetime_invalid"):
-        await service.start(long, issuer=public, requester=caller)
+        await service.start(
+            long, issuer=public, requester=caller, observation=creation_status(long)
+        )
     assert await store.db.fetch_one(
         "SELECT count(*) AS n FROM {{tables.approval_enrollments}}"
     ) == {"n": 0}
@@ -546,9 +559,13 @@ async def test_pending_enrollment_refuses_more_than_24_hours_and_expired_attempt
     short["signature"] = encode(
         issuer.sign(domain("enrollment_intent") + canonical(short["intent"]))
     )
-    old = await service.start(short, issuer=public, requester=caller)
+    old = await service.start(
+        short, issuer=public, requester=caller, observation=creation_status(short)
+    )
     await asyncio.sleep(max(0, short["intent"]["deadline"] - time.time()) + 0.05)
-    retry = await service.start(intent, issuer=public, requester=caller)
+    retry = await service.start(
+        intent, issuer=public, requester=caller, observation=creation_status(intent)
+    )
     assert retry["locator"] != old["locator"]
     assert (
         await store.db.fetch_one(

@@ -2218,7 +2218,7 @@
       "version": 1,
       "body_schema": "later_enrollment_evidence_body",
       "signature_domain": "later_enrollment_evidence",
-      "meaning": "The issuer states that this person can approve with the credential and grade exercised in this enrollment ceremony. since is the issuer clock when signing this statement, not a registry-witnessed time or a WebAuthn signing time. enrollment.confirmation_receipt_commitment binds this ceremony receipt C; if transition is present it equals transition.confirmation_receipt_commitment. Earlier enrollment facts are referenced by the existing transition history. Existing replacement/recovery authority and modes remain unchanged. This states no creation fact.",
+      "meaning": "Only the current namespace controller obtained from checked namespace public authority may sign this statement; the artifact never supplies its own trust anchor. The issuer states that this person can approve with the credential and grade exercised in this enrollment ceremony. since is the issuer clock when signing this statement, not a registry-witnessed time or a WebAuthn signing time. enrollment.confirmation_receipt_commitment binds this ceremony receipt C; if transition is present it equals transition.confirmation_receipt_commitment. Earlier enrollment facts are referenced by the existing transition history. Existing replacement/recovery authority and modes remain unchanged. This states no creation fact.",
       "display": "can approve since T (issuer's statement), grade G (issuer's statement)"
     }
   }

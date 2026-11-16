@@ -175,7 +175,7 @@ def _check_enrollment_intent(
                 trust.organisation,
                 trust.identity_key,
                 trust.certificate,
-                trust.issuer,
+                trust.namespace_issuer,
             ) != (
                 body["person"],
                 body["organisation"],
@@ -280,7 +280,13 @@ def check_activation(
             or not 0 <= now - trust.observed_at <= 60
         ):
             raise Refused("identity_unavailable")
-        if (trust.person, trust.certificate, trust.identity_key, trust.issuer) != (
+        later = value["version"] == 2
+        if (
+            trust.person,
+            trust.certificate,
+            trust.identity_key,
+            trust.namespace_issuer if later else trust.issuer,
+        ) != (
             pending["person"],
             pending["certificate"],
             pending["identity_key"],
@@ -288,7 +294,6 @@ def check_activation(
         ):
             raise Refused("enrollment_identity_mismatch")
         check_activation_carrier(value, requester=requester, trust=trust)
-        later = value["version"] == 2
         if later and (
             "previous_binding_commitment" not in value["intent"]["intent"]
             and value["intent"]["intent"]["purpose"] != "enroll_existing_person"
@@ -502,12 +507,11 @@ def check_creation_proof(
         trust = pending_trust
         if trust is None or not 0 <= now - trust.observed_at <= 60:
             raise Refused("issuer_unavailable")
-        if (trust.person, trust.certificate, trust.identity_key, trust.issuer) != (
+        if (trust.person, trust.certificate, trust.identity_key) != (
             pending["person"],
             pending["certificate"],
             pending["identity_key"],
-            issuer_key,
-        ):
+        ) or issuer_key not in (trust.issuer, trust.namespace_issuer):
             raise Refused("enrollment_identity_mismatch")
         checked, bh, request = _creation_assertion(
             receipt, requester=requester, origin=origin, now=now, trust=trust

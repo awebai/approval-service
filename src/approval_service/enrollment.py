@@ -49,9 +49,19 @@ class Enrollments:
         self.origin, self.rp_id, self.grading = (origin, rp_id, grading)
 
     @staticmethod
-    def _bounds(row, *, issuer=None, requester=None, browser=False, activation=False):
+    def _bounds(
+        row,
+        *,
+        issuer=None,
+        requester=None,
+        browser=False,
+        activation=False,
+        current=None,
+    ):
         now = int(time.time())
         Ceremonies._bounds(now, trust=issuer, requester=requester)
+        if current is not None:
+            Ceremonies._bounds(now, trust=current)
         if now >= row["deadline"] and not (
             activation and row.get("confirmation_approved", False)
         ):
@@ -59,7 +69,7 @@ class Enrollments:
         if browser and now >= row["browser_deadline"]:
             raise Refused("enrollment_browser_expired")
 
-    def _check(self, intent, issuer, requester):
+    def _check(self, intent, issuer, requester, current=None):
         Ceremonies._bounds(int(time.time()), trust=issuer, requester=requester)
         return check_enrollment_intent(
             intent,
@@ -68,6 +78,7 @@ class Enrollments:
             origin=self.origin,
             rp_id=self.rp_id,
             now=int(time.time()),
+            trust=current,
         )
 
     async def _row(self, tx, locator, *, pending=True, activation=False):
@@ -126,8 +137,17 @@ class Enrollments:
             "extensions": {"credProps": True},
         }
 
-    async def start(self, intent, *, issuer, requester, admission=None, current=None):
-        checked = self._check(intent, issuer, requester)
+    async def start(
+        self,
+        intent,
+        *,
+        issuer,
+        requester,
+        admission=None,
+        current=None,
+        observation=None,
+    ):
+        checked = self._check(intent, issuer, requester, current)
         i = intent["intent"]
         if i["deadline"] - i["not_before"] > 86400:
             raise Refused("enrollment_lifetime_invalid")
@@ -186,8 +206,26 @@ class Enrollments:
                     current.certificate,
                 ) != expected:
                     raise Refused("enrollment_identity_mismatch")
-            elif previous is not None or i["purpose"] != "enroll_person":
+            elif previous is not None or i["purpose"] not in (
+                "enroll_person",
+                "enroll_existing_person",
+            ):
                 raise Refused("enrollment_previous_unavailable")
+            if old is None and active is None and i["purpose"] == "enroll_person":
+                if (
+                    observation is None
+                    or observation.person != i["person"]
+                    or not 0 <= int(time.time()) - observation.observed_at <= 60
+                    or observation.committed is None
+                ):
+                    raise Refused("identity_unavailable")
+                if observation.committed:
+                    raise Refused("enrollment_creation_committed")
+                if (
+                    observation.current_key is not None
+                    and observation.current_key != i["identity_key"]
+                ):
+                    raise Refused("enrollment_identity_mismatch")
             if old is None:
                 count = await tx.fetch_one(
                     "SELECT count(*) AS n FROM {{tables.approval_enrollments}} WHERE requester_hash=$1 AND state='pending' AND deadline>$2",
@@ -223,7 +261,9 @@ class Enrollments:
                     json.dumps(admission),
                     old["enrollment_locator"],
                 )
-            self._bounds(old, issuer=issuer, requester=requester)
+            self._bounds(old, issuer=issuer, requester=requester, current=current)
+            if observation is not None:
+                Ceremonies._bounds(int(time.time()), trust=observation)
             if current is not None:
                 Ceremonies._bounds(int(time.time()), trust=current)
             return {
@@ -313,8 +353,8 @@ class Enrollments:
                 "grade": checked.grade,
             }
 
-    async def material(self, intent, *, issuer, requester):
-        checked = self._check(intent, issuer, requester)
+    async def material(self, intent, *, issuer, requester, current=None):
+        checked = self._check(intent, issuer, requester, current)
         async with self.store.transaction() as tx:
             row = await self._row(tx, checked["locator"])
             if row["requester_hash"] != requester.commitment:
@@ -325,7 +365,7 @@ class Enrollments:
                 row["organisation"],
                 row["enrollment_locator"],
             )
-            self._bounds(row, issuer=issuer, requester=requester)
+            self._bounds(row, issuer=issuer, requester=requester, current=current)
             return {
                 "version": 1,
                 "locator": checked["locator"],
@@ -358,11 +398,11 @@ class Enrollments:
             raise Refused("binding_credential_mismatch")
         return credentials
 
-    async def confirm(self, body, *, issuer, requester):
+    async def confirm(self, body, *, issuer, requester, current=None):
         validate("enrollment_confirm_request", body)
         # Terminal receipt recovery remains a deadline-bound confirmation step;
         # only activation may use a retained, approved pending enrollment.
-        self._check(body["intent"], issuer, requester)
+        self._check(body["intent"], issuer, requester, current)
         locator = commitment("enrollment_locator", body["intent"])
         old = await self.store.db.fetch_one(
             "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND organisation=$2 AND person_id=$3",
@@ -401,7 +441,9 @@ class Enrollments:
                 person_id=old["person_id"],
             )
             answer = await self.store.decision_answer(recovered, locator)
-            Ceremonies._bounds(int(time.time()), requester=requester)
+            Ceremonies._bounds(int(time.time()), requester=requester, trust=issuer)
+            if current is not None:
+                Ceremonies._bounds(int(time.time()), trust=current)
             return answer
         checked = read_enrollment_request(
             "enrollment_confirm",
@@ -412,6 +454,7 @@ class Enrollments:
             origin=self.origin,
             rp_id=self.rp_id,
             now=int(time.time()),
+            trust=current,
         )
         locator = checked["locator"]
         raw = decode(body["request_bytes"])
@@ -424,7 +467,12 @@ class Enrollments:
             ref = commitment("binding_commitment", body["binding"])
             if row["binding_ref"] is not None and row["binding_ref"] != ref:
                 raise Refused("binding_mismatch")
-            chain = [body["intent"]["intent"]["pending_certificate"]]
+            chain = (
+                json.loads(row["admission"])["id_chain"]
+                if body["intent"]["intent"]["purpose"] == "enroll_existing_person"
+                and row["admission"] is not None
+                else [body["intent"]["intent"]["pending_certificate"]]
+            )
             await tx.execute(
                 "INSERT INTO {{tables.approval_binding_versions}}(digest,person_id,binding,id_chain,organisation,enrollment_locator) VALUES($1,$2,$3::jsonb,$4::jsonb,$5,$6) ON CONFLICT DO NOTHING",
                 ref,
@@ -464,7 +512,7 @@ class Enrollments:
                 row["enrollment_locator"],
             )
             answer = await self.store.decision_answer(request, locator, db=tx)
-            self._bounds(row, issuer=issuer, requester=requester)
+            self._bounds(row, issuer=issuer, requester=requester, current=current)
             return answer
 
     async def confirmation_options(self, locator, csrf):
@@ -613,6 +661,11 @@ class Enrollments:
                 b["issuer"],
                 public_key_from_did(b["issuer"]),
                 0,
+                b["issuer"]
+                if enrollment.get("evidence") is not None
+                and json.loads(enrollment["evidence"])["evidence"].get("kind")
+                == "human_enrolled_later"
+                else None,
             ),
         }
 
@@ -700,7 +753,9 @@ class Enrollments:
                 raise Refused("enrollment_conflict")
             checked = check_activation(
                 value,
-                issuer_key=trust.issuer,
+                issuer_key=trust.namespace_issuer
+                if value["version"] == 2
+                else trust.issuer,
                 requester=parse(requester.descriptor_bytes),
                 origin=self.origin,
                 rp_id=self.rp_id,

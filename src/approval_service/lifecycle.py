@@ -37,29 +37,37 @@ def check_lifecycle(value, *, previous, transition_trust, new_creation):
         b["organisation"],
         b["identity_key"],
         b["certificate"],
-        b["issuer"],
     ) != (
         trust.person,
         trust.organisation,
         trust.identity_key,
         trust.certificate,
-        trust.issuer,
-    ):
+    ) or b["issuer"] not in (trust.issuer, trust.namespace_issuer):
         raise Refused("binding_mismatch")
-    _signature(trust.issuer, signed_b["signature"], domain("binding") + canonical(b))
+    _signature(b["issuer"], signed_b["signature"], domain("binding") + canonical(b))
     before_hash = commitment("binding_commitment", signed_b)
     if signed_e is not None:
-        validate("creation_evidence", signed_e)
-        _signature(
-            trust.issuer,
-            signed_e["signature"],
-            domain("identity_evidence") + canonical(e),
-        )
+        if e.get("kind") == "human_enrolled_later":
+            from .statements import _check_statement
+
+            _check_statement(signed_e, trust)
+        else:
+            validate("creation_evidence", signed_e)
+            _signature(
+                trust.issuer,
+                signed_e["signature"],
+                domain("identity_evidence") + canonical(e),
+            )
         if (
             e["subject"] != expected_subject
             or e["binding_commitment"] != before_hash
             or e["organisation"] != trust.organisation
-            or e["issuer"] != trust.issuer
+            or e["issuer"]
+            != (
+                trust.namespace_issuer
+                if e.get("kind") == "human_enrolled_later"
+                else trust.issuer
+            )
         ):
             raise Refused("evidence_subject_mismatch")
     i = value["intent"]["intent"]
@@ -88,7 +96,10 @@ def check_lifecycle(value, *, previous, transition_trust, new_creation):
     ) or after_b["identity_key"] == trust.identity_key:
         raise Refused("enrollment_identity_mismatch")
     if t["confirmation_receipt_commitment"] != commitment(
-        "receipt_commitment", value["creation_receipt"]
+        "receipt_commitment",
+        value["confirmation_receipt"]
+        if value["version"] == 2
+        else value["creation_receipt"],
     ):
         raise Refused("evidence_binding_mismatch")
     if i["purpose"] == "enroll_person":
@@ -99,14 +110,17 @@ def check_lifecycle(value, *, previous, transition_trust, new_creation):
         ):
             raise Refused("transition_mode_invalid")
         # A recovery is a new creation event after a break. No old grade survives.
-        if after_e["creation"] != new_creation:
+        if value["version"] != 2 and after_e["creation"] != new_creation:
             raise Refused("evidence_binding_mismatch")
         return
     if t["mode"] not in ("unbroken", "assisted"):
         raise Refused("transition_mode_invalid")
     if e is None:
         raise Refused("enrollment_previous_unavailable")
-    if after_e["creation"] != e["creation"]:
+    if value["version"] == 2:
+        if e.get("kind") != "human_enrolled_later":
+            raise Refused("enrollment_purpose_mismatch")
+    elif after_e["creation"] != e["creation"]:
         raise Refused("creation_changed")
     receipt = value.get("transition_receipt")
     if receipt is None or transition_trust is None:

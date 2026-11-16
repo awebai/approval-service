@@ -12,6 +12,7 @@ import hmac
 from dataclasses import dataclass
 
 import cbor2
+from awid.did import public_key_from_did
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
@@ -47,6 +48,7 @@ class Trust:
     issuer: str
     issuer_public_key: bytes
     observed_at: int
+    namespace_issuer: str | None = None
 
 
 @dataclass(frozen=True)
@@ -162,21 +164,27 @@ def _verify(receipt, expected_request, trust):
         b["organisation"],
         b["identity_key"],
         b["certificate"],
-        b["issuer"],
     ) != (
         trust.person,
         trust.organisation,
         trust.identity_key,
         trust.certificate,
-        trust.issuer,
     ):
         raise Refused("binding_mismatch")
-    if len(trust.issuer_public_key) != 32 or not crypto_core_ed25519_is_valid_point(
-        trust.issuer_public_key
+    issuer_public_key = trust.issuer_public_key
+    if b["issuer"] != trust.issuer:
+        if not trust.namespace_issuer or b["issuer"] != trust.namespace_issuer:
+            raise Refused("binding_mismatch")
+        try:
+            issuer_public_key = public_key_from_did(trust.namespace_issuer)
+        except (ValueError, TypeError) as exc:
+            raise Refused("issuer_key_invalid") from exc
+    if len(issuer_public_key) != 32 or not crypto_core_ed25519_is_valid_point(
+        issuer_public_key
     ):
         raise Refused("issuer_key_invalid")
     try:
-        Ed25519PublicKey.from_public_bytes(trust.issuer_public_key).verify(
+        Ed25519PublicKey.from_public_bytes(issuer_public_key).verify(
             decode(receipt["binding"]["signature"]), BINDING_PREFIX + canonical(b)
         )
     except (InvalidSignature, ValueError) as exc:

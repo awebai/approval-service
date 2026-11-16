@@ -23,7 +23,7 @@ from .ceremonies import Ceremonies
 from .ceremonies import commitment as token_commitment
 from .definitions import check_definition
 from .encoding import decode
-from .enrollment import Enrollments
+from .enrollment import Enrollments, PublicIssuer
 from .requester import AdmittedRequester
 from .seams import check_activation_carrier, check_http, commitment
 from .store import StoreRefused
@@ -274,7 +274,11 @@ def create_app(store, *, public, origin, rp_id, grading):
             original = check_activation_carrier(
                 value, requester=descriptor, trust=trust
             )
-            if canonical(descriptor) != canonical(original):
+            if descriptor == {
+                "kind": "identity",
+                "id": trust.person,
+                "key": trust.identity_key,
+            }:
                 # The exact target/current key is established by the same shared
                 # Trust read used for activation, not a supplied binding key.
                 caller = AdmittedRequester(
@@ -290,15 +294,36 @@ def create_app(store, *, public, origin, rp_id, grading):
             if row is None or row["admission"] is None:
                 raise Refused("enrollment_not_found")
             admission = json.loads(row["admission"])
+        current = None
+        if (
+            intent is not None
+            and intent["intent"]["purpose"] == "enroll_existing_person"
+        ):
+            i = intent["intent"]
+            current = await public.person(
+                admission["id_chain"],
+                person=i["person"],
+                identity_key=i["identity_key"],
+                organisation=organisation,
+            )
+            if not current.namespace_issuer:
+                raise Refused("namespace_authority_unavailable")
+            issuer = PublicIssuer(current.namespace_issuer, current.observed_at)
         caller = await public.requester(
-            descriptor, organisation=organisation, admission=admission, intent=intent
+            descriptor,
+            organisation=organisation,
+            admission=admission,
+            intent=intent,
+            purpose=purpose,
+            origin=origin,
+            rp_id=rp_id,
         )
         if intent is not None:
             if purpose == "enrollment_activate":
                 return await enrollments.activate(value, trust=trust, requester=caller)
-            issuer = await public.issuer(intent)
+            if current is None:
+                issuer = await public.issuer(intent)
             if purpose == "enrollment_start":
-                current = None
                 i = intent["intent"]
                 if "previous_binding_commitment" in i:
                     if i["purpose"] == "replace_person_keys":
@@ -329,12 +354,21 @@ def create_app(store, *, public, origin, rp_id, grading):
                     requester=caller,
                     admission=admission,
                     current=current,
+                    observation=(await public.key_observation(i["person"]))
+                    if i["purpose"] == "enroll_person"
+                    and "previous_binding_commitment" not in i
+                    else None,
                 )
             if purpose == "enrollment_material":
                 return await enrollments.material(
-                    intent, issuer=issuer, requester=caller
+                    intent,
+                    issuer=issuer,
+                    requester=caller,
+                    current=current,
                 )
-            return await enrollments.confirm(value, issuer=issuer, requester=caller)
+            return await enrollments.confirm(
+                value, issuer=issuer, requester=caller, current=current
+            )
         digest = hashlib.sha256(domain("request") + original).hexdigest()
         if purpose == "submit":
             if r["purpose"] != "act_approval":
@@ -515,12 +549,26 @@ def create_app(store, *, public, origin, rp_id, grading):
         browser_origin(request)
         _, v = await body(request, ("locator", "csrf", "id", "assertion"))
         row = await store.db.fetch_one(
-            "SELECT intent FROM {{tables.approval_enrollments}} WHERE enrollment_locator=$1",
+            "SELECT intent,admission FROM {{tables.approval_enrollments}} WHERE enrollment_locator=$1",
             v["locator"],
         )
         if row is None or row["intent"] is None:
             raise Refused("enrollment_not_found")
-        issuer = await public.issuer(json.loads(row["intent"]))
+        signed = json.loads(row["intent"])
+        i = signed["intent"]
+        if i["purpose"] == "enroll_existing_person":
+            admission = json.loads(row["admission"])
+            current = await public.person(
+                admission["id_chain"],
+                person=i["person"],
+                identity_key=i["identity_key"],
+                organisation=i["organisation"],
+            )
+            if not current.namespace_issuer:
+                raise Refused("namespace_authority_unavailable")
+            issuer = PublicIssuer(current.namespace_issuer, current.observed_at)
+        else:
+            issuer = await public.issuer(signed)
         return await enrollments.finish_confirmation(
             v["locator"], v["csrf"], v["id"], v["assertion"], issuer=issuer
         )

@@ -171,6 +171,7 @@ def construction(
             "identity_key": did(person_key),
             "issuer": did(issuer),
             "issuer_public_key": b64(bytes(issuer.verify_key)),
+            "namespace_issuer": did(issuer),
             "observed_at": 1100,
         },
         "activation": {

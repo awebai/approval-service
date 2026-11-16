@@ -37,6 +37,9 @@ func StatementDefinition(name string) (map[string]any, error) {
 }
 
 func checkEnrollmentStatement(statement map[string]any, trust Trust) (map[string]any, error) {
+	if trust.NamespaceIssuer == "" {
+		return nil, refuse("namespace_authority_unavailable")
+	}
 	e, ok := statement["evidence"].(map[string]any)
 	if !ok {
 		return nil, refuse("enrollment_evidence_invalid")
@@ -56,11 +59,11 @@ func checkEnrollmentStatement(statement map[string]any, trust Trust) (map[string
 	if err != nil {
 		return nil, err
 	}
-	if err = signature(trust.Issuer, text(statement, "signature"), raw); err != nil {
+	if err = signature(trust.NamespaceIssuer, text(statement, "signature"), raw); err != nil {
 		return nil, err
 	}
 	subject := map[string]any{"id": trust.Person, "certificate": trust.Certificate, "key": trust.IdentityKey}
-	if !equalValue(e["subject"], subject) || text(e, "organisation") != trust.Organisation || text(e, "issuer") != trust.Issuer {
+	if !equalValue(e["subject"], subject) || text(e, "organisation") != trust.Organisation || text(e, "issuer") != trust.NamespaceIssuer {
 		return nil, refuse("evidence_subject_mismatch")
 	}
 	return e, nil

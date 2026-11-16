@@ -50,7 +50,8 @@ func DeriveTrust(chain []any, person, identityKey, organisation string, observat
 	certificate := object(signed, "certificate")
 	parent := object(certificate, "parent")
 	issuer := ""
-	if text(parent, "kind") == "namespace" {
+	namespaceIssuer := ""
+	{
 		epochs, _ := object(observation.Status, "namespace")["epochs"].([]any)
 		if len(epochs) == 0 {
 			return bad("identity_trust_invalid")
@@ -59,7 +60,10 @@ func DeriveTrust(chain []any, person, identityKey, organisation string, observat
 		if !ok {
 			return bad("identity_trust_invalid")
 		}
-		issuer = text(row, "did_key")
+		namespaceIssuer = text(row, "did_key")
+	}
+	if text(parent, "kind") == "namespace" {
+		issuer = namespaceIssuer
 	} else {
 		parentID := text(parent, "id")
 
@@ -96,7 +100,7 @@ func DeriveTrust(chain []any, person, identityKey, organisation string, observat
 	if observedAt < 0 {
 		return bad("status_unavailable")
 	}
-	return Trust{Person: person, Organisation: organisation, IdentityKey: identityKey, Certificate: digest, Issuer: issuer, IssuerPublicKey: key, ObservedAt: observedAt}, nil
+	return Trust{Person: person, Organisation: organisation, IdentityKey: identityKey, Certificate: digest, Issuer: issuer, IssuerPublicKey: key, ObservedAt: observedAt, NamespaceIssuer: namespaceIssuer}, nil
 }
 
 // ReadTrust uses the configured SDK public resolver and its original cache age.

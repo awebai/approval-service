@@ -39,6 +39,77 @@ class AdmittedRequester:
         return hashlib.sha256(self.descriptor_bytes).hexdigest()
 
 
+@dataclass(frozen=True)
+class KeyObservation:
+    """Fresh public key-mapping/enrollment facts from the configured registry.
+
+    A missing mapping may carry known not-enrolled status for creation checks;
+    it never proves possession or admits a pending personal requester.
+    """
+
+    person: str
+    current_key: str | None
+    committed: bool | None
+    observed_at: int
+
+
+def admit_enrollment_target(
+    intent, descriptor, *, issuer_key, observation, origin, rp_id, now, purpose
+):
+    """Issuer-authorized pending enrollment, never admission for an act.
+
+    Both service and holder callers supply their trusted route purpose and
+    configured site. The enclosing handler also enforces its row lifetime and
+    terminal state; this result cannot be reused as ordinary ID admission.
+    """
+    from .seams import check_enrollment_intent
+
+    if purpose not in {
+        "enrollment_start",
+        "enrollment_material",
+        "enrollment_confirm",
+        "enrollment_activate",
+        "holder_binding",
+        "holder_finish",
+        "holder_activate",
+    }:
+        raise Refused("enrollment_scope_invalid")
+    try:
+        validate("enrollment_intent", intent)
+        validate("requester", descriptor)
+    except (ValueError, TypeError, ValidationError) as exc:
+        raise Refused("enrollment_invalid") from exc
+    i = intent["intent"]
+    expected = {"kind": "identity", "id": i["person"], "key": i["identity_key"]}
+    if (
+        descriptor != expected
+        or i["requester"] != expected
+        or i["purpose"] != "enroll_person"
+        or "previous_binding_commitment" in i
+    ):
+        raise Refused("requester_mismatch")
+    if not 0 <= now - observation.observed_at <= 60:
+        raise Refused("status_unavailable")
+    if (
+        observation.person != i["person"]
+        or observation.current_key != i["identity_key"]
+    ):
+        raise Refused("requester_mismatch")
+    if observation.committed is not False:
+        raise Refused("requester_pending_invalid")
+    check_enrollment_intent(
+        intent,
+        issuer_key=issuer_key,
+        requester=descriptor,
+        origin=origin,
+        rp_id=rp_id,
+        now=now,
+    )
+    return AdmittedRequester(
+        canonical(descriptor), descriptor["key"], observation.observed_at
+    )
+
+
 def admit_team_member(
     descriptor, *, organisation, certificate_header, observation, now
 ):

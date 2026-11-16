@@ -40,7 +40,8 @@ func seamTrust(t *testing.T, v any) *Trust {
 	if e != nil {
 		t.Fatal(e)
 	}
-	return &Trust{Person: text(m, "person"), Organisation: text(m, "organisation"), IdentityKey: text(m, "identity_key"), Certificate: text(m, "certificate"), Issuer: text(m, "issuer"), IssuerPublicKey: raw, ObservedAt: number(m, "observed_at")}
+	namespaceIssuer, _ := m["namespace_issuer"].(string)
+	return &Trust{Person: text(m, "person"), Organisation: text(m, "organisation"), IdentityKey: text(m, "identity_key"), Certificate: text(m, "certificate"), Issuer: text(m, "issuer"), IssuerPublicKey: raw, ObservedAt: number(m, "observed_at"), NamespaceIssuer: namespaceIssuer}
 }
 func TestRequesterServiceSeam(t *testing.T) {
 	for _, v := range seamCases(t, "requester-service") {

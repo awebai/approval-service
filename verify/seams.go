@@ -250,7 +250,7 @@ func checkEnrollmentIntent(signed map[string]any, in EnrollmentInput, live bool)
 		if trust == nil || in.Now < trust.ObservedAt || in.Now-trust.ObservedAt > 60 {
 			return bad("identity_unavailable")
 		}
-		if trust.Person != text(b, "person") || trust.Organisation != text(b, "organisation") || trust.IdentityKey != text(b, "identity_key") || trust.Certificate != cid || trust.Issuer != in.IssuerKey {
+		if trust.Person != text(b, "person") || trust.Organisation != text(b, "organisation") || trust.IdentityKey != text(b, "identity_key") || trust.Certificate != cid || trust.NamespaceIssuer != in.IssuerKey {
 			return bad("enrollment_identity_mismatch")
 		}
 		if !equalValue(in.Requester, map[string]any{"kind": "identity", "id": trust.Person, "key": trust.IdentityKey}) {
@@ -294,13 +294,17 @@ func CheckActivation(value map[string]any, in EnrollmentInput) (CheckedEnrollmen
 	if trust == nil || in.Now < trust.ObservedAt || in.Now-trust.ObservedAt > 60 {
 		return bad("identity_unavailable")
 	}
-	if trust.Person != pending.Person || trust.Certificate != pending.Certificate || trust.IdentityKey != pending.IdentityKey || trust.Issuer != in.IssuerKey {
+	later := number(value, "version") == 2
+	expectedIssuer := trust.Issuer
+	if later {
+		expectedIssuer = trust.NamespaceIssuer
+	}
+	if trust.Person != pending.Person || trust.Certificate != pending.Certificate || trust.IdentityKey != pending.IdentityKey || expectedIssuer != in.IssuerKey {
 		return bad("enrollment_identity_mismatch")
 	}
 	if e = checkActivationCarrier(value, in); e != nil {
 		return out, e
 	}
-	later := number(value, "version") == 2
 	intent := object(object(value, "intent"), "intent")
 	if _, previous := intent["previous_binding_commitment"]; later && !previous && text(intent, "purpose") != "enroll_existing_person" {
 		return bad("enrollment_purpose_mismatch")
@@ -509,7 +513,7 @@ func CheckCreationProof(receipt, intent map[string]any, in EnrollmentInput, nonc
 	if t == nil || in.Now < t.ObservedAt || in.Now-t.ObservedAt > 60 {
 		return out, refuse("issuer_unavailable")
 	}
-	if t.Person != pending.Person || t.Certificate != pending.Certificate || t.IdentityKey != pending.IdentityKey || t.Issuer != in.IssuerKey {
+	if t.Person != pending.Person || t.Certificate != pending.Certificate || t.IdentityKey != pending.IdentityKey || (t.Issuer != in.IssuerKey && t.NamespaceIssuer != in.IssuerKey) {
 		return out, refuse("enrollment_identity_mismatch")
 	}
 	checked, bh, r, e := creationAssertion(receipt, in, true)

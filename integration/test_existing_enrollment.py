@@ -44,7 +44,7 @@ async def test_existing_person_activates_with_later_statement_and_raw_proof(stor
 
 @pytest.mark.asyncio
 async def test_new_creation_start_cannot_relabel_a_committed_person(store):
-    intent, issuer, trust, caller, _ = enrollment_world()
+    intent, _issuer, trust, caller, _ = enrollment_world()
     service = Enrollments(
         store, origin=ORIGIN, rp_id=RP, grading=EnrollmentGrading("passkey_only", None)
     )

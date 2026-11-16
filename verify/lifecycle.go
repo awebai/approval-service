@@ -21,7 +21,7 @@ func checkLifecycle(value map[string]any, in EnrollmentInput, newCreation map[st
 		}
 		evidence = supplied
 	}
-	if validate("binding", p.Binding) != nil || (evidence != nil && validate("creation_evidence", evidence) != nil) {
+	if validate("binding", p.Binding) != nil {
 		return refuse("activation_invalid")
 	}
 	b := object(p.Binding, "binding")
@@ -30,14 +30,14 @@ func checkLifecycle(value map[string]any, in EnrollmentInput, newCreation map[st
 		eb = object(evidence, "evidence")
 	}
 	subject := map[string]any{"id": trust.Person, "certificate": trust.Certificate, "key": trust.IdentityKey}
-	if text(b, "person") != trust.Person || text(b, "organisation") != trust.Organisation || text(b, "identity_key") != trust.IdentityKey || text(b, "certificate") != trust.Certificate || text(b, "issuer") != trust.Issuer {
+	if text(b, "person") != trust.Person || text(b, "organisation") != trust.Organisation || text(b, "identity_key") != trust.IdentityKey || text(b, "certificate") != trust.Certificate || (text(b, "issuer") != trust.Issuer && text(b, "issuer") != trust.NamespaceIssuer) {
 		return refuse("binding_mismatch")
 	}
 	raw, e := preimage("binding", b)
 	if e != nil {
 		return refuse("activation_invalid")
 	}
-	if e = signature(trust.Issuer, text(p.Binding, "signature"), raw); e != nil {
+	if e = signature(text(b, "issuer"), text(p.Binding, "signature"), raw); e != nil {
 		return e
 	}
 	bh, e := Commitment("binding_commitment", p.Binding)
@@ -45,14 +45,27 @@ func checkLifecycle(value map[string]any, in EnrollmentInput, newCreation map[st
 		return refuse("activation_invalid")
 	}
 	if evidence != nil {
-		raw, e = preimage("identity_evidence", eb)
-		if e != nil {
-			return refuse("activation_invalid")
+		if text(eb, "kind") == "human_enrolled_later" {
+			if _, e = checkEnrollmentStatement(evidence, *trust); e != nil {
+				return e
+			}
+		} else {
+			if validate("creation_evidence", evidence) != nil {
+				return refuse("activation_invalid")
+			}
+			raw, e = preimage("identity_evidence", eb)
+			if e != nil {
+				return refuse("activation_invalid")
+			}
+			if e = signature(trust.Issuer, text(evidence, "signature"), raw); e != nil {
+				return e
+			}
 		}
-		if e = signature(trust.Issuer, text(evidence, "signature"), raw); e != nil {
-			return e
+		evidenceIssuer := trust.Issuer
+		if text(eb, "kind") == "human_enrolled_later" {
+			evidenceIssuer = trust.NamespaceIssuer
 		}
-		if !equalValue(eb["subject"], subject) || text(eb, "binding_commitment") != bh || text(eb, "organisation") != trust.Organisation || text(eb, "issuer") != trust.Issuer {
+		if !equalValue(eb["subject"], subject) || text(eb, "binding_commitment") != bh || text(eb, "organisation") != trust.Organisation || text(eb, "issuer") != evidenceIssuer {
 			return refuse("evidence_subject_mismatch")
 		}
 	}
@@ -80,7 +93,11 @@ func checkLifecycle(value map[string]any, in EnrollmentInput, newCreation map[st
 	if text(afterB, "person") != trust.Person || text(afterB, "organisation") != trust.Organisation || text(afterB, "identity_key") == trust.IdentityKey {
 		return refuse("enrollment_identity_mismatch")
 	}
-	ch, e := Commitment("receipt_commitment", value["creation_receipt"])
+	confirmation := value["creation_receipt"]
+	if number(value, "version") == 2 {
+		confirmation = value["confirmation_receipt"]
+	}
+	ch, e := Commitment("receipt_commitment", confirmation)
 	if e != nil {
 		return refuse("activation_invalid")
 	}
@@ -93,7 +110,7 @@ func checkLifecycle(value map[string]any, in EnrollmentInput, newCreation map[st
 		if mode != "recreated" || transition["approval_receipt_commitment"] != nil || hasReceipt {
 			return refuse("transition_mode_invalid")
 		}
-		if !equalValue(afterE["creation"], newCreation) {
+		if number(value, "version") != 2 && !equalValue(afterE["creation"], newCreation) {
 			return refuse("evidence_binding_mismatch")
 		}
 		return nil
@@ -101,7 +118,10 @@ func checkLifecycle(value map[string]any, in EnrollmentInput, newCreation map[st
 	if mode != "unbroken" && mode != "assisted" {
 		return refuse("transition_mode_invalid")
 	}
-	if !equalValue(afterE["creation"], eb["creation"]) {
+	if number(value, "version") == 2 && text(eb, "kind") != "human_enrolled_later" {
+		return refuse("enrollment_purpose_mismatch")
+	}
+	if number(value, "version") != 2 && !equalValue(afterE["creation"], eb["creation"]) {
 		return refuse("creation_changed")
 	}
 	receipt, ok := value["transition_receipt"].(map[string]any)

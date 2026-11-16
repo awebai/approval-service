@@ -20,12 +20,17 @@ from awid.id_certificates import (
     verify_id_certificate,
     verify_id_chain,
 )
-from awid.registry import RegistryError
+from awid.registry import DIDKeyNotFoundError, RegistryError
 from httpx import HTTPError
 
 from .canonical import canonical
 from .enrollment import PublicIssuer
-from .requester import AdmittedRequester, read_team_member
+from .requester import (
+    AdmittedRequester,
+    KeyObservation,
+    admit_enrollment_target,
+    read_team_member,
+)
 from .trust import read_trust
 from .verify import Refused
 
@@ -92,6 +97,31 @@ class PublicReader:
                 organisation=organisation,
             ),
         )
+
+    @public_errors
+    async def key_observation(self, person):
+        """Mapping-only read for pending ownership and creation classification."""
+
+        async def read():
+            try:
+                value = await self.registry.resolve_key_fresh(person)
+            except DIDKeyNotFoundError as exc:
+                tree = exc.id_tree
+                return KeyObservation(
+                    person,
+                    None,
+                    None if tree is None else tree.enrolled,
+                    int(time.time()),
+                )
+            tree = value.id_tree
+            return KeyObservation(
+                person,
+                value.current_did_key,
+                None if tree is None else tree.enrolled,
+                int(time.time()),
+            )
+
+        return await self._cached(("key-mapping", person), read)
 
     @public_errors
     async def issuer(self, intent):
@@ -163,7 +193,40 @@ class PublicReader:
         return int(time.time()) - math.ceil(age)
 
     @public_errors
-    async def requester(self, descriptor, *, organisation, admission, intent=None):
+    async def requester(
+        self,
+        descriptor,
+        *,
+        organisation,
+        admission,
+        intent=None,
+        purpose=None,
+        origin=None,
+        rp_id=None,
+    ):
+        # This path cannot be reached from an act packet: the handler's closed
+        # act schema has no intent, and it supplies its own trusted route purpose.
+        if intent is not None and descriptor.get("kind") == "identity":
+            i = intent["intent"]
+            if (
+                i["purpose"] == "enroll_person"
+                and "previous_binding_commitment" not in i
+                and descriptor.get("id") == i["person"]
+            ):
+                observation = await self.key_observation(i["person"])
+                if observation.committed is False:
+                    issuer = await self.issuer(intent)
+                    return admit_enrollment_target(
+                        intent,
+                        descriptor,
+                        issuer_key=issuer.key,
+                        observation=observation,
+                        origin=origin,
+                        rp_id=rp_id,
+                        now=int(time.time()),
+                        purpose=purpose,
+                    )
+
         async def read():
             if descriptor["kind"] == "team_member":
                 return await read_team_member(

@@ -132,7 +132,7 @@ def read_answer_json(kind, raw, **context):
 
 
 def read_enrollment_request(
-    kind, body, *, intent, issuer_key, requester, origin, rp_id, now
+    kind, body, *, intent, issuer_key, requester, origin, rp_id, now, trust=None
 ):
     # Admission evidence is checked by the HTTP layer from THIS frozen body.
     # B's grades also have to equal the service's private registered rows there.
@@ -152,6 +152,7 @@ def read_enrollment_request(
             origin=origin,
             rp_id=rp_id,
             now=now,
+            trust=trust,
         )
         if kind == "enrollment_material":
             return pending
