@@ -65,8 +65,6 @@ def derive_trust(chain, *, person, identity_key, organisation, observation, now)
         status = observation.status
         if parent["kind"] == "namespace":
             issuer = status["namespace"]["epochs"][-1]["did_key"]
-        elif parent["id"].startswith("did:key:"):
-            issuer = parent["id"]
         else:
             row = next(r for r in status["identities"] if r["id"] == parent["id"])
             issuer = row["key_history"][-1]["entry"]["new_did_key"]

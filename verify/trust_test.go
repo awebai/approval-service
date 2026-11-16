@@ -28,6 +28,8 @@ func TestSharedPublicTrustVectors(t *testing.T) {
 			ExpectedIssuer      string         `json:"expected_issuer"`
 			ExpectedIssuerKey   string         `json:"expected_issuer_key"`
 			ExpectedCertificate string         `json:"expected_certificate"`
+			OfferedReceipt      map[string]any `json:"offered_receipt"`
+			OfferedRequest      map[string]any `json:"offered_request"`
 			Accept              bool           `json:"accept"`
 		}
 	}
@@ -46,6 +48,11 @@ func TestSharedPublicTrustVectors(t *testing.T) {
 			if e == nil {
 				if base64.RawURLEncoding.EncodeToString(tr.IssuerPublicKey) != c.ExpectedIssuerKey || tr.Issuer != c.ExpectedIssuer || tr.Certificate != c.ExpectedCertificate {
 					t.Fatalf("incorrect issuer/certificate trust: %+v", tr)
+				}
+				if c.OfferedReceipt != nil {
+					if _, err := VerifyHistorical(c.OfferedReceipt, c.OfferedRequest, tr); err == nil || err.Error() != "binding_mismatch" {
+						t.Fatalf("parent issuer substitution: %v", err)
+					}
 				}
 				if tr.Person != c.Person || tr.IdentityKey != c.Key || tr.Organisation != c.Organisation || len(tr.Certificate) != 71 || len(tr.IssuerPublicKey) != 32 || tr.ObservedAt != c.Acquired-int64(c.Age) {
 					t.Fatalf("wrong checked trust: %+v", tr)

@@ -3625,6 +3625,577 @@
       "expected_issuer": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
       "expected_issuer_key": "gTl3Dqh9F19Wo1Rmw0x-zMuNipG07jeiXfYPW4_Js5Q",
       "expected_certificate": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9"
+    },
+    {
+      "id": "inherited-child-namespace",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "tenant.aweb.ai",
+            "parent": {
+              "kind": "namespace",
+              "id": "tenant.aweb.ai"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "EO9qy5-6OaNs3ttY1pgQpolD0DFSX66Y8XqNRtCaxHrnThAYXCBGZndfn4cJr6qy4U-sYGzY5mKxIQpS-2rMBw"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "tenant.aweb.ai",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ],
+          "delegation": {
+            "parent_domain": "aweb.ai",
+            "parent_controller_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          }
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:2782d984c3d9154262284e863fc77e837eea40f5a0bc0f4c41f95fc302497403",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "tenant.aweb.ai",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "tenant.aweb.ai"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "EO9qy5-6OaNs3ttY1pgQpolD0DFSX66Y8XqNRtCaxHrnThAYXCBGZndfn4cJr6qy4U-sYGzY5mKxIQpS-2rMBw"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "tenant.aweb.ai",
+        "dns_name": "_awid.aweb.ai",
+        "inherited": true,
+        "controller_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 1000,
+      "organisation": "tenant.aweb.ai",
+      "accept": true,
+      "person": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+      "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+      "expected_issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "expected_issuer_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+      "expected_certificate": "sha256:2782d984c3d9154262284e863fc77e837eea40f5a0bc0f4c41f95fc302497403"
+    },
+    {
+      "id": "inherited-parent-cannot-issue-child-binding",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "tenant.aweb.ai",
+            "parent": {
+              "kind": "namespace",
+              "id": "tenant.aweb.ai"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "EO9qy5-6OaNs3ttY1pgQpolD0DFSX66Y8XqNRtCaxHrnThAYXCBGZndfn4cJr6qy4U-sYGzY5mKxIQpS-2rMBw"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "tenant.aweb.ai",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ],
+          "delegation": {
+            "parent_domain": "aweb.ai",
+            "parent_controller_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          }
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:2782d984c3d9154262284e863fc77e837eea40f5a0bc0f4c41f95fc302497403",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "tenant.aweb.ai",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "tenant.aweb.ai"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "EO9qy5-6OaNs3ttY1pgQpolD0DFSX66Y8XqNRtCaxHrnThAYXCBGZndfn4cJr6qy4U-sYGzY5mKxIQpS-2rMBw"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "tenant.aweb.ai",
+        "dns_name": "_awid.aweb.ai",
+        "inherited": true,
+        "controller_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 1000,
+      "organisation": "tenant.aweb.ai",
+      "accept": true,
+      "person": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+      "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+      "expected_issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "expected_issuer_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+      "expected_certificate": "sha256:2782d984c3d9154262284e863fc77e837eea40f5a0bc0f4c41f95fc302497403",
+      "offered_receipt": {
+        "version": 1,
+        "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsInJlc291cmNlIjoidmF1bHQva2V5IiwicmlnaHRzIjpbInJlYWQiLCJ3cml0ZSJdfSwiYXBwcm92ZXIiOiJkaWQ6YXc6M1lEQU01WkxSS2c3ZUhIMVpzNnNTTXdrZ2E4dyIsImRlYWRsaW5lIjoxMzAwLCJkZWZpbml0aW9uIjp7ImlkIjoic2VjcmV0cy5yZWFkLXdyaXRlIiwic2hhMjU2IjoiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsInZlcnNpb24iOjF9LCJlbmZvcmNlciI6eyJhdWRpZW5jZSI6Imh0dHBzOi8vc2VjcmV0cy5leGFtcGxlLnRlc3QifSwibm9uY2UiOnsia2lkIjoiazEiLCJ2YWx1ZSI6IkdXeEc3ZjEzMnhaaWZYOWlXNFBiN3c3ZTh1YklBaXY3WTdlZFBfOGpLMXcifSwibm90X2JlZm9yZSI6MTAwMCwib3JnYW5pc2F0aW9uIjoidGVuYW50LmF3ZWIuYWkiLCJwdXJwb3NlIjoiYWN0X2FwcHJvdmFsIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OmFnZW50LWEiLCJrZXkiOiJyZXF1ZXN0ZXIta2V5Iiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "tenant.aweb.ai",
+            "person": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "certificate": "sha256:2782d984c3d9154262284e863fc77e837eea40f5a0bc0f4c41f95fc302497403",
+            "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+            "issuer": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "origin": "https://approval.example.test",
+            "rp_id": "approval.example.test",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYICWgftrWRf0bDoBIaVSsDXO0bLzxR_wWEE6f4ZajgvKvIlggYt3VLkhvB60k-Rk8kVhq32ouFdeQCvzuxxKUgRLuquI",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "kpwP1aMFh_U2oKsdA2jShs074E6uRqFzpRzgCA4Ml0aLsFWYpryGr-jtyQDUiZMcmu4rSrDiWnvjMAgdjV7NCg"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+              "domain": "tenant.aweb.ai",
+              "parent": {
+                "kind": "namespace",
+                "id": "tenant.aweb.ai"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "2026-10-26T00:00:00Z"
+            },
+            "signature": "EO9qy5-6OaNs3ttY1pgQpolD0DFSX66Y8XqNRtCaxHrnThAYXCBGZndfn4cJr6qy4U-sYGzY5mKxIQpS-2rMBw"
+          }
+        ],
+        "assertion": {
+          "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+          "client_data_json": "eyJjaGFsbGVuZ2UiOiI0aUE3Sk5iOGtWLXYzelJ1cHBpZUdyYklyR0VTUFNXMXhKa19TUnlzWk1NIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2FwcHJvdmFsLmV4YW1wbGUudGVzdCIsInR5cGUiOiJ3ZWJhdXRobi5nZXQifQ",
+          "authenticator_data": "IP2P_eNPmVCyHmB6JfFa1QjgGG3qkGDKFYeq0xCyjAAFAAAAAA",
+          "signature": "MEUCIHaVaLl4zljzTLrRPH_wsMPJGHr3s2zBy7fkbpKWbK3bAiEAzJrqZERyOUONQNEHcL6nPkQWY7nvAVVoAImWrYXOel8"
+        }
+      },
+      "offered_request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "tenant.aweb.ai",
+        "approver": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:agent-a",
+          "key": "requester-key"
+        },
+        "enforcer": {
+          "audience": "https://secrets.example.test"
+        },
+        "definition": {
+          "id": "secrets.read-write",
+          "version": 1,
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "act": {
+          "resource": "vault/key",
+          "rights": [
+            "read",
+            "write"
+          ],
+          "expected_revision": 1
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "receipt_accept": false
+    },
+    {
+      "id": "did-key-agent-cannot-issue-person",
+      "chain": [
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "domain": "example.com",
+            "parent": {
+              "kind": "namespace",
+              "id": "example.com"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "issued_at": "2026-10-26T00:00:00Z"
+          },
+          "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+        },
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:key:z6Mkon22vwz9JoNpGDxCrGZRgeNFTdRTwXYYN3fvAhA3K19x",
+            "domain": "example.com",
+            "parent": {
+              "kind": "identity",
+              "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+            },
+            "kind": "agent",
+            "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+            "issued_at": "2026-10-26T00:04:00Z"
+          },
+          "signature": "DannjvTjueGeZ7kPwfoli8A8jcxXiiAKCrRmvqkTVWXZ5TkOYidQh5Xo4Pzc-vSdTmr5TC-lTkSuEQtPxiGdAA"
+        },
+        {
+          "certificate": {
+            "v": 1,
+            "type": "aweb.id-certificate",
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "domain": "example.com",
+            "parent": {
+              "kind": "identity",
+              "id": "did:key:z6Mkon22vwz9JoNpGDxCrGZRgeNFTdRTwXYYN3fvAhA3K19x"
+            },
+            "kind": "human",
+            "issuer_key": "did:key:z6Mkon22vwz9JoNpGDxCrGZRgeNFTdRTwXYYN3fvAhA3K19x",
+            "issued_at": "2026-10-26T00:07:00Z"
+          },
+          "signature": "eK9TV_wet1OxryjIKxhyaJserF2hRzC5c-PJCBiAnDU1MGfBvxb2lWmGliqQ4VTIYP2rim1ahEJ38wcmvSzpAg"
+        }
+      ],
+      "status": {
+        "v": 1,
+        "domain": "example.com",
+        "observed_at": "2026-10-26T00:30:00.000000Z",
+        "namespace": {
+          "epochs": [
+            {
+              "seq": 1,
+              "did_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "registered_at": "2026-10-26T00:00:00.000000Z",
+              "retired_at": null,
+              "continuity": "replaced"
+            }
+          ]
+        },
+        "identities": [
+          {
+            "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+            "current_certificate_id": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "new_did_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "f101717425d7c37244133f3c85015836ed22cd5eb43d666f4a9d533edf8d82d4",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "2cf9b9ca49d6d52198137ecd65b4f22115e43686868be41d029e80c7cd60fcf9",
+                  "signature": "0mxM7sA/FFflCx7MKD2/WIlu9ik329eWDeNl2x01wH5pO7Ot8ThAzFnNbn64y+hYxsqGqSJZgXTeArk15cHWAw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "namespace",
+                      "id": "example.com"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                    "issued_at": "2026-10-26T00:00:00Z"
+                  },
+                  "signature": "UsTQXXWmQYmDLZNsqHs6ebs9763IcHsYI3zbPFYJ9lgdkYMRKtmAdnFerb7hjFS5bxrCU_7XcQYNYQhoAjdlBA"
+                },
+                "registered_at": "2026-10-26T00:01:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+            "current_certificate_id": "sha256:c7601ac7ae45a13626785274489fbe6bc6807d2963067b1f94c8bc2827247971",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "new_did_key": "did:key:z6MkmtWtY63GQVBrpMyRJWEzsnxfsGkemu6CtMDwGTv4RYj2",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "3f55928a5f305ce731303197a1b9ae3a3743f19fdb907fe400b8903e87a6a6ce",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "22b20203490a77c8213833a1451862235268e5cd4ed5ce7e5df0ca966c52c3be",
+                  "signature": "BlYAgnzsonrr28GZvngPUQ2LplGi6XKpubByO7FcMd01sD2H+MKVY+jDL9HcaHdARH9pX69SxI/jPpl+rk+MAg"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:2e2SPDJNyxg5Dt6EFJX3Tcn8Tauj",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:02:00Z"
+                  },
+                  "signature": "MOL86pnAcZCRTvNyZMWLguKYeIfts0EjbzJmmQXZ7nOgeMLzqv8BU9GY9dXuqA5prGC9m5q1nmF746QijrpOAA"
+                },
+                "registered_at": "2026-10-26T00:03:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+            "current_certificate_id": "sha256:e9dfa77e5eda11fe82215d62ac5878734a6cde3a56d7e15f037c2ac0d4532282",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "new_did_key": "did:key:z6MkwVDfCg9LbbY6xjH3EZk8YSFQZujV5Y4y1ZWeER9tDiN3",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "8850abacd19a6f27f56d30697f74b95366e709fabbbe10e0cb8313811cda3c5f",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "131c7c9321862318e212c7a28f1a9b8d0063419e56af047939d56b17fe83fc08",
+                  "signature": "nY622ouwJ5/Gyd5bbaic5yEOgqNQTBIyEvv57brQLRpVzWRLRX95CHxEwwezq+y/E4uAUTYD6RbbUMjE2X5RBA"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:44aKNQyvo1xh8rv6TfdfzjTn6nRp",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:aw:3YDAM5ZLRKg7eHH1Zs6sSMwkga8w"
+                    },
+                    "kind": "agent",
+                    "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+                    "issued_at": "2026-10-26T00:03:00Z"
+                  },
+                  "signature": "z2oS4uSNgiaSaT7QX9AWmqRTkFFy-8TRjIrEP0PyuU_w0ptPTEbv8OjWqhbxP7oLivvi2AEFg0Anq5bkoGTECw"
+                },
+                "registered_at": "2026-10-26T00:04:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          },
+          {
+            "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+            "current_certificate_id": "sha256:60e76f4a19a14dd3dea7db0589be805ec89f5755210475effc31b60511beb12e",
+            "current_key_seq": 1,
+            "key_history": [
+              {
+                "entry": {
+                  "authorized_by": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "new_did_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+                  "operation": "register_did",
+                  "prev_entry_hash": null,
+                  "previous_did_key": null,
+                  "seq": 1,
+                  "state_hash": "c8455f10c3febf3d2c29f5af334dd6ec323e4ba82baeb9b1b8597116166f6eff",
+                  "timestamp": "2026-10-26T00:00:00Z",
+                  "entry_hash": "c4182f836e13f2ecb45d285c3ab65190aea3238e4e26ea51aacaad8113922284",
+                  "signature": "BXuD38wkhL2xU951L3n8xZa7kSudTOx4kREh9SlfDn6BHwYI+p9gjEMPyntVb4UamCnH2pnQkNW2uU4UuzleCw"
+                },
+                "registered_at": "2026-10-26T00:00:00.000000Z"
+              }
+            ],
+            "certificates": [
+              {
+                "signed": {
+                  "certificate": {
+                    "v": 1,
+                    "type": "aweb.id-certificate",
+                    "id": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+                    "domain": "example.com",
+                    "parent": {
+                      "kind": "identity",
+                      "id": "did:key:z6Mkon22vwz9JoNpGDxCrGZRgeNFTdRTwXYYN3fvAhA3K19x"
+                    },
+                    "kind": "human",
+                    "issuer_key": "did:key:z6Mkon22vwz9JoNpGDxCrGZRgeNFTdRTwXYYN3fvAhA3K19x",
+                    "issued_at": "2026-10-26T00:07:00Z"
+                  },
+                  "signature": "eK9TV_wet1OxryjIKxhyaJserF2hRzC5c-PJCBiAnDU1MGfBvxb2lWmGliqQ4VTIYP2rim1ahEJ38wcmvSzpAg"
+                },
+                "registered_at": "2026-10-26T00:08:00.000000Z",
+                "superseded_at": null,
+                "issuer_key_seq": 1
+              }
+            ],
+            "revocation": null
+          }
+        ],
+        "missing": []
+      },
+      "namespace_authority": {
+        "domain": "example.com",
+        "dns_name": "_awid.example.com",
+        "inherited": false,
+        "controller_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "acquired_at": 1000,
+      "age_seconds": 0,
+      "now": 1000,
+      "organisation": "example.com",
+      "accept": false,
+      "person": "did:aw:4YDPf9bG55GJLKFKhsQG5XqbM2Mz",
+      "identity_key": "did:key:z6MkmNL6xksdEJENGk9Z1qqGsY5njKQdjU1UhnUEUvWyQUVX",
+      "expected_issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "expected_issuer_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+      "expected_certificate": "sha256:301e3b3926861a4c057c810b042d5fbb7d539dcaa824b1acee77054d877cb1c9"
     }
   ]
 }

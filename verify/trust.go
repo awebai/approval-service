@@ -62,29 +62,26 @@ func DeriveTrust(chain []any, person, identityKey, organisation string, observat
 		issuer = text(row, "did_key")
 	} else {
 		parentID := text(parent, "id")
-		if len(parentID) >= 8 && parentID[:8] == "did:key:" {
-			issuer = parentID
-		} else {
-			rows, _ := observation.Status["identities"].([]any)
-			for _, v := range rows {
-				row, ok := v.(map[string]any)
-				if !ok {
-					continue
-				}
-				if text(row, "id") != parentID {
-					continue
-				}
-				history, _ := row["key_history"].([]any)
-				if len(history) == 0 {
-					continue
-				}
-				last, ok := history[len(history)-1].(map[string]any)
-				if !ok {
-					continue
-				}
-				issuer = text(object(last, "entry"), "new_did_key")
-				break
+
+		rows, _ := observation.Status["identities"].([]any)
+		for _, v := range rows {
+			row, ok := v.(map[string]any)
+			if !ok {
+				continue
 			}
+			if text(row, "id") != parentID {
+				continue
+			}
+			history, _ := row["key_history"].([]any)
+			if len(history) == 0 {
+				continue
+			}
+			last, ok := history[len(history)-1].(map[string]any)
+			if !ok {
+				continue
+			}
+			issuer = text(object(last, "entry"), "new_did_key")
+			break
 		}
 	}
 	key, err := awid.ExtractPublicKey(issuer)

@@ -23,3 +23,15 @@ permission. Historical checks still use explicit as-of trust.
 The Python and Go trust tests share real ID certificate/log signatures from the
 public AWID conformance corpus. They exercise cryptography and supplied public
 observation ports; they are not live registry, service or hardware tests.
+
+The issuer is always its CURRENT key. After a namespace controller rotation or
+an issuing person's key change, that issuer must sign the affected person's
+binding again; bindings signed by the superseded issuer key no longer verify.
+For inherited DNS authority, the child's checked namespace delegation and epochs
+select its issuer; the parent's controller cannot issue the child's binding.
+Human certificate parents cannot be did:key identities: a human's identity
+parent must itself be human, and human IDs must be did:aw.
+
+Go callers supplying a pure public observation must decode status with a
+`json.Decoder` using `UseNumber`; ordinary float64 map decoding is refused by
+the underlying ID verifier. `ReadTrust` uses the SDK's correct decoder.
