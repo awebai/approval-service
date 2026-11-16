@@ -129,7 +129,8 @@ deadlines; the requester must save its receipt before retrieval closes.
 forwarded client addresses (default `127.0.0.1,::1` for a loopback HTTPS proxy).
 Set it to the actual proxy addresses when the proxy is elsewhere, and configure
 that proxy to replace incoming forwarded headers. An empty setting trusts no
-forwarding; behind a proxy this makes the browser limit one shared budget.
+forwarding; behind a proxy this makes each IP budget shared by all callers
+using that proxy.
 `AWSIGN_REQUESTS_PER_IP_PER_MINUTE` bounds all `/v1/*` attempts per observed
 client IP (default 600 per process), before body parsing, signature processing
 or public reads. The existing per-requester budget still applies. Raw forwarded
