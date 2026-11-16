@@ -23,7 +23,7 @@ from approval_service.encoding import decode, encode
 from approval_service.enrollment import Enrollments, PublicIssuer
 from approval_service.grading import EnrollmentGrading
 from approval_service.registration import check_registration
-from approval_service.requester import AdmittedRequester
+from approval_service.requester import AdmittedRequester, KeyObservation
 from approval_service.seams import commitment
 from approval_service.verify import Refused, Trust
 from approval_service.wire import domain
@@ -56,6 +56,12 @@ def enrollment_world(*, lifetime=120):
     caller = AdmittedRequester(canonical(i["requester"]), i["requester"]["key"], now)
     w = fixture()
     return intent, issuer, trust, caller, w
+
+
+def creation_status(intent):
+    """Explicit checked not-committed input port, like this fixture's Trust."""
+    i = intent["intent"]
+    return KeyObservation(i["person"], i["identity_key"], False, int(time.time()))
 
 
 def sign_binding(intent, issuer, entries):
@@ -113,13 +119,38 @@ def confirmation_request(intent, binding):
     return r
 
 
-async def confirmed_person(store, *, lifetime=120):
+async def confirmed_person(store, *, lifetime=120, later=False):
     intent, issuer, trust, caller, w = enrollment_world(lifetime=lifetime)
     service = Enrollments(
         store, origin=ORIGIN, rp_id=RP, grading=EnrollmentGrading("passkey_only", None)
     )
     public = PublicIssuer(trust.issuer, trust.observed_at)
-    started = await service.start(intent, issuer=public, requester=caller)
+    if later:
+        from dataclasses import replace
+
+        trust = replace(trust, namespace_issuer=trust.issuer)
+        i = intent["intent"]
+        i.update(
+            purpose="enroll_existing_person",
+            requester={
+                "kind": "identity",
+                "id": trust.person,
+                "key": trust.identity_key,
+            },
+        )
+        intent["signature"] = encode(
+            issuer.sign(domain("enrollment_intent") + canonical(i))
+        )
+        caller = AdmittedRequester(
+            canonical(i["requester"]), trust.identity_key, trust.observed_at
+        )
+    started = await service.start(
+        intent,
+        issuer=public,
+        requester=caller,
+        current=trust if later else None,
+        observation=creation_status(intent),
+    )
     browser = await service.browser_options(started["locator"])
     assert browser["public_key"]["authenticatorSelection"]["residentKey"] == "required"
     assert (
@@ -132,7 +163,9 @@ async def confirmed_person(store, *, lifetime=120):
     )
     ext = {"credProps": {"rk": True}}
     await service.register(started["locator"], browser["csrf"], registered, ext)
-    material = await service.material(intent, issuer=public, requester=caller)
+    material = await service.material(
+        intent, issuer=public, requester=caller, current=trust if later else None
+    )
     raw = material["registrations"][0]["registration"]
     assert raw == registered
     checked = check_registration(
@@ -152,7 +185,9 @@ async def confirmed_person(store, *, lifetime=120):
         "request_bytes": encode(canonical(r)),
         "admission": {"team_certificate": None, "id_chain": []},
     }
-    pending = await service.confirm(confirm, issuer=public, requester=caller)
+    pending = await service.confirm(
+        confirm, issuer=public, requester=caller, current=trust if later else None
+    )
     assert pending["state"] == "pending"
     # A newly opened page has no original token. Refresh from the bearer locator
     # after the issuer has done its independent work; never repeat registration.
@@ -167,7 +202,9 @@ async def confirmed_person(store, *, lifetime=120):
     await service.finish_confirmation(
         started["locator"], browser["csrf"], options["id"], proof, issuer=public
     )
-    approved = await service.confirm(confirm, issuer=public, requester=caller)
+    approved = await service.confirm(
+        confirm, issuer=public, requester=caller, current=trust if later else None
+    )
     assert approved["state"] == "approved"
     from approval_service.answers import assemble_receipt
 
@@ -195,9 +232,25 @@ async def confirmed_person(store, *, lifetime=120):
         "cases"
     ][0]["activation"]["evidence"]["evidence"]
     e = {**base, **e}
+    if later:
+        e.pop("creation")
+        e.update(
+            kind="human_enrolled_later",
+            enrollment={
+                "credential": checked.credential_id,
+                "grade": checked.grade,
+                "since": int(time.time()),
+                "confirmation_receipt_commitment": commitment("receipt_commitment", c),
+            },
+        )
     signed_e = {
         "evidence": e,
-        "signature": encode(issuer.sign(domain("identity_evidence") + canonical(e))),
+        "signature": encode(
+            issuer.sign(
+                domain("later_enrollment_evidence" if later else "identity_evidence")
+                + canonical(e)
+            )
+        ),
     }
     active = {
         "version": 1,
@@ -207,6 +260,9 @@ async def confirmed_person(store, *, lifetime=120):
         "evidence": signed_e,
         "id_chain": c["id_chain"],
     }
+    if later:
+        active["version"] = 2
+        active["confirmation_receipt"] = active.pop("creation_receipt")
     return {
         "service": service,
         "intent": intent,
