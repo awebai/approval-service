@@ -13,7 +13,7 @@ from dataclasses import dataclass
 
 from awid.did import public_key_from_did
 from awid.id_certificates import IDChainEvidence, id_certificate_id, verify_id_chain
-from awid.registry import CachedRegistryClient
+from awid.registry import RegistryClient
 
 from .verify import Refused, Trust
 
@@ -94,13 +94,12 @@ def derive_trust(chain, *, person, identity_key, organisation, observation, now)
 
 
 async def read_trust(
-    registry: CachedRegistryClient, chain, *, person, identity_key, organisation
+    registry: RegistryClient, chain, *, person, identity_key, organisation
 ):
     """Use the configured AWID public resolver; no caller-provided status route.
 
-    The production 0.5.39 CachedRegistryClient supplies this method (the plain
-    RegistryClient does not). A long-lived instance may serve a <=60s cached observation;
-    its reported original age is retained. No protected/freshness extension or
+    SDK 0.5.40rc1 supplies this on the plain RegistryClient, without Redis.
+    The service may use its cached subclass; any original age is retained. No protected/freshness extension or
     mutation is involved. Registry failures remain unavailable, never legacy.
     """
     bundle = {"v": 1, "type": "aweb.id-chain", "certificates": chain}

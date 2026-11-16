@@ -8,8 +8,8 @@ approval protocol; releases are held.
 Receipt verifiers take independently checked `Trust`; a binding carried in a
 receipt is not its own trust anchor. Python `approval_service.trust.read_trust`
 and Go `verify.ReadTrust` obtain public ID status and DNS authority through the
-configured AWID SDK resolver (Python uses the production 0.5.39
-`CachedRegistryClient` with Redis), then use the single chain-to-trust implementation
+configured AWID SDK resolver (Python 0.5.40rc1 supports the plain client
+without Redis; the service may use its cached subclass), then use the single chain-to-trust implementation
 in that language. Enforcers use this path rather than extracting keys from a
 receipt or writing their own chain/status interpretation.
 
@@ -35,3 +35,22 @@ parent must itself be human, and human IDs must be did:aw.
 Go callers supplying a pure public observation must decode status with a
 `json.Decoder` using `UseNumber`; ordinary float64 map decoding is refused by
 the underlying ID verifier. `ReadTrust` uses the SDK's correct decoder.
+
+The service and issuer verify the SAME registration response with
+`approval_service.registration.check_registration`. The WebAuthn create
+challenge is the issuer's fresh value for the exact person and pending
+certificate. Before signing certified hardware in B, the issuer checks the raw
+private attestation with this shared code and its own pinned metadata input;
+otherwise it may sign passkey grade at most. This prevents a compromised service
+from labelling software hardware or replaying another enrollment's attestation.
+It cannot stop that service enrolling genuine hardware held by an attacker:
+the organisation's authorization supplies the first physical-key association.
+There is no second registration; the separate enrollment_confirmation get
+assertion over B remains the public creation proof. Attestation certificates
+remain private and are never placed in a binding or public identity sidecar.
+
+The v1 registration profiles are listed in the format source. Formats whose
+privacy has not been established are refused rather than silently importing
+enterprise identifiers. A software authenticator or a claimed model identifier
+alone earns passkey grade only; genuine hardware qualification still requires
+a real device ceremony.

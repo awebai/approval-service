@@ -124,12 +124,13 @@ dependencies = [
 dev = [
     { name = "httpx" },
     { name = "pytest" },
+    { name = "pytest-asyncio" },
     { name = "ruff" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "awid-service", specifier = "==0.5.39" },
+    { name = "awid-service", specifier = "==0.5.40rc1" },
     { name = "cbor2", specifier = ">=6.1.2,<7" },
     { name = "cryptography", specifier = ">=46,<51" },
     { name = "fastapi", specifier = ">=0.116,<1" },
@@ -144,12 +145,13 @@ requires-dist = [
 dev = [
     { name = "httpx", specifier = ">=0.28,<1" },
     { name = "pytest", specifier = ">=8,<10" },
+    { name = "pytest-asyncio", specifier = ">=1.2,<2" },
     { name = "ruff", specifier = ">=0.12,<1" },
 ]
 
 [[package]]
 name = "awid-service"
-version = "0.5.39"
+version = "0.5.40rc1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "base58" },
@@ -166,9 +168,9 @@ dependencies = [
     { name = "typer" },
     { name = "uvicorn", extra = ["standard"] },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a7/49/cffe827479c51434a9716cbb865c20c236ab4e41c42a2eb420319c2928e5/awid_service-0.5.39.tar.gz", hash = "sha256:6df346ef36e5daa8c284020b004eac7f3f27d13042458c01a33f37d4403bf833", size = 457976, upload-time = "2026-11-11T14:19:03.561Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/28/37/5e07aed70ceb967b0feaca1afff1db40c2314ec41da1f332f95459f20364/awid_service-0.5.40rc1.tar.gz", hash = "sha256:38d266df99ec9b517658fd936a0e841aac71105e2afa4ef06aace7b7fbe8ef14", size = 465128, upload-time = "2026-11-12T21:29:04.952Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2f/af/d46f85987c1bf2f52b9bbf2d4784d81dbeeb5452eb768e9d52d35f20a5e9/awid_service-0.5.39-py3-none-any.whl", hash = "sha256:41238e71d92cbe9ad5be9bb7f1ffa317ed9d55e0db7255e2599832c8ad43de30", size = 183155, upload-time = "2026-11-11T14:19:02.272Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/61/9a40a720a3297d9391b0dd2f826aa740630684310b8dbb57158d831ba41d/awid_service-0.5.40rc1-py3-none-any.whl", hash = "sha256:325a73778b1d9fe84009b4b7a3e08940df3500e8aec9ce812ac673522a53841d", size = 186321, upload-time = "2026-11-12T21:29:03.482Z" },
 ]
 
 [[package]]
@@ -989,6 +991,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/79/42/bb4641652e58dedeac2ec51abc1f8cae4fee4ec63899a0999016229a0f2a/pytest-9.2.0.tar.gz", hash = "sha256:97c4f3b1f3c7414aa36465e09b8220f1d03627993bd51b1282e193753c80557b", size = 1797555, upload-time = "2026-10-27T21:30:20.728Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/51/39/1f5d8c8877a0fa327db959c19341d4be61660de1ab6b7391f9eb805bcd67/pytest-9.2.0-py3-none-any.whl", hash = "sha256:07acdcf88ec174f907dc01af70bf52d49b014bbab03faeeade31c96b18c2e588", size = 411776, upload-time = "2026-10-27T21:30:19.131Z" },
+]
+
+[[package]]
+name = "pytest-asyncio"
+version = "1.5.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pytest" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/2c/de/80724f9b5b9eca1a654179cae6edc51aaa0a355a9834a736e2a188b91780/pytest_asyncio-1.5.0.tar.gz", hash = "sha256:92c8fa83ca419fd0d4bd6a34df6520dae435841d3733c319343249492adf37f7", size = 146227, upload-time = "2026-11-12T16:35:49.845Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/27/2d/e600d8f47597a803641704aba367c7266cd621f86561ec36da9888f160ec/pytest_asyncio-1.5.0-py3-none-any.whl", hash = "sha256:557f255ee03cc84f84a8d5f438bc9c6e0f714bf86970ae743c7ecb5a38d7e07d", size = 17215, upload-time = "2026-11-12T16:35:48.446Z" },
 ]
 
 [[package]]

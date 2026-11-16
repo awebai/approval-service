@@ -404,6 +404,43 @@
           "$ref": "#/$defs/assertion"
         }
       }
+    },
+    "binary": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "maxLength": 1048576
+    },
+    "registration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "client_data_json",
+        "attestation_object"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/binary"
+        },
+        "client_data_json": {
+          "$ref": "#/$defs/binary"
+        },
+        "attestation_object": {
+          "$ref": "#/$defs/binary"
+        }
+      }
     }
-  }
+  },
+  "x-cbor-limits": {
+    "max_depth": 8,
+    "max_map_pairs": 16,
+    "max_array_elements": 16
+  },
+  "x-registration-attestation-formats": [
+    "none",
+    "packed",
+    "fido-u2f",
+    "tpm",
+    "apple"
+  ]
 }

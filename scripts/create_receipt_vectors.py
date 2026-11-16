@@ -13,11 +13,21 @@ out = root / "vectors/receipts.json"
 append_review = "--append-review" in sys.argv
 append_hostnames = "--append-hostnames" in sys.argv
 append_patterns = "--append-patterns" in sys.argv
-if out.exists() and not (append_review or append_hostnames or append_patterns):
+append_cose = "--append-cose" in sys.argv
+append_extra = "--append-cose-extra" in sys.argv
+if out.exists() and not (
+    append_review or append_hostnames or append_patterns or append_cose or append_extra
+):
     raise SystemExit("refuse to overwrite frozen vectors")
 cases = (
     json.loads(out.read_text())["cases"]
-    if (append_review or append_hostnames or append_patterns)
+    if (
+        append_review
+        or append_hostnames
+        or append_patterns
+        or append_cose
+        or append_extra
+    )
     else []
 )
 
@@ -41,7 +51,9 @@ def add(name, w, accept, now=1100, required_grade="passkey_uv"):
     )
 
 
-if not (append_review or append_hostnames or append_patterns):
+if not (
+    append_review or append_hostnames or append_patterns or append_cose or append_extra
+):
     for algorithm in (-7, -8, -257):
         add("algorithm-" + str(algorithm), fixture(algorithm), True)
     for packaging in ("carried", "dropped", "superseded"):
@@ -83,7 +95,7 @@ if not (append_review or append_hostnames or append_patterns):
         False,
         required_grade="certified_hardware",
     )
-if not (append_hostnames or append_patterns):
+if not (append_hostnames or append_patterns or append_cose or append_extra):
     # Six review regressions: each has a genuine issuer and assertion signature.
     import cbor2
 
@@ -174,6 +186,85 @@ if append_patterns:
     w["receipt"]["request_bytes"] = b64(canon(r))
     signed_client(w, canon)
     add("definition-digest-trailing-newline", w, False)
+if append_cose:
+    import hashlib
+
+    import cbor2
+    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.asymmetric import ec
+
+    from approval_service.encoding import decode
+
+    for name, algorithm, label, value in [
+        ("cose-float-key-type", -7, 1, 2.0),
+        ("cose-bool-curve", -7, -1, True),
+        ("cose-bool-key-type", -8, 1, True),
+        ("cose-rsa-float-key-type", -257, 1, 3.0),
+        ("cose-tagged-key-type", -7, 1, cbor2.CBORTag(2, b"\x02")),
+    ]:
+        w = fixture(algorithm)
+        b = w["receipt"]["binding"]["binding"]
+        key = cbor2.loads(decode(b["credentials"][0]["key"]))
+        key[label] = value
+        b["credentials"][0]["key"] = b64(cbor2.dumps(key))
+        w["receipt"]["binding"] = resign(w, b)
+        add(name, w, False)
+    for name, tagged in [("cose-tagged-map", True), ("cose-map-over-limit", False)]:
+        w = fixture()
+        b = w["receipt"]["binding"]["binding"]
+        key = cbor2.loads(decode(b["credentials"][0]["key"]))
+        if tagged:
+            key = cbor2.CBORTag(55799, key)
+        else:
+            key.update({100 + i: i for i in range(12)})
+        b["credentials"][0]["key"] = b64(cbor2.dumps(key))
+        w["receipt"]["binding"] = resign(w, b)
+        add(name, w, False)
+    for name, extension, accept in [
+        ("assertion-tagged-extension", cbor2.CBORTag(55799, {"x": 1}), False),
+        ("assertion-nonstring-extension", {1: 1}, False),
+        ("assertion-extension-over-limit", {"x" + str(i): i for i in range(17)}, False),
+        ("assertion-valid-extension", {"uvm": [[1, 2, 3]]}, True),
+    ]:
+        w = fixture()
+        a = w["receipt"]["assertion"]
+        auth = bytearray(decode(a["authenticator_data"]))
+        auth[32] |= 128
+        raw = bytes(auth) + cbor2.dumps(extension)
+        a["authenticator_data"] = b64(raw)
+        a["signature"] = b64(
+            w["private"].sign(
+                raw + hashlib.sha256(decode(a["client_data_json"])).digest(),
+                ec.ECDSA(hashes.SHA256()),
+            )
+        )
+        add(name, w, accept)
+if append_extra:
+    import hashlib
+
+    import cbor2
+    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.asymmetric import ec
+
+    from approval_service.encoding import decode
+
+    for name, extension, accept in [
+        ("assertion-null-extension", None, False),
+        ("assertion-empty-extension", {}, True),
+    ]:
+        w = fixture()
+        a = w["receipt"]["assertion"]
+        auth = bytearray(decode(a["authenticator_data"]))
+        auth[32] |= 128
+        raw = bytes(auth) + cbor2.dumps(extension)
+        a["authenticator_data"] = b64(raw)
+        a["signature"] = b64(
+            w["private"].sign(
+                raw + hashlib.sha256(decode(a["client_data_json"])).digest(),
+                ec.ECDSA(hashes.SHA256()),
+            )
+        )
+        add(name, w, accept)
 out.write_text(
     json.dumps(
         {

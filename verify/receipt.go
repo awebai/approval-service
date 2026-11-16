@@ -69,7 +69,7 @@ var coseMode cbor.DecMode
 
 func init() {
 	var e error
-	coseMode, e = (cbor.DecOptions{DupMapKey: cbor.DupMapKeyEnforcedAPF, MaxNestedLevels: 8, MaxMapPairs: 16, MaxArrayElements: 16, TagsMd: cbor.TagsForbidden}).DecMode()
+	coseMode, e = (cbor.DecOptions{DupMapKey: cbor.DupMapKeyEnforcedAPF, MaxNestedLevels: int(wireSchema["x-cbor-limits"].(map[string]any)["max_depth"].(float64)), MaxMapPairs: int(wireSchema["x-cbor-limits"].(map[string]any)["max_map_pairs"].(float64)), MaxArrayElements: int(wireSchema["x-cbor-limits"].(map[string]any)["max_array_elements"].(float64)), TagsMd: cbor.TagsForbidden}).DecMode()
 	if e != nil {
 		panic(e)
 	}
@@ -263,7 +263,7 @@ func rawVerify(receipt, expected map[string]any, trust Trust) (map[string]any, C
 	}
 	if flags&128 != 0 {
 		var ext map[string]any
-		if e = coseMode.Unmarshal(auth[37:], &ext); e != nil {
+		if e = coseMode.Unmarshal(auth[37:], &ext); e != nil || ext == nil {
 			return fail("assertion_invalid")
 		}
 	}

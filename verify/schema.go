@@ -7,13 +7,14 @@ import (
 	"strings"
 )
 
-var wireSchema map[string]any
-
-func init() {
-	if e := json.Unmarshal([]byte(schemaJSON), &wireSchema); e != nil {
+var wireSchema = func() map[string]any {
+	var schema map[string]any
+	if e := json.Unmarshal([]byte(schemaJSON), &schema); e != nil {
 		panic(e)
 	}
-}
+	return schema
+}()
+
 func domain(name string) []byte {
 	return []byte(wireSchema["x-domains"].(map[string]any)[name].(string))
 }
