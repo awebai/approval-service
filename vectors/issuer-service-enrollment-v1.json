@@ -1,0 +1,3404 @@
+{
+  "version": 1,
+  "scope": "issuer-service-enrollment",
+  "source": "Synthetic exact signed bytes for the first self-custody add-human path. Test keys are public fixtures. Pure cryptographic seam inputs, not live registry, browser, custody or effect qualification.",
+  "cases": [
+    {
+      "id": "intent-valid",
+      "phase": "intent",
+      "accept": true,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsIm9wZXJhdGlvbiI6Imh1bWFuLmFkZCIsInRhcmdldCI6eyJiaW5kaW5nX2NvbW1pdG1lbnQiOiJzaGEyNTY6MGJiZWU0MGQxYjNhNTI0OTM2ZjdjZTYxMTE0NjNhN2NkMjRkMWM2YjhmMzZkMDU1Njc2NzI1NDMxZWYyZjRiZiIsImNlcnRpZmljYXRlIjoic2hhMjU2Ojg5MDc5OWRjNDc4ZDYzYzQ3YTRhYTc1NDc1ODI3NjZjMjA2ZmI5MDJhYWU2NmVhMTNjMjA5YWJiMjAwZDg0ZWUiLCJpZGVudGl0eV9rZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsInBlcnNvbiI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3In19LCJhcHByb3ZlciI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3IiwiZGVhZGxpbmUiOjEzMDAsImRlZmluaXRpb24iOnsiaWQiOiJodW1hbi5hZGQiLCJzaGEyNTYiOiJhN2Y2NzgwZTVlNjZjMmViY2IzZDgyYmYwMDExODk0NmRhYjAwY2QzNWUxYjcwMTI4MTJiOGRhZmU4YzliMmExIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoidXJuOmF3c2lnbjp0ZXN0OmtleWhvbGRlciJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibjlXMVZyVzlOYWtidVBQQ3ZvS2h3VDkzUUc5RjVTazRpaTNSLTBBcmIwWSJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImVucm9sbG1lbnRfY29uZmlybWF0aW9uIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJrZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJhLTZUVmM0N1FlSVBYczVMNGdXdTVrTTVLdVM5RlFxVnVIbzJwY3VvQkZjIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEYCIQDQ-ju_KzQovKpFxztfkNBpvRVyNR_w3ffc4CsjYdXwVwIhAOyWKWE1ELLrGETxMZ2vEGdue5PricQSR5Bj02dS-JeM"
+          }
+        },
+        "evidence": {
+          "evidence": {
+            "version": 1,
+            "kind": "human",
+            "organisation": "customer.example",
+            "subject": {
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+            },
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "binding_commitment": "sha256:0bbee40d1b3a524936f7ce6111463a7cd24d1c6b8f36d055676725431ef2f4bf",
+            "creation": {
+              "credential": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "grade": "passkey_uv",
+              "receipt_commitment": "sha256:12768a1b282ced28cba5ff7755368e8d97e911b0ef47838968ab75ddc6d10a01"
+            }
+          },
+          "signature": "lOc_dCFkzwm2fsOEQVRc6rXAGZCKRF9dDSMIg-030ewWOadN7wqMZUeryygNkhsLNp9V2215tqJli9sqWT1RCg"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "requester": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "origin": "https://awsign.com",
+      "rp_id": "awsign.com",
+      "now": 1100,
+      "trust": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+        "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "issuer_public_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+        "observed_at": 1100
+      },
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "pending"
+    },
+    {
+      "id": "pending-valid",
+      "phase": "pending",
+      "accept": true,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsIm9wZXJhdGlvbiI6Imh1bWFuLmFkZCIsInRhcmdldCI6eyJiaW5kaW5nX2NvbW1pdG1lbnQiOiJzaGEyNTY6MGJiZWU0MGQxYjNhNTI0OTM2ZjdjZTYxMTE0NjNhN2NkMjRkMWM2YjhmMzZkMDU1Njc2NzI1NDMxZWYyZjRiZiIsImNlcnRpZmljYXRlIjoic2hhMjU2Ojg5MDc5OWRjNDc4ZDYzYzQ3YTRhYTc1NDc1ODI3NjZjMjA2ZmI5MDJhYWU2NmVhMTNjMjA5YWJiMjAwZDg0ZWUiLCJpZGVudGl0eV9rZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsInBlcnNvbiI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3In19LCJhcHByb3ZlciI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3IiwiZGVhZGxpbmUiOjEzMDAsImRlZmluaXRpb24iOnsiaWQiOiJodW1hbi5hZGQiLCJzaGEyNTYiOiJhN2Y2NzgwZTVlNjZjMmViY2IzZDgyYmYwMDExODk0NmRhYjAwY2QzNWUxYjcwMTI4MTJiOGRhZmU4YzliMmExIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoidXJuOmF3c2lnbjp0ZXN0OmtleWhvbGRlciJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibjlXMVZyVzlOYWtidVBQQ3ZvS2h3VDkzUUc5RjVTazRpaTNSLTBBcmIwWSJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImVucm9sbG1lbnRfY29uZmlybWF0aW9uIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJrZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJhLTZUVmM0N1FlSVBYczVMNGdXdTVrTTVLdVM5RlFxVnVIbzJwY3VvQkZjIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEYCIQDQ-ju_KzQovKpFxztfkNBpvRVyNR_w3ffc4CsjYdXwVwIhAOyWKWE1ELLrGETxMZ2vEGdue5PricQSR5Bj02dS-JeM"
+          }
+        },
+        "evidence": {
+          "evidence": {
+            "version": 1,
+            "kind": "human",
+            "organisation": "customer.example",
+            "subject": {
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+            },
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "binding_commitment": "sha256:0bbee40d1b3a524936f7ce6111463a7cd24d1c6b8f36d055676725431ef2f4bf",
+            "creation": {
+              "credential": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "grade": "passkey_uv",
+              "receipt_commitment": "sha256:12768a1b282ced28cba5ff7755368e8d97e911b0ef47838968ab75ddc6d10a01"
+            }
+          },
+          "signature": "lOc_dCFkzwm2fsOEQVRc6rXAGZCKRF9dDSMIg-030ewWOadN7wqMZUeryygNkhsLNp9V2215tqJli9sqWT1RCg"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "requester": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "origin": "https://awsign.com",
+      "rp_id": "awsign.com",
+      "now": 1100,
+      "trust": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+        "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "issuer_public_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+        "observed_at": 1100
+      },
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "pending"
+    },
+    {
+      "id": "activation-valid",
+      "phase": "activation",
+      "accept": true,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsIm9wZXJhdGlvbiI6Imh1bWFuLmFkZCIsInRhcmdldCI6eyJiaW5kaW5nX2NvbW1pdG1lbnQiOiJzaGEyNTY6MGJiZWU0MGQxYjNhNTI0OTM2ZjdjZTYxMTE0NjNhN2NkMjRkMWM2YjhmMzZkMDU1Njc2NzI1NDMxZWYyZjRiZiIsImNlcnRpZmljYXRlIjoic2hhMjU2Ojg5MDc5OWRjNDc4ZDYzYzQ3YTRhYTc1NDc1ODI3NjZjMjA2ZmI5MDJhYWU2NmVhMTNjMjA5YWJiMjAwZDg0ZWUiLCJpZGVudGl0eV9rZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsInBlcnNvbiI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3In19LCJhcHByb3ZlciI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3IiwiZGVhZGxpbmUiOjEzMDAsImRlZmluaXRpb24iOnsiaWQiOiJodW1hbi5hZGQiLCJzaGEyNTYiOiJhN2Y2NzgwZTVlNjZjMmViY2IzZDgyYmYwMDExODk0NmRhYjAwY2QzNWUxYjcwMTI4MTJiOGRhZmU4YzliMmExIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoidXJuOmF3c2lnbjp0ZXN0OmtleWhvbGRlciJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibjlXMVZyVzlOYWtidVBQQ3ZvS2h3VDkzUUc5RjVTazRpaTNSLTBBcmIwWSJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImVucm9sbG1lbnRfY29uZmlybWF0aW9uIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJrZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJhLTZUVmM0N1FlSVBYczVMNGdXdTVrTTVLdVM5RlFxVnVIbzJwY3VvQkZjIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEYCIQDQ-ju_KzQovKpFxztfkNBpvRVyNR_w3ffc4CsjYdXwVwIhAOyWKWE1ELLrGETxMZ2vEGdue5PricQSR5Bj02dS-JeM"
+          }
+        },
+        "evidence": {
+          "evidence": {
+            "version": 1,
+            "kind": "human",
+            "organisation": "customer.example",
+            "subject": {
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+            },
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "binding_commitment": "sha256:0bbee40d1b3a524936f7ce6111463a7cd24d1c6b8f36d055676725431ef2f4bf",
+            "creation": {
+              "credential": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "grade": "passkey_uv",
+              "receipt_commitment": "sha256:12768a1b282ced28cba5ff7755368e8d97e911b0ef47838968ab75ddc6d10a01"
+            }
+          },
+          "signature": "lOc_dCFkzwm2fsOEQVRc6rXAGZCKRF9dDSMIg-030ewWOadN7wqMZUeryygNkhsLNp9V2215tqJli9sqWT1RCg"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "requester": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "origin": "https://awsign.com",
+      "rp_id": "awsign.com",
+      "now": 1100,
+      "trust": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+        "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "issuer_public_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+        "observed_at": 1100
+      },
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "active"
+    },
+    {
+      "id": "wrong-issuer",
+      "phase": "activation",
+      "accept": false,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsIm9wZXJhdGlvbiI6Imh1bWFuLmFkZCIsInRhcmdldCI6eyJiaW5kaW5nX2NvbW1pdG1lbnQiOiJzaGEyNTY6MGJiZWU0MGQxYjNhNTI0OTM2ZjdjZTYxMTE0NjNhN2NkMjRkMWM2YjhmMzZkMDU1Njc2NzI1NDMxZWYyZjRiZiIsImNlcnRpZmljYXRlIjoic2hhMjU2Ojg5MDc5OWRjNDc4ZDYzYzQ3YTRhYTc1NDc1ODI3NjZjMjA2ZmI5MDJhYWU2NmVhMTNjMjA5YWJiMjAwZDg0ZWUiLCJpZGVudGl0eV9rZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsInBlcnNvbiI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3In19LCJhcHByb3ZlciI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3IiwiZGVhZGxpbmUiOjEzMDAsImRlZmluaXRpb24iOnsiaWQiOiJodW1hbi5hZGQiLCJzaGEyNTYiOiJhN2Y2NzgwZTVlNjZjMmViY2IzZDgyYmYwMDExODk0NmRhYjAwY2QzNWUxYjcwMTI4MTJiOGRhZmU4YzliMmExIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoidXJuOmF3c2lnbjp0ZXN0OmtleWhvbGRlciJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibjlXMVZyVzlOYWtidVBQQ3ZvS2h3VDkzUUc5RjVTazRpaTNSLTBBcmIwWSJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImVucm9sbG1lbnRfY29uZmlybWF0aW9uIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJrZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJhLTZUVmM0N1FlSVBYczVMNGdXdTVrTTVLdVM5RlFxVnVIbzJwY3VvQkZjIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEYCIQDQ-ju_KzQovKpFxztfkNBpvRVyNR_w3ffc4CsjYdXwVwIhAOyWKWE1ELLrGETxMZ2vEGdue5PricQSR5Bj02dS-JeM"
+          }
+        },
+        "evidence": {
+          "evidence": {
+            "version": 1,
+            "kind": "human",
+            "organisation": "customer.example",
+            "subject": {
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+            },
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "binding_commitment": "sha256:0bbee40d1b3a524936f7ce6111463a7cd24d1c6b8f36d055676725431ef2f4bf",
+            "creation": {
+              "credential": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "grade": "passkey_uv",
+              "receipt_commitment": "sha256:12768a1b282ced28cba5ff7755368e8d97e911b0ef47838968ab75ddc6d10a01"
+            }
+          },
+          "signature": "lOc_dCFkzwm2fsOEQVRc6rXAGZCKRF9dDSMIg-030ewWOadN7wqMZUeryygNkhsLNp9V2215tqJli9sqWT1RCg"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+      "requester": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "origin": "https://awsign.com",
+      "rp_id": "awsign.com",
+      "now": 1100,
+      "trust": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+        "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "issuer_public_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+        "observed_at": 1100
+      },
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "active"
+    },
+    {
+      "id": "wrong-requester",
+      "phase": "activation",
+      "accept": false,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsIm9wZXJhdGlvbiI6Imh1bWFuLmFkZCIsInRhcmdldCI6eyJiaW5kaW5nX2NvbW1pdG1lbnQiOiJzaGEyNTY6MGJiZWU0MGQxYjNhNTI0OTM2ZjdjZTYxMTE0NjNhN2NkMjRkMWM2YjhmMzZkMDU1Njc2NzI1NDMxZWYyZjRiZiIsImNlcnRpZmljYXRlIjoic2hhMjU2Ojg5MDc5OWRjNDc4ZDYzYzQ3YTRhYTc1NDc1ODI3NjZjMjA2ZmI5MDJhYWU2NmVhMTNjMjA5YWJiMjAwZDg0ZWUiLCJpZGVudGl0eV9rZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsInBlcnNvbiI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3In19LCJhcHByb3ZlciI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3IiwiZGVhZGxpbmUiOjEzMDAsImRlZmluaXRpb24iOnsiaWQiOiJodW1hbi5hZGQiLCJzaGEyNTYiOiJhN2Y2NzgwZTVlNjZjMmViY2IzZDgyYmYwMDExODk0NmRhYjAwY2QzNWUxYjcwMTI4MTJiOGRhZmU4YzliMmExIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoidXJuOmF3c2lnbjp0ZXN0OmtleWhvbGRlciJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibjlXMVZyVzlOYWtidVBQQ3ZvS2h3VDkzUUc5RjVTazRpaTNSLTBBcmIwWSJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImVucm9sbG1lbnRfY29uZmlybWF0aW9uIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJrZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJhLTZUVmM0N1FlSVBYczVMNGdXdTVrTTVLdVM5RlFxVnVIbzJwY3VvQkZjIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEYCIQDQ-ju_KzQovKpFxztfkNBpvRVyNR_w3ffc4CsjYdXwVwIhAOyWKWE1ELLrGETxMZ2vEGdue5PricQSR5Bj02dS-JeM"
+          }
+        },
+        "evidence": {
+          "evidence": {
+            "version": 1,
+            "kind": "human",
+            "organisation": "customer.example",
+            "subject": {
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+            },
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "binding_commitment": "sha256:0bbee40d1b3a524936f7ce6111463a7cd24d1c6b8f36d055676725431ef2f4bf",
+            "creation": {
+              "credential": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "grade": "passkey_uv",
+              "receipt_commitment": "sha256:12768a1b282ced28cba5ff7755368e8d97e911b0ef47838968ab75ddc6d10a01"
+            }
+          },
+          "signature": "lOc_dCFkzwm2fsOEQVRc6rXAGZCKRF9dDSMIg-030ewWOadN7wqMZUeryygNkhsLNp9V2215tqJli9sqWT1RCg"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "requester": {
+        "kind": "identity",
+        "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      },
+      "origin": "https://awsign.com",
+      "rp_id": "awsign.com",
+      "now": 1100,
+      "trust": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+        "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "issuer_public_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+        "observed_at": 1100
+      },
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "active"
+    },
+    {
+      "id": "wrong-origin",
+      "phase": "activation",
+      "accept": false,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsIm9wZXJhdGlvbiI6Imh1bWFuLmFkZCIsInRhcmdldCI6eyJiaW5kaW5nX2NvbW1pdG1lbnQiOiJzaGEyNTY6MGJiZWU0MGQxYjNhNTI0OTM2ZjdjZTYxMTE0NjNhN2NkMjRkMWM2YjhmMzZkMDU1Njc2NzI1NDMxZWYyZjRiZiIsImNlcnRpZmljYXRlIjoic2hhMjU2Ojg5MDc5OWRjNDc4ZDYzYzQ3YTRhYTc1NDc1ODI3NjZjMjA2ZmI5MDJhYWU2NmVhMTNjMjA5YWJiMjAwZDg0ZWUiLCJpZGVudGl0eV9rZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsInBlcnNvbiI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3In19LCJhcHByb3ZlciI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3IiwiZGVhZGxpbmUiOjEzMDAsImRlZmluaXRpb24iOnsiaWQiOiJodW1hbi5hZGQiLCJzaGEyNTYiOiJhN2Y2NzgwZTVlNjZjMmViY2IzZDgyYmYwMDExODk0NmRhYjAwY2QzNWUxYjcwMTI4MTJiOGRhZmU4YzliMmExIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoidXJuOmF3c2lnbjp0ZXN0OmtleWhvbGRlciJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibjlXMVZyVzlOYWtidVBQQ3ZvS2h3VDkzUUc5RjVTazRpaTNSLTBBcmIwWSJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImVucm9sbG1lbnRfY29uZmlybWF0aW9uIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJrZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJhLTZUVmM0N1FlSVBYczVMNGdXdTVrTTVLdVM5RlFxVnVIbzJwY3VvQkZjIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEYCIQDQ-ju_KzQovKpFxztfkNBpvRVyNR_w3ffc4CsjYdXwVwIhAOyWKWE1ELLrGETxMZ2vEGdue5PricQSR5Bj02dS-JeM"
+          }
+        },
+        "evidence": {
+          "evidence": {
+            "version": 1,
+            "kind": "human",
+            "organisation": "customer.example",
+            "subject": {
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+            },
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "binding_commitment": "sha256:0bbee40d1b3a524936f7ce6111463a7cd24d1c6b8f36d055676725431ef2f4bf",
+            "creation": {
+              "credential": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "grade": "passkey_uv",
+              "receipt_commitment": "sha256:12768a1b282ced28cba5ff7755368e8d97e911b0ef47838968ab75ddc6d10a01"
+            }
+          },
+          "signature": "lOc_dCFkzwm2fsOEQVRc6rXAGZCKRF9dDSMIg-030ewWOadN7wqMZUeryygNkhsLNp9V2215tqJli9sqWT1RCg"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "requester": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "origin": "https://other.example",
+      "rp_id": "awsign.com",
+      "now": 1100,
+      "trust": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+        "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "issuer_public_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+        "observed_at": 1100
+      },
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "active"
+    },
+    {
+      "id": "expired-intent",
+      "phase": "activation",
+      "accept": false,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsIm9wZXJhdGlvbiI6Imh1bWFuLmFkZCIsInRhcmdldCI6eyJiaW5kaW5nX2NvbW1pdG1lbnQiOiJzaGEyNTY6MGJiZWU0MGQxYjNhNTI0OTM2ZjdjZTYxMTE0NjNhN2NkMjRkMWM2YjhmMzZkMDU1Njc2NzI1NDMxZWYyZjRiZiIsImNlcnRpZmljYXRlIjoic2hhMjU2Ojg5MDc5OWRjNDc4ZDYzYzQ3YTRhYTc1NDc1ODI3NjZjMjA2ZmI5MDJhYWU2NmVhMTNjMjA5YWJiMjAwZDg0ZWUiLCJpZGVudGl0eV9rZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsInBlcnNvbiI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3In19LCJhcHByb3ZlciI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3IiwiZGVhZGxpbmUiOjEzMDAsImRlZmluaXRpb24iOnsiaWQiOiJodW1hbi5hZGQiLCJzaGEyNTYiOiJhN2Y2NzgwZTVlNjZjMmViY2IzZDgyYmYwMDExODk0NmRhYjAwY2QzNWUxYjcwMTI4MTJiOGRhZmU4YzliMmExIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoidXJuOmF3c2lnbjp0ZXN0OmtleWhvbGRlciJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibjlXMVZyVzlOYWtidVBQQ3ZvS2h3VDkzUUc5RjVTazRpaTNSLTBBcmIwWSJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImVucm9sbG1lbnRfY29uZmlybWF0aW9uIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJrZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJhLTZUVmM0N1FlSVBYczVMNGdXdTVrTTVLdVM5RlFxVnVIbzJwY3VvQkZjIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEYCIQDQ-ju_KzQovKpFxztfkNBpvRVyNR_w3ffc4CsjYdXwVwIhAOyWKWE1ELLrGETxMZ2vEGdue5PricQSR5Bj02dS-JeM"
+          }
+        },
+        "evidence": {
+          "evidence": {
+            "version": 1,
+            "kind": "human",
+            "organisation": "customer.example",
+            "subject": {
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+            },
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "binding_commitment": "sha256:0bbee40d1b3a524936f7ce6111463a7cd24d1c6b8f36d055676725431ef2f4bf",
+            "creation": {
+              "credential": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "grade": "passkey_uv",
+              "receipt_commitment": "sha256:12768a1b282ced28cba5ff7755368e8d97e911b0ef47838968ab75ddc6d10a01"
+            }
+          },
+          "signature": "lOc_dCFkzwm2fsOEQVRc6rXAGZCKRF9dDSMIg-030ewWOadN7wqMZUeryygNkhsLNp9V2215tqJli9sqWT1RCg"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "requester": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "origin": "https://awsign.com",
+      "rp_id": "awsign.com",
+      "now": 1300,
+      "trust": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+        "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "issuer_public_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+        "observed_at": 1100
+      },
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "active"
+    },
+    {
+      "id": "missing-public-identity",
+      "phase": "activation",
+      "accept": false,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsIm9wZXJhdGlvbiI6Imh1bWFuLmFkZCIsInRhcmdldCI6eyJiaW5kaW5nX2NvbW1pdG1lbnQiOiJzaGEyNTY6MGJiZWU0MGQxYjNhNTI0OTM2ZjdjZTYxMTE0NjNhN2NkMjRkMWM2YjhmMzZkMDU1Njc2NzI1NDMxZWYyZjRiZiIsImNlcnRpZmljYXRlIjoic2hhMjU2Ojg5MDc5OWRjNDc4ZDYzYzQ3YTRhYTc1NDc1ODI3NjZjMjA2ZmI5MDJhYWU2NmVhMTNjMjA5YWJiMjAwZDg0ZWUiLCJpZGVudGl0eV9rZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsInBlcnNvbiI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3In19LCJhcHByb3ZlciI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3IiwiZGVhZGxpbmUiOjEzMDAsImRlZmluaXRpb24iOnsiaWQiOiJodW1hbi5hZGQiLCJzaGEyNTYiOiJhN2Y2NzgwZTVlNjZjMmViY2IzZDgyYmYwMDExODk0NmRhYjAwY2QzNWUxYjcwMTI4MTJiOGRhZmU4YzliMmExIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoidXJuOmF3c2lnbjp0ZXN0OmtleWhvbGRlciJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibjlXMVZyVzlOYWtidVBQQ3ZvS2h3VDkzUUc5RjVTazRpaTNSLTBBcmIwWSJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImVucm9sbG1lbnRfY29uZmlybWF0aW9uIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJrZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJhLTZUVmM0N1FlSVBYczVMNGdXdTVrTTVLdVM5RlFxVnVIbzJwY3VvQkZjIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEYCIQDQ-ju_KzQovKpFxztfkNBpvRVyNR_w3ffc4CsjYdXwVwIhAOyWKWE1ELLrGETxMZ2vEGdue5PricQSR5Bj02dS-JeM"
+          }
+        },
+        "evidence": {
+          "evidence": {
+            "version": 1,
+            "kind": "human",
+            "organisation": "customer.example",
+            "subject": {
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+            },
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "binding_commitment": "sha256:0bbee40d1b3a524936f7ce6111463a7cd24d1c6b8f36d055676725431ef2f4bf",
+            "creation": {
+              "credential": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "grade": "passkey_uv",
+              "receipt_commitment": "sha256:12768a1b282ced28cba5ff7755368e8d97e911b0ef47838968ab75ddc6d10a01"
+            }
+          },
+          "signature": "lOc_dCFkzwm2fsOEQVRc6rXAGZCKRF9dDSMIg-030ewWOadN7wqMZUeryygNkhsLNp9V2215tqJli9sqWT1RCg"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "requester": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "origin": "https://awsign.com",
+      "rp_id": "awsign.com",
+      "now": 1100,
+      "trust": null,
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "active"
+    },
+    {
+      "id": "expired-status",
+      "phase": "activation",
+      "accept": false,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsIm9wZXJhdGlvbiI6Imh1bWFuLmFkZCIsInRhcmdldCI6eyJiaW5kaW5nX2NvbW1pdG1lbnQiOiJzaGEyNTY6MGJiZWU0MGQxYjNhNTI0OTM2ZjdjZTYxMTE0NjNhN2NkMjRkMWM2YjhmMzZkMDU1Njc2NzI1NDMxZWYyZjRiZiIsImNlcnRpZmljYXRlIjoic2hhMjU2Ojg5MDc5OWRjNDc4ZDYzYzQ3YTRhYTc1NDc1ODI3NjZjMjA2ZmI5MDJhYWU2NmVhMTNjMjA5YWJiMjAwZDg0ZWUiLCJpZGVudGl0eV9rZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsInBlcnNvbiI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3In19LCJhcHByb3ZlciI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3IiwiZGVhZGxpbmUiOjEzMDAsImRlZmluaXRpb24iOnsiaWQiOiJodW1hbi5hZGQiLCJzaGEyNTYiOiJhN2Y2NzgwZTVlNjZjMmViY2IzZDgyYmYwMDExODk0NmRhYjAwY2QzNWUxYjcwMTI4MTJiOGRhZmU4YzliMmExIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoidXJuOmF3c2lnbjp0ZXN0OmtleWhvbGRlciJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibjlXMVZyVzlOYWtidVBQQ3ZvS2h3VDkzUUc5RjVTazRpaTNSLTBBcmIwWSJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImVucm9sbG1lbnRfY29uZmlybWF0aW9uIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJrZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJhLTZUVmM0N1FlSVBYczVMNGdXdTVrTTVLdVM5RlFxVnVIbzJwY3VvQkZjIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEYCIQDQ-ju_KzQovKpFxztfkNBpvRVyNR_w3ffc4CsjYdXwVwIhAOyWKWE1ELLrGETxMZ2vEGdue5PricQSR5Bj02dS-JeM"
+          }
+        },
+        "evidence": {
+          "evidence": {
+            "version": 1,
+            "kind": "human",
+            "organisation": "customer.example",
+            "subject": {
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+            },
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "binding_commitment": "sha256:0bbee40d1b3a524936f7ce6111463a7cd24d1c6b8f36d055676725431ef2f4bf",
+            "creation": {
+              "credential": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "grade": "passkey_uv",
+              "receipt_commitment": "sha256:12768a1b282ced28cba5ff7755368e8d97e911b0ef47838968ab75ddc6d10a01"
+            }
+          },
+          "signature": "lOc_dCFkzwm2fsOEQVRc6rXAGZCKRF9dDSMIg-030ewWOadN7wqMZUeryygNkhsLNp9V2215tqJli9sqWT1RCg"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "requester": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "origin": "https://awsign.com",
+      "rp_id": "awsign.com",
+      "now": 1100,
+      "trust": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+        "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "issuer_public_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+        "observed_at": 1039
+      },
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "active"
+    },
+    {
+      "id": "wrong-public-key",
+      "phase": "activation",
+      "accept": false,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsIm9wZXJhdGlvbiI6Imh1bWFuLmFkZCIsInRhcmdldCI6eyJiaW5kaW5nX2NvbW1pdG1lbnQiOiJzaGEyNTY6MGJiZWU0MGQxYjNhNTI0OTM2ZjdjZTYxMTE0NjNhN2NkMjRkMWM2YjhmMzZkMDU1Njc2NzI1NDMxZWYyZjRiZiIsImNlcnRpZmljYXRlIjoic2hhMjU2Ojg5MDc5OWRjNDc4ZDYzYzQ3YTRhYTc1NDc1ODI3NjZjMjA2ZmI5MDJhYWU2NmVhMTNjMjA5YWJiMjAwZDg0ZWUiLCJpZGVudGl0eV9rZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsInBlcnNvbiI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3In19LCJhcHByb3ZlciI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3IiwiZGVhZGxpbmUiOjEzMDAsImRlZmluaXRpb24iOnsiaWQiOiJodW1hbi5hZGQiLCJzaGEyNTYiOiJhN2Y2NzgwZTVlNjZjMmViY2IzZDgyYmYwMDExODk0NmRhYjAwY2QzNWUxYjcwMTI4MTJiOGRhZmU4YzliMmExIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoidXJuOmF3c2lnbjp0ZXN0OmtleWhvbGRlciJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibjlXMVZyVzlOYWtidVBQQ3ZvS2h3VDkzUUc5RjVTazRpaTNSLTBBcmIwWSJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImVucm9sbG1lbnRfY29uZmlybWF0aW9uIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJrZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJhLTZUVmM0N1FlSVBYczVMNGdXdTVrTTVLdVM5RlFxVnVIbzJwY3VvQkZjIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEYCIQDQ-ju_KzQovKpFxztfkNBpvRVyNR_w3ffc4CsjYdXwVwIhAOyWKWE1ELLrGETxMZ2vEGdue5PricQSR5Bj02dS-JeM"
+          }
+        },
+        "evidence": {
+          "evidence": {
+            "version": 1,
+            "kind": "human",
+            "organisation": "customer.example",
+            "subject": {
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+            },
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "binding_commitment": "sha256:0bbee40d1b3a524936f7ce6111463a7cd24d1c6b8f36d055676725431ef2f4bf",
+            "creation": {
+              "credential": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "grade": "passkey_uv",
+              "receipt_commitment": "sha256:12768a1b282ced28cba5ff7755368e8d97e911b0ef47838968ab75ddc6d10a01"
+            }
+          },
+          "signature": "lOc_dCFkzwm2fsOEQVRc6rXAGZCKRF9dDSMIg-030ewWOadN7wqMZUeryygNkhsLNp9V2215tqJli9sqWT1RCg"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "requester": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "origin": "https://awsign.com",
+      "rp_id": "awsign.com",
+      "now": 1100,
+      "trust": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2",
+        "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+        "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "issuer_public_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+        "observed_at": 1100
+      },
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "active"
+    },
+    {
+      "id": "changed-binding",
+      "phase": "activation",
+      "accept": false,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y2hhbmdlZA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsIm9wZXJhdGlvbiI6Imh1bWFuLmFkZCIsInRhcmdldCI6eyJiaW5kaW5nX2NvbW1pdG1lbnQiOiJzaGEyNTY6MGJiZWU0MGQxYjNhNTI0OTM2ZjdjZTYxMTE0NjNhN2NkMjRkMWM2YjhmMzZkMDU1Njc2NzI1NDMxZWYyZjRiZiIsImNlcnRpZmljYXRlIjoic2hhMjU2Ojg5MDc5OWRjNDc4ZDYzYzQ3YTRhYTc1NDc1ODI3NjZjMjA2ZmI5MDJhYWU2NmVhMTNjMjA5YWJiMjAwZDg0ZWUiLCJpZGVudGl0eV9rZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsInBlcnNvbiI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3In19LCJhcHByb3ZlciI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3IiwiZGVhZGxpbmUiOjEzMDAsImRlZmluaXRpb24iOnsiaWQiOiJodW1hbi5hZGQiLCJzaGEyNTYiOiJhN2Y2NzgwZTVlNjZjMmViY2IzZDgyYmYwMDExODk0NmRhYjAwY2QzNWUxYjcwMTI4MTJiOGRhZmU4YzliMmExIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoidXJuOmF3c2lnbjp0ZXN0OmtleWhvbGRlciJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibjlXMVZyVzlOYWtidVBQQ3ZvS2h3VDkzUUc5RjVTazRpaTNSLTBBcmIwWSJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImVucm9sbG1lbnRfY29uZmlybWF0aW9uIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJrZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y2hhbmdlZA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJhLTZUVmM0N1FlSVBYczVMNGdXdTVrTTVLdVM5RlFxVnVIbzJwY3VvQkZjIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEYCIQDQ-ju_KzQovKpFxztfkNBpvRVyNR_w3ffc4CsjYdXwVwIhAOyWKWE1ELLrGETxMZ2vEGdue5PricQSR5Bj02dS-JeM"
+          }
+        },
+        "evidence": {
+          "evidence": {
+            "version": 1,
+            "kind": "human",
+            "organisation": "customer.example",
+            "subject": {
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+            },
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "binding_commitment": "sha256:0bbee40d1b3a524936f7ce6111463a7cd24d1c6b8f36d055676725431ef2f4bf",
+            "creation": {
+              "credential": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "grade": "passkey_uv",
+              "receipt_commitment": "sha256:12768a1b282ced28cba5ff7755368e8d97e911b0ef47838968ab75ddc6d10a01"
+            }
+          },
+          "signature": "lOc_dCFkzwm2fsOEQVRc6rXAGZCKRF9dDSMIg-030ewWOadN7wqMZUeryygNkhsLNp9V2215tqJli9sqWT1RCg"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "requester": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "origin": "https://awsign.com",
+      "rp_id": "awsign.com",
+      "now": 1100,
+      "trust": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+        "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "issuer_public_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+        "observed_at": 1100
+      },
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "active"
+    },
+    {
+      "id": "missing-evidence",
+      "phase": "activation",
+      "accept": false,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsIm9wZXJhdGlvbiI6Imh1bWFuLmFkZCIsInRhcmdldCI6eyJiaW5kaW5nX2NvbW1pdG1lbnQiOiJzaGEyNTY6MGJiZWU0MGQxYjNhNTI0OTM2ZjdjZTYxMTE0NjNhN2NkMjRkMWM2YjhmMzZkMDU1Njc2NzI1NDMxZWYyZjRiZiIsImNlcnRpZmljYXRlIjoic2hhMjU2Ojg5MDc5OWRjNDc4ZDYzYzQ3YTRhYTc1NDc1ODI3NjZjMjA2ZmI5MDJhYWU2NmVhMTNjMjA5YWJiMjAwZDg0ZWUiLCJpZGVudGl0eV9rZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsInBlcnNvbiI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3In19LCJhcHByb3ZlciI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3IiwiZGVhZGxpbmUiOjEzMDAsImRlZmluaXRpb24iOnsiaWQiOiJodW1hbi5hZGQiLCJzaGEyNTYiOiJhN2Y2NzgwZTVlNjZjMmViY2IzZDgyYmYwMDExODk0NmRhYjAwY2QzNWUxYjcwMTI4MTJiOGRhZmU4YzliMmExIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoidXJuOmF3c2lnbjp0ZXN0OmtleWhvbGRlciJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibjlXMVZyVzlOYWtidVBQQ3ZvS2h3VDkzUUc5RjVTazRpaTNSLTBBcmIwWSJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImVucm9sbG1lbnRfY29uZmlybWF0aW9uIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJrZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJhLTZUVmM0N1FlSVBYczVMNGdXdTVrTTVLdVM5RlFxVnVIbzJwY3VvQkZjIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEYCIQDQ-ju_KzQovKpFxztfkNBpvRVyNR_w3ffc4CsjYdXwVwIhAOyWKWE1ELLrGETxMZ2vEGdue5PricQSR5Bj02dS-JeM"
+          }
+        },
+        "evidence": null,
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "requester": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "origin": "https://awsign.com",
+      "rp_id": "awsign.com",
+      "now": 1100,
+      "trust": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+        "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "issuer_public_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+        "observed_at": 1100
+      },
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "active"
+    },
+    {
+      "id": "evidence-subject-mismatch",
+      "phase": "activation",
+      "accept": false,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsIm9wZXJhdGlvbiI6Imh1bWFuLmFkZCIsInRhcmdldCI6eyJiaW5kaW5nX2NvbW1pdG1lbnQiOiJzaGEyNTY6MGJiZWU0MGQxYjNhNTI0OTM2ZjdjZTYxMTE0NjNhN2NkMjRkMWM2YjhmMzZkMDU1Njc2NzI1NDMxZWYyZjRiZiIsImNlcnRpZmljYXRlIjoic2hhMjU2Ojg5MDc5OWRjNDc4ZDYzYzQ3YTRhYTc1NDc1ODI3NjZjMjA2ZmI5MDJhYWU2NmVhMTNjMjA5YWJiMjAwZDg0ZWUiLCJpZGVudGl0eV9rZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsInBlcnNvbiI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3In19LCJhcHByb3ZlciI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3IiwiZGVhZGxpbmUiOjEzMDAsImRlZmluaXRpb24iOnsiaWQiOiJodW1hbi5hZGQiLCJzaGEyNTYiOiJhN2Y2NzgwZTVlNjZjMmViY2IzZDgyYmYwMDExODk0NmRhYjAwY2QzNWUxYjcwMTI4MTJiOGRhZmU4YzliMmExIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoidXJuOmF3c2lnbjp0ZXN0OmtleWhvbGRlciJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibjlXMVZyVzlOYWtidVBQQ3ZvS2h3VDkzUUc5RjVTazRpaTNSLTBBcmIwWSJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImVucm9sbG1lbnRfY29uZmlybWF0aW9uIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJrZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJhLTZUVmM0N1FlSVBYczVMNGdXdTVrTTVLdVM5RlFxVnVIbzJwY3VvQkZjIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEYCIQDQ-ju_KzQovKpFxztfkNBpvRVyNR_w3ffc4CsjYdXwVwIhAOyWKWE1ELLrGETxMZ2vEGdue5PricQSR5Bj02dS-JeM"
+          }
+        },
+        "evidence": {
+          "evidence": {
+            "version": 1,
+            "kind": "human",
+            "organisation": "customer.example",
+            "subject": {
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "key": "did:key:z6MkvRXNYcE7MMduynWTgeKbDaT1iijDSC8pZqXZc8rHPrf2"
+            },
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "binding_commitment": "sha256:0bbee40d1b3a524936f7ce6111463a7cd24d1c6b8f36d055676725431ef2f4bf",
+            "creation": {
+              "credential": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "grade": "passkey_uv",
+              "receipt_commitment": "sha256:12768a1b282ced28cba5ff7755368e8d97e911b0ef47838968ab75ddc6d10a01"
+            }
+          },
+          "signature": "DHeF9sb4Jzg0_jEjxNXcE1Q5ZXXFiClgtzT2HHV8vU4WIF362gQSTfLCS8-7IU4ud61pHCQaV9SM31VEZ20yDA"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "requester": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "origin": "https://awsign.com",
+      "rp_id": "awsign.com",
+      "now": 1100,
+      "trust": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+        "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "issuer_public_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+        "observed_at": 1100
+      },
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "active"
+    },
+    {
+      "id": "evidence-receipt-mismatch",
+      "phase": "activation",
+      "accept": false,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsIm9wZXJhdGlvbiI6Imh1bWFuLmFkZCIsInRhcmdldCI6eyJiaW5kaW5nX2NvbW1pdG1lbnQiOiJzaGEyNTY6MGJiZWU0MGQxYjNhNTI0OTM2ZjdjZTYxMTE0NjNhN2NkMjRkMWM2YjhmMzZkMDU1Njc2NzI1NDMxZWYyZjRiZiIsImNlcnRpZmljYXRlIjoic2hhMjU2Ojg5MDc5OWRjNDc4ZDYzYzQ3YTRhYTc1NDc1ODI3NjZjMjA2ZmI5MDJhYWU2NmVhMTNjMjA5YWJiMjAwZDg0ZWUiLCJpZGVudGl0eV9rZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsInBlcnNvbiI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3In19LCJhcHByb3ZlciI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3IiwiZGVhZGxpbmUiOjEzMDAsImRlZmluaXRpb24iOnsiaWQiOiJodW1hbi5hZGQiLCJzaGEyNTYiOiJhN2Y2NzgwZTVlNjZjMmViY2IzZDgyYmYwMDExODk0NmRhYjAwY2QzNWUxYjcwMTI4MTJiOGRhZmU4YzliMmExIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoidXJuOmF3c2lnbjp0ZXN0OmtleWhvbGRlciJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibjlXMVZyVzlOYWtidVBQQ3ZvS2h3VDkzUUc5RjVTazRpaTNSLTBBcmIwWSJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImVucm9sbG1lbnRfY29uZmlybWF0aW9uIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJrZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJhLTZUVmM0N1FlSVBYczVMNGdXdTVrTTVLdVM5RlFxVnVIbzJwY3VvQkZjIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEYCIQDQ-ju_KzQovKpFxztfkNBpvRVyNR_w3ffc4CsjYdXwVwIhAOyWKWE1ELLrGETxMZ2vEGdue5PricQSR5Bj02dS-JeM"
+          }
+        },
+        "evidence": {
+          "evidence": {
+            "version": 1,
+            "kind": "human",
+            "organisation": "customer.example",
+            "subject": {
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+            },
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "binding_commitment": "sha256:0bbee40d1b3a524936f7ce6111463a7cd24d1c6b8f36d055676725431ef2f4bf",
+            "creation": {
+              "credential": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "grade": "passkey_uv",
+              "receipt_commitment": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          "signature": "0hE-J3uS1cYTNaiVAiGJXKh8hkU7rXeCEhrrZl3uoWCso5RVKp0u4HzMQSk_FyXD2Jqx8MBvGsK55nLowgnHCA"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "requester": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "origin": "https://awsign.com",
+      "rp_id": "awsign.com",
+      "now": 1100,
+      "trust": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+        "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "issuer_public_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+        "observed_at": 1100
+      },
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "active"
+    },
+    {
+      "id": "confirmation-target-mismatch",
+      "phase": "activation",
+      "accept": false,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsIm9wZXJhdGlvbiI6Imh1bWFuLmFkZCIsInRhcmdldCI6eyJiaW5kaW5nX2NvbW1pdG1lbnQiOiJzaGEyNTY6MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIsImNlcnRpZmljYXRlIjoic2hhMjU2Ojg5MDc5OWRjNDc4ZDYzYzQ3YTRhYTc1NDc1ODI3NjZjMjA2ZmI5MDJhYWU2NmVhMTNjMjA5YWJiMjAwZDg0ZWUiLCJpZGVudGl0eV9rZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsInBlcnNvbiI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3In19LCJhcHByb3ZlciI6ImRpZDphdzoyVXE1MWlGVkxucW1nYlZZM3ZMWnRNRDVQUjg3IiwiZGVhZGxpbmUiOjEzMDAsImRlZmluaXRpb24iOnsiaWQiOiJodW1hbi5hZGQiLCJzaGEyNTYiOiJhN2Y2NzgwZTVlNjZjMmViY2IzZDgyYmYwMDExODk0NmRhYjAwY2QzNWUxYjcwMTI4MTJiOGRhZmU4YzliMmExIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoidXJuOmF3c2lnbjp0ZXN0OmtleWhvbGRlciJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibjlXMVZyVzlOYWtidVBQQ3ZvS2h3VDkzUUc5RjVTazRpaTNSLTBBcmIwWSJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImVucm9sbG1lbnRfY29uZmlybWF0aW9uIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJrZXkiOiJkaWQ6a2V5Ono2TWtvOWhUZ2dNd2pTVEVhSmFQVWZFNnRxY3kyeHZVNkJuTnEzZTNvOHFWQml5SCIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJuc05pVWtDR0RrQ0RsNzRZOTFfeGZWNnlfcll2QzAzMmwzMEs0eERpY2tnIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEUCIQCJOUCuiK0-xXmPTfn0lhyZHdKQA3o5t1pg8I3Pub1fNwIgTSMZqNgSpQ8k4PQThzopNuhSqEcnXmbII5GLzRNjSaM"
+          }
+        },
+        "evidence": {
+          "evidence": {
+            "version": 1,
+            "kind": "human",
+            "organisation": "customer.example",
+            "subject": {
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+            },
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "binding_commitment": "sha256:0bbee40d1b3a524936f7ce6111463a7cd24d1c6b8f36d055676725431ef2f4bf",
+            "creation": {
+              "credential": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "grade": "passkey_uv",
+              "receipt_commitment": "sha256:7294344fb43f01e7dd3d3c58bef27543599d5b0f483b6ad6c181ef2f54a025a8"
+            }
+          },
+          "signature": "Er1Tk3Fe8lClJabEGnk2E1qPXZOJrNrZ7_es_ekaV_cY9FG-3yPZZzbvbq0JOGpAcXnVWfQGJx2J5OuNv6uoDw"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "requester": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "origin": "https://awsign.com",
+      "rp_id": "awsign.com",
+      "now": 1100,
+      "trust": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+        "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "issuer_public_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+        "observed_at": 1100
+      },
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "active"
+    },
+    {
+      "id": "malformed-creation-request",
+      "phase": "activation",
+      "accept": false,
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "namespace_controller",
+            "namespace": "customer.example",
+            "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+          },
+          "origin": "https://awsign.com",
+          "rp_id": "awsign.com",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+      },
+      "activation": {
+        "version": 1,
+        "intent": {
+          "intent": {
+            "version": 1,
+            "purpose": "enroll_person",
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "pending_certificate": {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            },
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "requester": {
+              "kind": "namespace_controller",
+              "namespace": "customer.example",
+              "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+            },
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+            "not_before": 1000,
+            "deadline": 1300
+          },
+          "signature": "08_Z56DIR2L0LPyuaYnJH-I2PlDUqi4bQQ-s0eMmRoNoB4AeU_4vKU7mkhUyHL_fHJo0rToUbiHmIm04GQXuBg"
+        },
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+            "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "origin": "https://awsign.com",
+            "rp_id": "awsign.com",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+        },
+        "creation_receipt": {
+          "version": 1,
+          "request_bytes": "e30",
+          "binding": {
+            "binding": {
+              "version": 1,
+              "organisation": "customer.example",
+              "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+              "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "origin": "https://awsign.com",
+              "rp_id": "awsign.com",
+              "credentials": [
+                {
+                  "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                  "key": "pQECAyYgASFYIGlHfI5Av4oz9mhy9A5ne3z3UbQA1ar6Fgb2sL3oDzEwIlggHlrIcXLbrR6UZGjxuHb-Icv8n-WEd39FZSmgMhgT7Mw",
+                  "algorithm": -7,
+                  "grade": "passkey_uv",
+                  "snapshot": null,
+                  "grade_policy": "uv-v1"
+                }
+              ]
+            },
+            "signature": "6izuIuK9cXaJFsnzzf6prVnSNlj7CuT7rJyDJ2CKm54uSUi1AKk1wuQ4M1k2nmMiS9axlFLs-2hiwB2RhBr3BA"
+          },
+          "id_chain": [
+            {
+              "certificate": {
+                "v": 1,
+                "type": "aweb.id-certificate",
+                "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+                "domain": "customer.example",
+                "parent": {
+                  "kind": "namespace",
+                  "id": "customer.example"
+                },
+                "kind": "human",
+                "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+                "issued_at": "1970-01-01T00:16:40Z"
+              },
+              "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+            }
+          ],
+          "assertion": {
+            "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+            "client_data_json": "eyJjaGFsbGVuZ2UiOiJhLTZUVmM0N1FlSVBYczVMNGdXdTVrTTVLdVM5RlFxVnVIbzJwY3VvQkZjIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+            "authenticator_data": "NWEfW9mJ4NGYhLKCuhyi2cDsX2EY2yySl5QWMX3wp7AFAAAAAA",
+            "signature": "MEYCIQDQ-ju_KzQovKpFxztfkNBpvRVyNR_w3ffc4CsjYdXwVwIhAOyWKWE1ELLrGETxMZ2vEGdue5PricQSR5Bj02dS-JeM"
+          }
+        },
+        "evidence": {
+          "evidence": {
+            "version": 1,
+            "kind": "human",
+            "organisation": "customer.example",
+            "subject": {
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+              "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+            },
+            "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+            "binding_commitment": "sha256:0bbee40d1b3a524936f7ce6111463a7cd24d1c6b8f36d055676725431ef2f4bf",
+            "creation": {
+              "credential": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "grade": "passkey_uv",
+              "receipt_commitment": "sha256:12768a1b282ced28cba5ff7755368e8d97e911b0ef47838968ab75ddc6d10a01"
+            }
+          },
+          "signature": "lOc_dCFkzwm2fsOEQVRc6rXAGZCKRF9dDSMIg-030ewWOadN7wqMZUeryygNkhsLNp9V2215tqJli9sqWT1RCg"
+        },
+        "id_chain": [
+          {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:16:40Z"
+            },
+            "signature": "yXFzYq_i6FlRBwoVScbDHaMBlMp-3I4T6BAR96EODGU28hsgI6Ka-8ibgs2EiSWTGCEnM7SHNV8wXidEqUTdBw"
+          }
+        ]
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "requester": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "origin": "https://awsign.com",
+      "rp_id": "awsign.com",
+      "now": 1100,
+      "trust": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "certificate": "sha256:890799dc478d63c47a4aa7547582766c206fb902aae66ea13c209abb200d84ee",
+        "issuer": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "issuer_public_key": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w",
+        "observed_at": 1100
+      },
+      "expected_person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+      "expected_locator": "sha256:7b810184bf81f03fede3f568e49e885a5c5f172584bb2fa1cf44d4b983fc1b6b",
+      "expected_intent_preimage": "YXdlYi5hd3NpZ24tZW5yb2xsbWVudC1pbnRlbnQvMQp7ImNoYWxsZW5nZSI6IkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkVSRVJFUkUiLCJkZWFkbGluZSI6MTMwMCwiaWRlbnRpdHlfa2V5IjoiZGlkOmtleTp6Nk1rbzloVGdnTXdqU1RFYUphUFVmRTZ0cWN5Mnh2VTZCbk5xM2UzbzhxVkJpeUgiLCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwib3JpZ2luIjoiaHR0cHM6Ly9hd3NpZ24uY29tIiwicGVuZGluZ19jZXJ0aWZpY2F0ZSI6eyJjZXJ0aWZpY2F0ZSI6eyJkb21haW4iOiJjdXN0b21lci5leGFtcGxlIiwiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImlzc3VlZF9hdCI6IjE5NzAtMDEtMDFUMDA6MTY6NDBaIiwiaXNzdWVyX2tleSI6ImRpZDprZXk6ejZNa29uM05lY2Q2TmtreWZvR29IeGlkMnpuR2M1OUxVM0s3bXViYVJjRmJMZkxYIiwia2luZCI6Imh1bWFuIiwicGFyZW50Ijp7ImlkIjoiY3VzdG9tZXIuZXhhbXBsZSIsImtpbmQiOiJuYW1lc3BhY2UifSwidHlwZSI6ImF3ZWIuaWQtY2VydGlmaWNhdGUiLCJ2IjoxfSwic2lnbmF0dXJlIjoieVhGellxX2k2RmxSQndvVlNjYkRIYU1CbE1wLTNJNFQ2QkFSOTZFT0RHVTI4aHNnSTZLYS04aWJnczJFaVNXVEdDRW5NN1NITlY4d1hpZEVxVVRkQncifSwicGVyc29uIjoiZGlkOmF3OjJVcTUxaUZWTG5xbWdiVlkzdkxadE1ENVBSODciLCJwdXJwb3NlIjoiZW5yb2xsX3BlcnNvbiIsInJlcXVlc3RlciI6eyJrZXkiOiJkaWQ6a2V5Ono2TWtvbjNOZWNkNk5ra3lmb0dvSHhpZDJ6bkdjNTlMVTNLN211YmFSY0ZiTGZMWCIsImtpbmQiOiJuYW1lc3BhY2VfY29udHJvbGxlciIsIm5hbWVzcGFjZSI6ImN1c3RvbWVyLmV4YW1wbGUifSwicnBfaWQiOiJhd3NpZ24uY29tIiwidmVyc2lvbiI6MX0",
+      "expected_state": "active"
+    }
+  ]
+}
