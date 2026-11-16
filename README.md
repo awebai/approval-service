@@ -1,9 +1,15 @@
-# Approval service
+# awsign
 
 Exact human approval using enrolled keys. The service holds no organisation
 private keys and performs no application effects. Enforcers verify receipts
 under their own rules. Implementation follows the approved architecture and
-approval protocol; releases are held.
+approval protocol. The hosted origin is `https://awsign.com` and its WebAuthn
+RP ID is `awsign.com`. The repository remains `awebai/approval-service`.
+
+Nothing ships until Juan has walked the completed Cloud fixes and main
+programme together in ONE walk. Continue building and landing reviewed work on
+main; release planning is held. DNS and hosting need Juan's separate go through
+the coordinator. Any origin/RP change after enrollment requires reenrollment.
 
 Receipt verifiers take independently checked `Trust`; a binding carried in a
 receipt is not its own trust anchor. Python `approval_service.trust.read_trust`

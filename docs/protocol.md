@@ -1,4 +1,4 @@
-# Human approval service protocol — approved revision 3
+# awsign approval protocol — approved revision 3
 
 2026-11-15. Revision 3 accepted by Antares and Athena, with the recorded
 implementation clarifications below. Implementation is in progress; this
@@ -6,12 +6,13 @@ document does not claim hardware qualification or permission to release.
 Wire layouts and parameters are checked with implementation vectors and review. Goals 1/2: independently checkable human approval for aweb and customer
 applications, with organisation keys and application permission kept separate.
 
-**PLACEHOLDER, NOT A DEPLOYMENT: `https://approval-service.invalid`.** This
-reserved example origin and RP ID `approval-service.invalid` must never be
-installed, used for enrollment, or accepted as a production trust anchor.
-The repository is `awebai/approval-service` (working name); Juan chooses the hosted address. Choosing the real address
-precedes enrollment; moving an established enrollment to a different origin
-requires reenrollment. The example address remains a placeholder.
+The service is **awsign**, hosted at the exact origin `https://awsign.com`,
+with WebAuthn RP ID `awsign.com`. Juan selected this name and address on
+2026-11-15 (coordinator4d55cbf1). The repository is `awebai/approval-service`.
+Moving an established enrollment to a different origin or RP requires
+reenrollment; changing configuration or redirecting does not migrate a binding.
+DNS and hosting are production operations requiring Juan's separate go through
+the coordinator. The chosen address is not evidence of a running deployment.
 
 ## Read this first: five objects
 
@@ -751,8 +752,9 @@ do not rewrite their bytes as this new format.
 
 ## 11. Acceptance and review gates before code/runs
 
-Athena/Antares review this exact document and its open choices; Juan chooses
-name/origin. Library owner reviews canonical/crypto inputs and offline-verify
+Athena/Antares review this exact document and its open choices. The hosted
+name/origin is decided: awsign at `https://awsign.com`, RP ID `awsign.com`.
+Library owner reviews canonical/crypto inputs and offline-verify
 reviews result/export semantics. Before any long run, coordinator receives the
 exact combined source/runner/fixture for context and reachability review.
 No allocation or release request is made here.
@@ -825,7 +827,9 @@ Required vectors/journeys (requirements, NOT executed tests) must distinguish:
 Release prerequisite R2: coordinator must land adck's optional evidence member
 BEFORE the first aw release with verify, even if the new service is not ready.
 Source/adcl.6 result acceptance is separate from code, hardware proof and that
-release-order enforcement. Releases remain held.
+release-order enforcement. Nothing ships until Juan has walked the completed
+Cloud fixes and main programme together in ONE walk. Continue building and
+landing reviewed work on main; no release planning follows from this protocol.
 
 Remaining format review: exact closed wire fields/domains and algorithm key
 limits; actual first MDS snapshot/status policy; the explicitly proposed B/C/E

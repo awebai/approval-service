@@ -1,4 +1,15 @@
-# Hardware grading and metadata operation
+# awsign deployment and metadata operation
+
+The hosted service is **awsign**, with exact HTTPS origin `https://awsign.com`
+and WebAuthn RP ID `awsign.com` (the origin's own host). Enrollment bindings pin
+that origin and RP; a change requires reenrollment. The repository remains
+`awebai/approval-service`. DNS, TLS and hosting changes are production work;
+the coordinator obtains Juan's go before they happen. This document records
+configuration and operating duties, not an instruction to provision production.
+
+Build and land reviewed work on main. Nothing ships until Juan has completed
+ONE walk covering the finished Cloud fixes and main programme together. No
+release planning or deployment is started by these notes.
 
 The approval-service repository maintainer owns metadata pin renewal and its
 correctness review. The deployment operator owns installing that reviewed pin,
