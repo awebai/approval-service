@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from importlib.resources import files
 
 from pgdbm import AsyncDatabaseManager, AsyncMigrationManager, DatabaseConfig
@@ -61,7 +62,7 @@ class Store:
     async def _terminal(tx, row, outcome, now, assertion=None, binding_ref=None):
         changed = await tx.fetch_one(
             """UPDATE {{tables.approval_requests}} SET outcome=$1, decided_at=$2,
-            request_bytes=NULL, assertion=$3::jsonb,binding_ref=$4
+            request_bytes=NULL, admission=NULL, assertion=$3::jsonb,binding_ref=$4
             WHERE operation_id=$5 AND outcome='pending' RETURNING *""",
             outcome,
             now,
@@ -103,6 +104,8 @@ class Store:
         request_bytes,
         now,
         deadline,
+        *,
+        admission=None,
     ):
         if deadline <= now:
             raise StoreRefused("request_expired")
@@ -138,8 +141,8 @@ class Store:
             if count["n"] >= 32:
                 raise StoreRefused("pending_limit")
             row = await tx.fetch_one(
-                """INSERT INTO {{tables.approval_requests}}(operation_id,digest,requester_hash,person_id,request_bytes,created_at,deadline)
-                VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING RETURNING *""",
+                """INSERT INTO {{tables.approval_requests}}(operation_id,digest,requester_hash,person_id,request_bytes,created_at,deadline,admission)
+                VALUES($1,$2,$3,$4,$5,$6,$7,$8::jsonb) ON CONFLICT DO NOTHING RETURNING *""",
                 operation_id,
                 digest,
                 requester_hash,
@@ -147,6 +150,7 @@ class Store:
                 request_bytes,
                 now,
                 deadline,
+                json.dumps(admission) if admission is not None else None,
             )
             if row is None:
                 raise StoreRefused("selection_conflict")
@@ -218,3 +222,55 @@ class Store:
             for row in rows:
                 await self._expire(tx, row, now)
             return len(rows)
+
+    async def decision_answer(self, row, locator, *, db=None):
+        in_transaction = db is not None
+        db = self.db if db is None else db
+        answer = {
+            "version": 1,
+            "locator": locator,
+            "digest": row["digest"],
+            "deadline": row["deadline"],
+            "state": row["outcome"],
+            "approval": None,
+        }
+        row = request_row(row)
+        if row["assertion"] is not None:
+            version = await db.fetch_one(
+                "SELECT binding,id_chain FROM {{tables.approval_binding_versions}} WHERE digest=$1",
+                row["binding_ref"],
+            )
+            if version is None:
+                raise StoreRefused("binding_unavailable")
+            answer["approval"] = {
+                "assertion": row["assertion"],
+                "binding": json.loads(version["binding"]),
+                "id_chain": json.loads(version["id_chain"]),
+            }
+        # SQL waits cannot keep an assertion readable beyond its original slot.
+        now = int(time.time())
+        if answer["approval"] is not None and now >= row["deadline"]:
+            if in_transaction:
+                await self._expire(db, row, now)
+            else:
+                await self.poll(
+                    row["operation_id"], row["digest"], row["requester_hash"], now
+                )
+            answer["approval"] = None
+        return answer
+
+    async def cancel(self, operation_id, digest, requester_hash, now):
+        async with self.transaction() as tx:
+            row = await tx.fetch_one(
+                "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND digest=$2 AND requester_hash=$3 FOR UPDATE",
+                operation_id,
+                digest,
+                requester_hash,
+            )
+            if row is None:
+                raise StoreRefused("request_not_found")
+            if now >= row["deadline"]:
+                return await self._expire(tx, row, now)
+            if row["outcome"] == "pending":
+                row = await self._terminal(tx, row, "cancelled", now)
+            return request_row(row)

@@ -2,12 +2,13 @@
 
 import httpx
 import pytest
-from approval_service.http import create_app
 from awid.registry import RegistryClient
-from test_requester_registry import listener
 
 from approval_service.grading import EnrollmentGrading
+from approval_service.http import create_app
 from approval_service.public import PublicReader
+
+from .test_requester_registry import listener
 
 
 @pytest.mark.asyncio

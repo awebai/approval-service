@@ -484,3 +484,33 @@ class Ceremonies:
             if isinstance(exc, Refused):
                 raise
             raise Refused("approval_assertion_invalid") from exc
+
+    async def deny(self, person, operation_id, session_token, csrf, trust, requester):
+        async with self.store.transaction() as conn:
+            enrollment = await self._enrollment(conn, person)
+            self._bind_enrollment(enrollment, trust)
+            session = await self._session(conn, session_token, csrf, person, enrollment)
+            await self._credential(conn, person, session["credential_id"])
+            row = await conn.fetch_one(
+                "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND person_id=$2 FOR UPDATE",
+                operation_id,
+                person,
+            )
+            if row is None or row["requester_hash"] != requester.commitment:
+                raise Refused("request_not_found")
+            self._bounds(
+                int(time.time()),
+                trust=trust,
+                session=session,
+                request=row,
+                requester=requester,
+            )
+            await self.store._terminal(conn, row, "denied", int(time.time()))
+            self._bounds(
+                int(time.time()),
+                trust=trust,
+                session=session,
+                request=row,
+                requester=requester,
+            )
+            return {"state": "denied"}

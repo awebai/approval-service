@@ -24,7 +24,7 @@ from receipts import PREFIX, b64, signed_client
 async def active_port(store):
     from dataclasses import replace
 
-    from test_enrollment import enroll_person
+    from .test_enrollment import enroll_person
 
     w, trust, _bootstrap, binding, creation, started = await enroll_person(store)
     now = int(time.time())

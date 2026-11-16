@@ -3,13 +3,7 @@
 The hosted service is **awsign**, with exact HTTPS origin `https://awsign.com`
 and WebAuthn RP ID `awsign.com` (the origin's own host). Enrollment bindings pin
 that origin and RP; a change requires reenrollment. The repository remains
-`awebai/approval-service`. DNS, TLS and hosting changes are production work;
-the coordinator obtains Juan's go before they happen. This document records
-configuration and operating duties, not an instruction to provision production.
-
-Build and land reviewed work on main. Nothing ships until Juan has completed
-ONE walk covering the finished Cloud fixes and main programme together. No
-release planning or deployment is started by these notes.
+`awebai/approval-service`. DNS, TLS and hosting are managed by the deployment operator.
 
 The approval-service repository maintainer owns metadata pin renewal and its
 correctness review. The deployment operator owns installing that reviewed pin,
@@ -36,8 +30,7 @@ vendor data or follows a root/CRL URL discovered in the new blob. A root change,
 new CRL route, rollback, verification failure or unavailable upstream stops the
 job and needs the maintainer's attention. The repository owner must enable
 scheduled Actions and allow its token to open PRs; otherwise this mechanism is
-not running. The maintainer watches failed runs and pending pin PRs. Releases
-remain held under the existing release instruction.
+not running. The maintainer watches failed runs and pending pin PRs.
 
 A pin to FIDO's live URL cannot bootstrap an empty cache after FIDO replaces that
 file. Keep the exact verified artifacts in a persistent external cache; their
@@ -80,3 +73,36 @@ still sends nothing to people. Do not put a mail address or notice sender into
 the service. The initial blob's next update is 2026-12-01; its CRLs can expire
 earlier. The maintainer's reviewed renewal and the operator's monitored refresh
 are continuing requirements, not a one-time setup or a silent downgrade path.
+
+
+## Process configuration
+
+- `AWSIGN_DATABASE_URL`: PostgreSQL connection string, supplied by the operator's
+  secret mechanism. `AWSIGN_DATABASE_SCHEMA` defaults to `awsign`.
+- `AWSIGN_DATABASE_POOL_MAX`: process pool ceiling, default 10; all polling and
+  ceremonies share it. No synchronous per-request connection is opened.
+- `AWSIGN_ORIGIN`: exact browser and signed-request origin, default
+  `https://awsign.com`. `AWSIGN_RP_ID` defaults to `awsign.com`; it must be the
+  origin's own lower-case ASCII host. Front this loopback process with HTTPS.
+- `AWID_REGISTRY_URL`: operator-configured registry; request bodies never select
+  an origin. The registry must provide public exact-certificate status reads.
+- `AWSIGN_GRADING`: `hardware` by default; explicit `passkey_only` is for
+  passkey-grade enrollment. `AWSIGN_MDS_CACHE` names the private persistent
+  metadata cache. A hardware-loading failure refuses startup.
+
+Run `uv run awsign migrate`, then `uv run awsign serve --bind 127.0.0.1 --port 8030`.
+Disable proxy request-body logging. The process disables access logs, serves
+only local browser assets and adds a restrictive CSP, no-store responses and
+secure HttpOnly SameSite cookies. Its bounded expiry worker erases terminal act
+bytes and expired assertion slots; unactivated pending enrollments expire too.
+`GET /health` includes the metadata expiry warning for the operator monitor.
+
+Receipt-only enforcers and self-hosted key holders need no Redis. This service
+uses a bounded 60-second in-process public observation cache which preserves
+original age. No unavailable read renews an observation. The pinned
+`awid-service==0.5.40rc1` supplies plain ID-chain reads but lacks
+`get_team_certificate_status_fresh`. Service startup refuses that missing port;
+install the AWID release built from post-deletion main when available. Native
+source integration uses the actual post-deletion `awid/src` on `PYTHONPATH`,
+with its import path asserted by the test. It does not substitute a status
+response or a new registry API.

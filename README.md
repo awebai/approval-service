@@ -6,10 +6,7 @@ under their own rules. Implementation follows the approved architecture and
 approval protocol. The hosted origin is `https://awsign.com` and its WebAuthn
 RP ID is `awsign.com`. The repository remains `awebai/approval-service`.
 
-Nothing ships until Juan has walked the completed Cloud fixes and main
-programme together in ONE walk. Continue building and landing reviewed work on
-main; release planning is held. DNS and hosting need Juan's separate go through
-the coordinator. Any origin/RP change after enrollment requires reenrollment.
+Any origin/RP change after enrollment requires reenrollment.
 
 Receipt verifiers take independently checked `Trust`; a binding carried in a
 receipt is not its own trust anchor. Python `approval_service.trust.read_trust`
@@ -99,3 +96,21 @@ Service enrollment uses the explicit operator policy in
 `approval_service.grading.EnrollmentGrading`; hardware input loading cannot fall
 back to passkey-only. The daily reviewed pin-renewal job and operator warning,
 cache and refresh responsibilities are in [deployment notes](docs/deployment.md).
+
+
+## Running the service
+
+Set `AWSIGN_DATABASE_URL` to the service's PostgreSQL database, then run
+`uv run awsign migrate` explicitly. `uv run awsign serve` opens one bounded
+async pgdbm pool and listens on loopback port 8030 behind the configured HTTPS
+origin. It never applies migrations at server startup. `/` signs in using a
+discoverable enrolled key; `/enroll#<locator>` is the first enrollment page
+opened from the issuer's page or command. Arrival grants no authenticated
+session. Registration, confirmation of the issuer-signed binding, and observed
+committed identity activation are separate steps.
+
+The signed requester routes and their closed replies are pinned in `vectors/`.
+The caller carries the issuer intent and request, polls for the result and
+assembles its own receipt. Enforcers never call the approval service.
+See [deployment configuration](docs/deployment.md) for settings and the public
+certificate-status SDK dependency.

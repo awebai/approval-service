@@ -12,8 +12,12 @@ dependencies = [
     "fastapi>=0.116,<1",
     "uvicorn>=0.35,<1",
     "pgdbm>=0.5,<0.6",
+    "asyncpg>=0.30,<1",
     "awid-service==0.5.40rc1",
 ]
+
+[project.scripts]
+awsign = "approval_service.cli:main"
 
 [dependency-groups]
 dev = [

@@ -6,6 +6,7 @@ response and its own confirmation nonce; only committed public Trust activates.
 
 from __future__ import annotations
 
+import hashlib
 import hmac
 import json
 import secrets
@@ -18,6 +19,7 @@ from .answers import read_enrollment_request
 from .canonical import canonical, parse
 from .ceremonies import Ceremonies
 from .ceremonies import commitment as token_commitment
+from .definitions import check_definition
 from .encoding import decode, encode
 from .seams import (
     _creation_assertion,
@@ -25,9 +27,8 @@ from .seams import (
     check_enrollment_intent,
     commitment,
 )
-from .store import request_row
 from .verify import Refused, Trust
-from .wire import SCHEMA, validate
+from .wire import SCHEMA, domain, validate
 
 
 @dataclass(frozen=True)
@@ -110,10 +111,14 @@ class Enrollments:
             "extensions": {"credProps": True},
         }
 
-    async def start(self, intent, *, issuer, requester):
+    async def start(self, intent, *, issuer, requester, admission=None):
         checked = self._check(intent, issuer, requester)
         i = intent["intent"]
         async with self.store.transaction() as tx:
+            await tx.execute(
+                "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+                requester.commitment,
+            )
             await tx.execute(
                 "SELECT pg_advisory_xact_lock(hashtextextended($1,0))", i["person"]
             )
@@ -150,6 +155,12 @@ class Enrollments:
                 or old["requester_hash"] != requester.commitment
             ):
                 raise Refused("enrollment_conflict")
+            if admission is not None and old["admission"] is None:
+                await tx.execute(
+                    "UPDATE {{tables.approval_enrollments}} SET admission=$1::jsonb WHERE person_id=$2",
+                    json.dumps(admission),
+                    i["person"],
+                )
             self._bounds(old, issuer=issuer, requester=requester)
             return {
                 "version": 1,
@@ -170,7 +181,7 @@ class Enrollments:
                 deadline,
                 row["person_id"],
             )
-            self._bounds(row)
+            self._bounds({**row, "browser_deadline": deadline}, browser=True)
             return {
                 "public_key": self._options(row),
                 "csrf": csrf,
@@ -265,6 +276,7 @@ class Enrollments:
             row["person_id"],
         )
         entries = sorted(binding["binding"]["credentials"], key=lambda c: c["id"])
+        credentials = sorted(credentials, key=lambda c: c["credential_id"])
         if (
             not credentials
             or [json.loads(c["binding_entry"]) for c in credentials] != entries
@@ -272,31 +284,42 @@ class Enrollments:
             raise Refused("binding_credential_mismatch")
         return credentials
 
-    async def _answer(self, tx, row, locator):
-        answer = {
-            "version": 1,
-            "locator": locator,
-            "digest": row["digest"],
-            "deadline": row["deadline"],
-            "state": row["outcome"],
-            "approval": None,
-        }
-        row = request_row(row)
-        if row["assertion"] is not None:
-            version = await tx.fetch_one(
-                "SELECT binding,id_chain FROM {{tables.approval_binding_versions}} WHERE digest=$1",
-                row["binding_ref"],
-            )
-            if version is None:
-                raise Refused("binding_unavailable")
-            answer["approval"] = {
-                "assertion": row["assertion"],
-                "binding": json.loads(version["binding"]),
-                "id_chain": json.loads(version["id_chain"]),
-            }
-        return answer
-
     async def confirm(self, body, *, issuer, requester):
+        validate("enrollment_confirm_request", body)
+        locator = commitment("enrollment_locator", body["intent"])
+        # A terminal retry is receipt recovery, not a new enrollment act. It
+        # remains readable after erasure, without extending the original window.
+        old = await self.store.db.fetch_one(
+            "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1", locator
+        )
+        if old is not None and (
+            old["outcome"] != "pending" or int(time.time()) >= old["deadline"]
+        ):
+            raw = decode(body["request_bytes"])
+            r = parse(raw)
+            if (
+                raw != canonical(r)
+                or hashlib.sha256(domain("request") + raw).hexdigest() != old["digest"]
+            ):
+                raise Refused("request_mismatch")
+            row = await self.store.db.fetch_one(
+                "SELECT binding_ref,requester_hash FROM {{tables.approval_enrollments}} WHERE enrollment_locator=$1",
+                locator,
+            )
+            if (
+                row is None
+                or row["requester_hash"] != requester.commitment
+                or row["binding_ref"]
+                != commitment("binding_commitment", body["binding"])
+            ):
+                raise Refused("requester_mismatch")
+            Ceremonies._bounds(int(time.time()), requester=requester)
+            recovered = await self.store.poll(
+                locator, old["digest"], requester.commitment, int(time.time())
+            )
+            answer = await self.store.decision_answer(recovered, locator)
+            Ceremonies._bounds(int(time.time()), requester=requester)
+            return answer
         checked = read_enrollment_request(
             "enrollment_confirm",
             body,
@@ -353,7 +376,7 @@ class Enrollments:
                 locator,
                 row["person_id"],
             )
-            answer = await self._answer(tx, request, locator)
+            answer = await self.store.decision_answer(request, locator, db=tx)
             self._bounds(row, issuer=issuer, requester=requester)
             return answer
 
@@ -378,6 +401,9 @@ class Enrollments:
                 operation_id=row["confirmation_id"],
             )
             result["request"] = parse(bytes(request["request_bytes"]))
+            result["display"] = check_definition(result["request"])["display"]
+            result["digest"] = request["digest"]
+            Ceremonies._bounds(int(time.time()), request=request)
             self._bounds(row, browser=True)
             return result
 
@@ -496,3 +522,33 @@ class Enrollments:
                 "person": trust.person,
                 "state": "active",
             }
+
+    async def cleanup(self, now):
+        async with self.store.transaction() as tx:
+            rows = await tx.fetch_all(
+                "SELECT person_id FROM {{tables.approval_enrollments}} WHERE state='pending' AND deadline<=$1 ORDER BY deadline LIMIT 128 FOR UPDATE SKIP LOCKED",
+                now,
+            )
+            for row in rows:
+                # These never became active people at the service. This deletes
+                # private pending enrollment data, never a public registry record.
+                for table in (
+                    "approval_challenges",
+                    "approval_sessions",
+                    "approval_credentials",
+                    "approval_binding_versions",
+                    "approval_enrollments",
+                ):
+                    await tx.execute(
+                        "DELETE FROM {{tables." + table + "}} WHERE person_id=$1",
+                        row["person_id"],
+                    )
+            await tx.execute(
+                "DELETE FROM {{tables.approval_challenges}} WHERE challenge_id IN (SELECT challenge_id FROM {{tables.approval_challenges}} WHERE deadline<=$1 LIMIT 128 FOR UPDATE SKIP LOCKED)",
+                now,
+            )
+            await tx.execute(
+                "DELETE FROM {{tables.approval_sessions}} WHERE token_hash IN (SELECT token_hash FROM {{tables.approval_sessions}} WHERE deadline<=$1 LIMIT 128 FOR UPDATE SKIP LOCKED)",
+                now,
+            )
+            return len(rows)

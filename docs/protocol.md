@@ -1,18 +1,13 @@
 # awsign approval protocol — approved revision 3
 
-2026-11-15. Revision 3 accepted by Antares and Athena, with the recorded
-implementation clarifications below. Implementation is in progress; this
-document does not claim hardware qualification or permission to release.
-Wire layouts and parameters are checked with implementation vectors and review. Goals 1/2: independently checkable human approval for aweb and customer
-applications, with organisation keys and application permission kept separate.
+This protocol keeps independently checkable human approval separate from
+organisation keys and application permission. Closed wire layouts, domains,
+key limits and the shared Python/Go cases live in `format-v1.json` and `vectors/`.
 
-The service is **awsign**, hosted at the exact origin `https://awsign.com`,
-with WebAuthn RP ID `awsign.com`. Juan selected this name and address on
-2026-11-15 (coordinator4d55cbf1). The repository is `awebai/approval-service`.
-Moving an established enrollment to a different origin or RP requires
-reenrollment; changing configuration or redirecting does not migrate a binding.
-DNS and hosting are production operations requiring Juan's separate go through
-the coordinator. The chosen address is not evidence of a running deployment.
+The hosted service is **awsign** at `https://awsign.com`, with WebAuthn RP ID
+`awsign.com`. The repository is `awebai/approval-service`. Moving an established
+enrollment to a different origin or RP requires reenrollment; changing
+configuration or redirecting does not migrate a binding.
 
 ## Read this first: five objects
 
@@ -32,35 +27,7 @@ issuer-signed input to the receipt, not a receipt's reference back to itself.
 Digests name these objects; they do not replace them. Neither statement grants
 an app role. The enforcer owns the rule and effect; no new registry record.
 
-## 1. Authority and review status
-
-The split was accepted by Antares5db3d418, relayed by coordinatorf3d1fae6.
-Its six rulings govern this document. Consolidation a287e6b7 applies
-Athena57210ce4/Antareseb66c6a2; requester-carries ruling08f88dda/9d2f1c95
-and Athena precisions5817fa41/29e857c0 supersede the initial R3 framing.
-Juan decided N1/N2 viaf6a395b4/55888579: one key required, second strongly
-recommended; ES256, EdDSA and RS256 accepted. Revision3 applies consolidated
-review710bd460 (Antaresda5e6deb/Athenab6f2fd85): person-ID-only ordinary approver,
-simpler public results and one-line claim rendering. Coordinatorc7494afd
-(Antares85cfa779 after Juan's question) supersedes A1 for v1: approving one's
-own agent is the default, with no approver-differs rule. The original split is
-`adcl5-approval-service-split-plan.md`, accepted at SHA256
-`de651fb34a6249ae133499566eff8feccc5639a4ee147b75433986a049ee4c65`.
-The architecture input is coordinator `reports/human-approval-architecture.md`,
-SHA256 `9a6e2ce164b0bad5aac80bb1909f8d71cb35dd0911a1ed511949ec38e444a08c`:
-authority lines8–34; act/nonce/currentness36–73; rules75–88;
-creation/evidence/recovery90–145; limits204–227; phishing/privacy229–247.
-Coordinatorb0fe9992 confirms this exact hash IS corrected architecture261b6012;
-the report was overwritten in place. The later source snapshot read for this
-revision is SHA256 `b2b2ccdddfef4b638e8918f0eb2aced6c6820a9674edacd0e28e487617bb78c3`.
-The explicit requester-carries rulings above govern even where the report copy
-has not yet incorporated those sentences.
-
-Normative words describe the accepted protocol. The six rulings
-and the consolidated rulings, including bounded assertion recovery, one-key
-enrollment and the algorithm set, are decisions already made. Exact closed
-field layouts, byte domains, limits, algorithm key parameters and the B/C/E
-construction below remain format-review proposals. No format is approved merely because it appears in a table.
+## 1. Authority
 
 The registry continues publishing existing public identities, chains and
 certificates. It neither records nor vouches for key custody or a protection
@@ -96,7 +63,7 @@ Arriving there grants nothing: an invitation cannot sign in, approve an act,
 choose another person/certificate, or activate an enrollment. The person still
 checks the service origin before registering a key.
 
-**Decided by Juan:** one enrolled key is required; a second is strongly
+ one enrolled key is required; a second is strongly
 recommended and offered in the same flow. Losing the only key uses assisted
 continuity or recreation, never a weaker sign-in. Keys may have different
 grades: each credential has its own grade and snapshot reference.
@@ -133,8 +100,7 @@ and gives it back with "this needs a human". That same caller signs submission
 to the approval service, polls for the assertion, builds the receipt, and
 presents it back. Enforcers never contact the approval service and need no
 account, client credential, installation record or standing there. **No new
-registry record is added.** The earlier external-app-delegation proposal is
-superseded by Antares9d2f1c95, not an implementation dependency.
+registry record is added.**
 
 A registered requester proves one of these public relationships to the person's
 **exact namespace**, never a common ancestor or shared hosted parent:
@@ -349,7 +315,7 @@ A browser/session/locator is not evidence of approval. The service's assertion
 slot contains no act fields, display text or full request bytes.
 
 All binary fields use canonical unpadded base64url, with strict decoding and
-re-encoding equality. **Decided by Juan:** accept ES256/P-256, EdDSA/Ed25519 and
+re-encoding equality.  accept ES256/P-256, EdDSA/Ed25519 and
 RS256/RSA, tagged by the trusted bound public COSE key. Require the correct
 algorithm/key/signature form; a global Ed25519 length check is wrong for the
 others. Reject private COSE parameters, duplicate CBOR keys/trailing objects
@@ -382,9 +348,11 @@ key, namespace, D or locator does not adopt the record. The minimal slot
 supports these checks without retaining the full act or app record. It also
 names the original immutable enrollment-binding version selected at decision,
 so polls return that same B/chain with the same assertion. B is enrollment
-state, not an act archive. A later identity-key change cannot substitute a
-new binding for the one whose credential signed; live enforcer currency checks
-may refuse an old binding even though its historical proof remains valid.
+state, not an act archive. A poll returns that original binding, not a later replacement. A requester may
+repackage the assertion with a later current issuer-signed binding that still
+lists the signing credential, under the construction rules below. Live enforcer
+currency checks may refuse the saved old binding even though its historical
+proof remains valid.
 
 Recovery cases are explicit and require no second approval:
 
@@ -454,7 +422,7 @@ Before signing hardware grade, the issuer independently checks format, chain,
 its pinned MDS snapshot/model status, backup flags, challenge and exact site.
 Without that check it signs passkey grade at most. Raw attestation stays private.
 There is no second registration. The subsequent enrollment_confirmation get
-assertion over B in §8.1 remains unchanged (coordinator5ec332a2/6c92d227).
+assertion over B in §8.1 remains unchanged .
 
 Snapshot input must pin the signed BLOB bytes/hash, signing trust roots,
 sequence, issue/retrieval dates, `nextUpdate`, model entries and policy version.
@@ -741,25 +709,13 @@ survivor certification):
 | passkeys006 / `authority_context` storage | Preserve old B3 evidence until explicitly migrated; do not copy old schema as new-service authority |
 | old `notifications.py` / mailed-link description | Superseded; no service notification replacement. Requester-owned notice contract in §5 |
 
-The deletion owner's final one-file/one-public-name survivor list at its exact
-head is required before extraction completeness can be claimed. No old
-protected-named file or API enters the new repository unchanged. Keep the
-transitional old contracts binding until the protocol explicitly replaces
-their surviving sections; this draft alone is not deletion/landing authority.
+The mapping above describes extraction vocabulary. The new service uses its
+own schema and APIs; old protected-named files are not copied unchanged.
 Deleted registry lock, service-key/effect proof, retained-effect and observation
 machinery are not compatibility adapters. Old records remain old records;
 do not rewrite their bytes as this new format.
 
-## 11. Acceptance and review gates before code/runs
-
-Athena/Antares review this exact document and its open choices. The hosted
-name/origin is decided: awsign at `https://awsign.com`, RP ID `awsign.com`.
-Library owner reviews canonical/crypto inputs and offline-verify
-reviews result/export semantics. Before any long run, coordinator receives the
-exact combined source/runner/fixture for context and reachability review.
-No allocation or release request is made here.
-
-Required vectors/journeys (requirements, NOT executed tests) must distinguish:
+## 11. Acceptance cases
 
 - Exact-namespace ID requester; certificate-only member including a private
   team; a global member admitted by this org; sibling *.aweb.ai member without
@@ -824,22 +780,11 @@ Required vectors/journeys (requirements, NOT executed tests) must distinguish:
   with actual add-human and Secrets read-write enforcers. Rules unreadable
   refuse; a stronger requirement cannot be removed using a weaker approval.
 
-Release prerequisite R2: coordinator must land adck's optional evidence member
-BEFORE the first aw release with verify, even if the new service is not ready.
-Source/adcl.6 result acceptance is separate from code, hardware proof and that
-release-order enforcement. Nothing ships until Juan has walked the completed
-Cloud fixes and main programme together in ONE walk. Continue building and
-landing reviewed work on main; no release planning follows from this protocol.
+The message-export `evidence` member is reserved before the first release
+containing `aw verify`, preserving independently checked message/chain results
+when evidence is absent, invalid or unsupported.
 
-Remaining format review: exact closed wire fields/domains and algorithm key
-limits; actual first MDS snapshot/status policy; the explicitly proposed B/C/E
-preimages and result enum projections; final deletion-head survivor names.
-One-key enrollment and RS256 are DECIDED, not pending. One-directional
-activation, bounded assertion recovery, ordinary backups and bundled v1
-definitions are the accepted design, not unresolved alternatives. No code,
-repository creation, runtime allocation or release follows from this revision.
-
-## Implementation rulings (54fb9c52 / Antares edb6a948)
+## Additional construction rules
 
 Assisted recovery uses the HELPER's current binding/chain and assertion;
 act.target retains the recovering person's BEFORE/AFTER. The approver is the

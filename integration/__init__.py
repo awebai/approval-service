@@ -1,1 +1,1 @@
-"""Placed, disposable PostgreSQL/Redis integration controls."""
+"""Placed real-component integration tests."""
