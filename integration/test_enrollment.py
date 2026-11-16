@@ -37,14 +37,14 @@ ORIGIN = "https://approval.example.test"
 RP = "approval.example.test"
 
 
-def enrollment_world():
+def enrollment_world(*, lifetime=120):
     case = json.loads((ROOT / "vectors/issuer-service-enrollment-v1.json").read_text())[
         "cases"
     ][0]
     intent = copy.deepcopy(case["intent"])
     now = int(time.time())
     i = intent["intent"]
-    i.update(origin=ORIGIN, rp_id=RP, not_before=now - 1, deadline=now + 120)
+    i.update(origin=ORIGIN, rp_id=RP, not_before=now - 1, deadline=now + lifetime)
     issuer = Ed25519PrivateKey.from_private_bytes(bytes([1]) * 32)
     intent["signature"] = encode(
         issuer.sign(domain("enrollment_intent") + canonical(i))
@@ -113,8 +113,8 @@ def confirmation_request(intent, binding):
     return r
 
 
-async def enroll_person(store):
-    intent, issuer, trust, caller, w = enrollment_world()
+async def confirmed_person(store, *, lifetime=120):
+    intent, issuer, trust, caller, w = enrollment_world(lifetime=lifetime)
     service = Enrollments(
         store, origin=ORIGIN, rp_id=RP, grading=EnrollmentGrading("passkey_only", None)
     )
@@ -207,10 +207,122 @@ async def enroll_person(store):
         "evidence": signed_e,
         "id_chain": c["id_chain"],
     }
-    assert (await service.activate(active, trust=trust, requester=caller))[
-        "state"
-    ] == "active"
-    return w, trust, caller, binding, c, started
+    return {
+        "service": service,
+        "intent": intent,
+        "issuer": issuer,
+        "trust": trust,
+        "caller": caller,
+        "world": w,
+        "binding": binding,
+        "receipt": c,
+        "started": started,
+        "activation": active,
+    }
+
+
+async def enroll_person(store):
+    confirmed = await confirmed_person(store)
+    assert (
+        await confirmed["service"].activate(
+            confirmed["activation"],
+            trust=confirmed["trust"],
+            requester=confirmed["caller"],
+        )
+    )["state"] == "active"
+    return tuple(
+        confirmed[k]
+        for k in ("world", "trust", "caller", "binding", "receipt", "started")
+    )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("approved", [False, True], ids=["unconfirmed", "confirmed"])
+async def test_pending_sweep_retains_only_approved_confirmation_for_30_days(
+    store, approved
+):
+    if approved:
+        context = await confirmed_person(store)
+        service, intent, started = (
+            context[k] for k in ("service", "intent", "started")
+        )
+    else:
+        intent, _issuer, trust, caller, _w = enrollment_world()
+        service = Enrollments(
+            store,
+            origin=ORIGIN,
+            rp_id=RP,
+            grading=EnrollmentGrading("passkey_only", None),
+        )
+        started = await service.start(
+            intent,
+            issuer=PublicIssuer(trust.issuer, trust.observed_at),
+            requester=caller,
+        )
+    deadline = intent["intent"]["deadline"]
+    assert await service.cleanup(deadline - 1) == 0
+    # Expiring raw assertion delivery must not erase the durable approval outcome.
+    await store.cleanup(deadline)
+    if approved:
+        assert await service.cleanup(deadline) == 0
+        assert await service.cleanup(deadline + 30 * 86400 - 1) == 0
+        assert await store.db.fetch_one(
+            "SELECT state FROM {{tables.approval_enrollments}} WHERE enrollment_locator=$1",
+            started["locator"],
+        ) == {"state": "pending"}
+        assert await store.db.fetch_one(
+            "SELECT outcome,assertion,request_bytes FROM {{tables.approval_requests}} WHERE operation_id=$1",
+            started["locator"],
+        ) == {"outcome": "approved", "assertion": None, "request_bytes": None}
+    assert await service.cleanup(deadline + (30 * 86400 if approved else 0)) == 1
+    for table in (
+        "approval_enrollments",
+        "approval_credentials",
+        "approval_binding_versions",
+    ):
+        assert await store.db.fetch_one(
+            "SELECT count(*) AS n FROM {{tables." + table + "}}"
+        ) == {"n": 0}
+
+
+@pytest.mark.asyncio
+async def test_new_start_replaces_confirmed_generation_after_original_deadline(store):
+    import asyncio
+    import secrets
+
+    context = await confirmed_person(store, lifetime=3)
+    old = context["started"]["locator"]
+    deadline = context["intent"]["intent"]["deadline"]
+    await asyncio.sleep(max(0, deadline - time.time()) + 0.05)
+    assert await context["service"].cleanup(int(time.time())) == 0
+    retry = copy.deepcopy(context["intent"])
+    retry["intent"].update(
+        not_before=int(time.time()) - 1,
+        deadline=int(time.time()) + 120,
+        challenge=encode(secrets.token_bytes(32)),
+    )
+    retry["signature"] = encode(
+        context["issuer"].sign(domain("enrollment_intent") + canonical(retry["intent"]))
+    )
+    started = await context["service"].start(
+        retry,
+        issuer=PublicIssuer(context["trust"].issuer, int(time.time())),
+        requester=context["caller"],
+    )
+    assert started["locator"] != old
+    assert await store.db.fetch_all(
+        "SELECT enrollment_locator,state FROM {{tables.approval_enrollments}}"
+    ) == [{"enrollment_locator": started["locator"], "state": "pending"}]
+    assert await store.db.fetch_one(
+        "SELECT count(*) AS n FROM {{tables.approval_credentials}}"
+    ) == {"n": 0}
+    assert await store.db.fetch_one(
+        "SELECT count(*) AS n FROM {{tables.approval_binding_versions}}"
+    ) == {"n": 0}
+    assert await store.db.fetch_one(
+        "SELECT outcome,assertion FROM {{tables.approval_requests}} WHERE operation_id=$1",
+        old,
+    ) == {"outcome": "approved", "assertion": None}
 
 
 @pytest.mark.asyncio

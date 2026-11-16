@@ -6,6 +6,7 @@ physical-key/browser or holder-effect journey, which consumes the same seams.
 
 from __future__ import annotations
 
+import asyncio
 import copy
 import hashlib
 import hmac
@@ -130,8 +131,13 @@ async def commit_identity(registry, certificate, seed):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "late_activation",
+    [False, True],
+    ids=["original-deadline", "confirmed-after-deadline"],
+)
 async def test_signed_http_enrollment_approval_and_foreign_organisation_fences(
-    store, tmp_path
+    store, tmp_path, late_activation
 ):
     root_a, pub_a = generate_keypair()
     root_b, pub_b = generate_keypair()
@@ -158,6 +164,10 @@ async def test_signed_http_enrollment_approval_and_foreign_organisation_fences(
             listener(app, config=config) as (origin, _server),
             httpx.AsyncClient(base_url=origin, verify=tls, trust_env=False) as client,
         ):
+            if late_activation:
+                intent_a = signed_intent(
+                    cert_a, person_key, root_a, deadline=int(time.time()) + 8
+                )
             empty = {"team_certificate": None, "id_chain": []}
             # R2: a valid foreign controller reserves the same bare person ID.
             for intent, seed in ((poison, root_b), (intent_a, root_a)):
@@ -349,6 +359,67 @@ async def test_signed_http_enrollment_approval_and_foreign_organisation_fences(
                 "evidence": signed_e,
                 "id_chain": [cert_a],
             }
+            if late_activation:
+                await asyncio.sleep(
+                    max(0, intent_a["intent"]["deadline"] - time.time()) + 0.05
+                )
+                # Approval is durable; its raw delivery slot still expires normally.
+                await store.cleanup(int(time.time()))
+                assert await app.state.enrollments.cleanup(int(time.time())) == 0
+                for purpose, body in [
+                    (
+                        "enrollment_material",
+                        {"version": 1, "intent": intent_a, "admission": empty},
+                    ),
+                    ("enrollment_confirm", confirm),
+                ]:
+                    refused = await exchange(
+                        client, purpose, body, root_a, intent_a["intent"]["requester"]
+                    )
+                    assert refused.status_code == 400, refused.text
+                    assert refused.json()["error"]["code"] == "enrollment_expired"
+                for path, body in [
+                    ("enrollment/options", {"locator": locator}),
+                    (
+                        "enrollment/register",
+                        {
+                            "locator": locator,
+                            "csrf": reopened["csrf"],
+                            "registration": registered,
+                            "client_extension_results": {"credProps": {"rk": True}},
+                        },
+                    ),
+                    (
+                        "enrollment/confirmation/options",
+                        {"locator": locator, "csrf": reopened["csrf"]},
+                    ),
+                    (
+                        "enrollment/confirmation/finish",
+                        {
+                            "locator": locator,
+                            "csrf": reopened["csrf"],
+                            "id": options["id"],
+                            "assertion": creation_assertion,
+                        },
+                    ),
+                ]:
+                    refused = await client.post(
+                        "/browser/" + path, json=body, headers={"Origin": ORIGIN}
+                    )
+                    assert refused.status_code == 400, refused.text
+                    assert refused.json()["error"]["code"] == "enrollment_expired"
+                login = await browser(client, "login/options", {})
+                refused = await client.post(
+                    "/browser/login/finish",
+                    json={
+                        "id": login["id"],
+                        "assertion": login_assertion(w, login),
+                        "user_handle": started["public_key"]["user"]["id"],
+                    },
+                    headers={"Origin": ORIGIN},
+                )
+                assert refused.status_code == 400, refused.text
+                assert refused.json()["error"]["code"] == "credential_not_enrolled"
             response = await exchange(
                 client,
                 "enrollment_activate",
