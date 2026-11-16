@@ -106,3 +106,23 @@ install the AWID release built from post-deletion main when available. Native
 source integration uses the actual post-deletion `awid/src` on `PYTHONPATH`,
 with its import path asserted by the test. It does not substitute a status
 response or a new registry API.
+
+
+The pending `/enroll#<locator>` link is a bearer capability: anyone holding it
+can add a pending registration and refresh the page window. Deliver it over an
+authenticated channel. The issuer's intent expires within 24 hours, cannot be
+extended by opening the link, and names the exact organisation and person.
+Before signing the enrollment binding, the issuer checks the number of
+registrations in the material against the number the person reports making.
+The link alone grants no signed-in session or active identity.
+
+
+`AWSIGN_TRUSTED_PROXY_IPS` explicitly configures which proxy peers may supply
+forwarded client addresses (default `127.0.0.1,::1` for a loopback HTTPS proxy).
+Set it to the actual proxy addresses when the proxy is elsewhere, and configure
+that proxy to replace incoming forwarded headers. An empty setting trusts no
+forwarding; behind a proxy this makes the browser limit one shared budget.
+This changes rate accounting, never authentication or approval authority.
+`/health` uses the database check for liveness and reports hardware-enrollment
+readiness separately; expired metadata pauses new hardware enrollment while
+sign-in and approvals remain available.

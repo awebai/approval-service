@@ -6,17 +6,57 @@ observation time. No network origin comes from a submitted receipt or request.
 
 from __future__ import annotations
 
+import logging
 import math
 import time
 from collections import OrderedDict
+from functools import wraps
 
-from awid.id_certificates import namespace_authority_valid, verify_id_chain
+from awid.dns_verify import DnsVerificationError
+from awid.id_certificates import (
+    IDCertificateError,
+    namespace_authority_valid,
+    status_request,
+    verify_id_certificate,
+    verify_id_chain,
+)
+from awid.registry import RegistryError
+from httpx import HTTPError
 
 from .canonical import canonical
 from .enrollment import PublicIssuer
 from .requester import AdmittedRequester, read_team_member
 from .trust import read_trust
 from .verify import Refused
+
+logger = logging.getLogger(__name__)
+
+
+def public_errors(method):
+    @wraps(method)
+    async def checked(*args, **kwargs):
+        try:
+            return await method(*args, **kwargs)
+        except Refused:
+            raise
+        except (RegistryError, DnsVerificationError, HTTPError, OSError) as exc:
+            status = getattr(exc, "status_code", None)
+            logger.warning(
+                "public registry read failed: type=%s status=%s code=%s",
+                type(exc).__name__,
+                status,
+                getattr(exc, "code", None),
+            )
+            code = (
+                "status_unavailable"
+                if status is None or status == 429 or status >= 500
+                else "public_evidence_invalid"
+            )
+            raise Refused(code) from exc
+        except (IDCertificateError, ValueError, TypeError, KeyError) as exc:
+            raise Refused("public_evidence_invalid") from exc
+
+    return checked
 
 
 class PublicReader:
@@ -40,6 +80,7 @@ class PublicReader:
             self._cache.popitem(last=False)
         return value
 
+    @public_errors
     async def person(self, chain, *, person, identity_key, organisation):
         return await self._cached(
             ("person", person, identity_key, organisation, canonical(chain)),
@@ -52,10 +93,16 @@ class PublicReader:
             ),
         )
 
+    @public_errors
     async def issuer(self, intent):
         i = intent["intent"]
         certificate = i["pending_certificate"]["certificate"]
         parent = certificate["parent"]
+        # Parse/check the signed certificate before a malformed admission can
+        # become a network failure. This is shape/signature, not issuer authority.
+        verify_id_certificate(
+            i["pending_certificate"], issuer_key=certificate["issuer_key"]
+        )
 
         async def read():
             if parent["kind"] == "namespace":
@@ -115,6 +162,7 @@ class PublicReader:
             raise Refused("status_unavailable")
         return int(time.time()) - math.ceil(age)
 
+    @public_errors
     async def requester(self, descriptor, *, organisation, admission, intent=None):
         async def read():
             if descriptor["kind"] == "team_member":
@@ -144,6 +192,7 @@ class PublicReader:
             if not chain:
                 raise Refused("identity_chain_required")
             bundle = {"v": 1, "type": "aweb.id-chain", "certificates": chain}
+            status_request(bundle, subject, domain=organisation)
             evidence = await self.registry.id_chain_evidence(
                 bundle, subject, domain=organisation
             )

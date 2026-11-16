@@ -114,3 +114,12 @@ The caller carries the issuer intent and request, polls for the result and
 assembles its own receipt. Enforcers never call the approval service.
 See [deployment configuration](docs/deployment.md) for settings and the public
 certificate-status SDK dependency.
+
+
+The pending `/enroll#<locator>` link is a bearer capability: anyone holding it
+can add a pending registration and refresh the page window. Deliver it over an
+authenticated channel. The issuer's intent expires within 24 hours, cannot be
+extended by opening the link, and names the exact organisation and person.
+Before signing the enrollment binding, the issuer checks the number of
+registrations in the material against the number the person reports making.
+The link alone grants no signed-in session or active identity.

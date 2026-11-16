@@ -13,12 +13,10 @@ import time
 from collections import OrderedDict
 from importlib.resources import files
 
-from asyncpg import PostgresError, UniqueViolationError
+from asyncpg import UniqueViolationError
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
-from httpx import HTTPError
 from jsonschema import ValidationError
-from pgdbm.errors import AsyncDBError
 
 from .canonical import canonical, parse
 from .ceremonies import Ceremonies
@@ -95,7 +93,7 @@ def create_app(store, *, public, origin, rp_id, grading):
                 {"version": 1, "error": {"code": "credential_conflict"}},
                 status_code=400,
             )
-        except (AsyncDBError, PostgresError, HTTPError, OSError) as exc:
+        except Exception as exc:  # noqa: BLE001 — final HTTP boundary must retain the closed body and headers.
             # Query exceptions may carry private act parameters. Record type and
             # SQLSTATE, never serialize exception objects, bodies or credentials.
             cause = getattr(exc, "original_error", None) or exc.__cause__ or exc
@@ -160,8 +158,8 @@ def create_app(store, *, public, origin, rp_id, grading):
         token = request.cookies.get(SESSION_COOKIE, "")
         row = await store.db.fetch_one(
             """SELECT s.*,e.organisation,e.state,e.certificate,v.id_chain
-            FROM {{tables.approval_sessions}} s JOIN {{tables.approval_enrollments}} e ON e.person_id=s.person_id
-            JOIN {{tables.approval_binding_versions}} v ON v.digest=e.binding_ref
+            FROM {{tables.approval_sessions}} s JOIN {{tables.approval_enrollments}} e ON e.person_id=s.person_id AND e.organisation=s.organisation
+            JOIN {{tables.approval_binding_versions}} v ON v.digest=e.binding_ref AND v.organisation=e.organisation AND v.person_id=e.person_id
             WHERE s.token_hash=$1""",
             token_commitment(token),
         )
@@ -175,8 +173,8 @@ def create_app(store, *, public, origin, rp_id, grading):
         )
         row = await store.db.fetch_one(
             """SELECT s.*,e.state FROM {{tables.approval_sessions}} s
-            JOIN {{tables.approval_enrollments}} e ON e.person_id=s.person_id
-            JOIN {{tables.approval_credentials}} c ON c.person_id=s.person_id AND c.credential_id=s.credential_id
+            JOIN {{tables.approval_enrollments}} e ON e.person_id=s.person_id AND e.organisation=s.organisation
+            JOIN {{tables.approval_credentials}} c ON c.person_id=s.person_id AND c.organisation=s.organisation AND c.credential_id=s.credential_id
             WHERE s.token_hash=$1 AND e.state='active' AND e.identity_key=s.identity_key AND NOT c.retired""",
             token_commitment(token),
         )
@@ -190,9 +188,10 @@ def create_app(store, *, public, origin, rp_id, grading):
     async def pending_context(request, value):
         token, session, trust = await current_session(request, value["csrf"])
         row = await store.db.fetch_one(
-            "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND person_id=$2",
+            "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND person_id=$2 AND organisation=$3",
             value["locator"],
             trust.person,
+            trust.organisation,
         )
         if row is None or row["request_bytes"] is None or row["admission"] is None:
             raise Refused("request_not_found")
@@ -305,17 +304,28 @@ def create_app(store, *, public, origin, rp_id, grading):
                 int(time.time()),
                 r["deadline"],
                 admission=admission,
+                organisation=r["organisation"],
             )
         else:
             if value["digest"] != digest:
                 raise Refused("request_digest_mismatch")
             if purpose == "cancel":
                 row = await store.cancel(
-                    value["locator"], digest, caller.commitment, int(time.time())
+                    value["locator"],
+                    digest,
+                    caller.commitment,
+                    int(time.time()),
+                    organisation=r["organisation"],
+                    person_id=r["approver"],
                 )
             else:
                 row = await store.poll(
-                    value["locator"], digest, caller.commitment, int(time.time())
+                    value["locator"],
+                    digest,
+                    caller.commitment,
+                    int(time.time()),
+                    organisation=r["organisation"],
+                    person_id=r["approver"],
                 )
         Ceremonies._bounds(int(time.time()), requester=caller)
         if purpose == "poll":
@@ -380,7 +390,9 @@ def create_app(store, *, public, origin, rp_id, grading):
     @app.get("/browser/pending")
     async def pending(request: Request):
         _token, session, trust = await current_session(request)
-        rows = await store.pending(trust.person, int(time.time()))
+        rows = await store.pending(
+            trust.person, organisation=trust.organisation, now=int(time.time())
+        )
         result = []
         for row in rows:
             r = parse(bytes(row["request_bytes"]))
@@ -472,9 +484,7 @@ def create_app(store, *, public, origin, rp_id, grading):
     async def health():
         await store.db.fetch_one("SELECT 1 AS ok")
         status = grading.status()
-        return JSONResponse(
-            status, status_code=200 if status["enrollment_ready"] else 503
-        )
+        return JSONResponse(status, status_code=200)
 
     @app.get("/assets/app.mjs")
     async def script():

@@ -93,7 +93,7 @@ document.querySelector('#register').onclick = () => run(async () => {
   status.textContent = 'Key registered. Register a second key if available, then ask your issuer to prepare enrollment confirmation.';
 });
 document.querySelector('#confirm').onclick = () => run(async () => {
-  if (!enrollment) throw new Error('Register a key in this browser first.');
+  enrollment = await post('/browser/enrollment/options', {locator});
   const options = await post('/browser/enrollment/confirmation/options', {locator, csrf: enrollment.csrf});
   list.replaceChildren(display({request: options.request, digest: options.digest, display: options.display}));
   const button = document.createElement('button'); button.textContent = 'Confirm with your key';

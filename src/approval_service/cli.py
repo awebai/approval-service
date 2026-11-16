@@ -18,6 +18,18 @@ from .public import PublicReader
 from .store import Store
 
 
+def server_config(app, *, bind, port, trusted_proxy_ips):
+    return uvicorn.Config(
+        app,
+        host=bind,
+        port=port,
+        access_log=False,
+        log_level="info",
+        proxy_headers=True,
+        forwarded_allow_ips=trusted_proxy_ips,
+    )
+
+
 async def operate(args):
     store = Store(
         os.environ["AWSIGN_DATABASE_URL"],
@@ -33,7 +45,7 @@ async def operate(args):
         # Refuse startup without the current schema; a server never applies it.
         row = await store.db.fetch_one(
             "SELECT count(*) AS n FROM {{tables.schema_migrations}} WHERE module_name='awsign' AND filename=$1",
-            "005_enrollment_requester_evidence.sql",
+            "001_initial.sql",
         )
         if row["n"] != 1:
             raise RuntimeError("Run awsign migrate before starting this service")
@@ -78,12 +90,13 @@ async def operate(args):
         worker = asyncio.create_task(cleanup())
         try:
             await uvicorn.Server(
-                uvicorn.Config(
+                server_config(
                     app,
-                    host=args.bind,
+                    bind=args.bind,
                     port=args.port,
-                    access_log=False,
-                    log_level="info",
+                    trusted_proxy_ips=os.environ.get(
+                        "AWSIGN_TRUSTED_PROXY_IPS", "127.0.0.1,::1"
+                    ),
                 )
             ).serve()
         finally:

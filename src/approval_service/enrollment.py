@@ -43,7 +43,7 @@ class Enrollments:
     def __init__(self, store, *, origin, rp_id, grading):
         self.store = store
         self.ceremonies = Ceremonies(store, origin=origin, rp_id=rp_id)
-        self.origin, self.rp_id, self.grading = origin, rp_id, grading
+        self.origin, self.rp_id, self.grading = (origin, rp_id, grading)
 
     @staticmethod
     def _bounds(row, *, issuer=None, requester=None, browser=False):
@@ -114,18 +114,29 @@ class Enrollments:
     async def start(self, intent, *, issuer, requester, admission=None):
         checked = self._check(intent, issuer, requester)
         i = intent["intent"]
+        if i["deadline"] - i["not_before"] > 86400:
+            raise Refused("enrollment_lifetime_invalid")
         async with self.store.transaction() as tx:
             await tx.execute(
                 "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
                 requester.commitment,
             )
             await tx.execute(
-                "SELECT pg_advisory_xact_lock(hashtextextended($1,0))", i["person"]
+                "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+                hashlib.sha256(canonical([i["organisation"], i["person"]])).hexdigest(),
             )
             old = await tx.fetch_one(
-                "SELECT * FROM {{tables.approval_enrollments}} WHERE person_id=$1 FOR UPDATE",
+                "SELECT * FROM {{tables.approval_enrollments}} WHERE person_id=$1 AND organisation=$2 FOR UPDATE",
                 i["person"],
+                i["organisation"],
             )
+            if (
+                old is not None
+                and old["state"] == "pending"
+                and int(time.time()) >= old["deadline"]
+            ):
+                await self._delete_pending(tx, old, int(time.time()))
+                old = None
             if old is None:
                 count = await tx.fetch_one(
                     "SELECT count(*) AS n FROM {{tables.approval_enrollments}} WHERE requester_hash=$1 AND state='pending' AND deadline>$2",
@@ -157,9 +168,10 @@ class Enrollments:
                 raise Refused("enrollment_conflict")
             if admission is not None and old["admission"] is None:
                 await tx.execute(
-                    "UPDATE {{tables.approval_enrollments}} SET admission=$1::jsonb WHERE person_id=$2",
+                    "UPDATE {{tables.approval_enrollments}} SET admission=$1::jsonb WHERE person_id=$2 AND organisation=$3",
                     json.dumps(admission),
                     i["person"],
+                    i["organisation"],
                 )
             self._bounds(old, issuer=issuer, requester=requester)
             return {
@@ -176,10 +188,11 @@ class Enrollments:
             csrf = secrets.token_urlsafe(32)
             deadline = min(row["deadline"], int(time.time()) + 120)
             await tx.execute(
-                "UPDATE {{tables.approval_enrollments}} SET browser_hash=$1,browser_deadline=$2 WHERE person_id=$3",
+                "UPDATE {{tables.approval_enrollments}} SET browser_hash=$1,browser_deadline=$2 WHERE person_id=$3 AND organisation=$4",
                 token_commitment(csrf),
                 deadline,
                 row["person_id"],
+                row["organisation"],
             )
             self._bounds({**row, "browser_deadline": deadline}, browser=True)
             return {
@@ -205,9 +218,10 @@ class Enrollments:
                 rp_id=self.rp_id,
             )
             existing = await tx.fetch_one(
-                "SELECT registration FROM {{tables.approval_credentials}} WHERE credential_id=$1 AND person_id=$2",
+                "SELECT registration FROM {{tables.approval_credentials}} WHERE credential_id=$1 AND person_id=$2 AND organisation=$3",
                 checked.credential_id,
                 row["person_id"],
+                row["organisation"],
             )
             if existing is not None:
                 if canonical(json.loads(existing["registration"])) != canonical(
@@ -216,15 +230,16 @@ class Enrollments:
                     raise Refused("credential_conflict")
             else:
                 count = await tx.fetch_one(
-                    "SELECT count(*) AS n FROM {{tables.approval_credentials}} WHERE person_id=$1 AND NOT retired",
+                    "SELECT count(*) AS n FROM {{tables.approval_credentials}} WHERE person_id=$1 AND NOT retired AND organisation=$2",
                     row["person_id"],
+                    row["organisation"],
                 )
                 if count["n"] >= 8:
                     raise Refused("credential_limit")
                 await tx.execute(
                     """INSERT INTO {{tables.approval_credentials}}
                     (person_id,credential_id,public_key,sign_count,grade,snapshot,attestation,registration,client_extension_results,binding_entry)
-                    VALUES($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10::jsonb)""",
+                    VALUES($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10::jsonb,$11)""",
                     row["person_id"],
                     checked.credential_id,
                     checked.public_key,
@@ -235,6 +250,7 @@ class Enrollments:
                     json.dumps(registration),
                     json.dumps(extensions),
                     json.dumps(checked.binding_entry()),
+                    row["organisation"],
                 )
             self._bounds(row, browser=True)
             return {
@@ -250,8 +266,9 @@ class Enrollments:
             if row["requester_hash"] != requester.commitment:
                 raise Refused("requester_mismatch")
             credentials = await tx.fetch_all(
-                "SELECT registration,client_extension_results FROM {{tables.approval_credentials}} WHERE person_id=$1 AND NOT retired ORDER BY credential_id",
+                "SELECT registration,client_extension_results FROM {{tables.approval_credentials}} WHERE person_id=$1 AND NOT retired AND organisation=$2 ORDER BY credential_id",
                 row["person_id"],
+                row["organisation"],
             )
             self._bounds(row, issuer=issuer, requester=requester)
             return {
@@ -272,8 +289,9 @@ class Enrollments:
 
     async def _private_binding(self, tx, row, binding):
         credentials = await tx.fetch_all(
-            "SELECT * FROM {{tables.approval_credentials}} WHERE person_id=$1 AND NOT retired ORDER BY credential_id FOR UPDATE",
+            "SELECT * FROM {{tables.approval_credentials}} WHERE person_id=$1 AND NOT retired AND organisation=$2 ORDER BY credential_id FOR UPDATE",
             row["person_id"],
+            row["organisation"],
         )
         entries = sorted(binding["binding"]["credentials"], key=lambda c: c["id"])
         credentials = sorted(credentials, key=lambda c: c["credential_id"])
@@ -287,10 +305,11 @@ class Enrollments:
     async def confirm(self, body, *, issuer, requester):
         validate("enrollment_confirm_request", body)
         locator = commitment("enrollment_locator", body["intent"])
-        # A terminal retry is receipt recovery, not a new enrollment act. It
-        # remains readable after erasure, without extending the original window.
         old = await self.store.db.fetch_one(
-            "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1", locator
+            "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND organisation=$2 AND person_id=$3",
+            locator,
+            body["intent"]["intent"]["organisation"],
+            body["intent"]["intent"]["person"],
         )
         if old is not None and (
             old["outcome"] != "pending" or int(time.time()) >= old["deadline"]
@@ -315,7 +334,12 @@ class Enrollments:
                 raise Refused("requester_mismatch")
             Ceremonies._bounds(int(time.time()), requester=requester)
             recovered = await self.store.poll(
-                locator, old["digest"], requester.commitment, int(time.time())
+                locator,
+                old["digest"],
+                requester.commitment,
+                int(time.time()),
+                organisation=old["organisation"],
+                person_id=old["person_id"],
             )
             answer = await self.store.decision_answer(recovered, locator)
             Ceremonies._bounds(int(time.time()), requester=requester)
@@ -344,15 +368,16 @@ class Enrollments:
                 raise Refused("binding_mismatch")
             chain = [body["intent"]["intent"]["pending_certificate"]]
             await tx.execute(
-                "INSERT INTO {{tables.approval_binding_versions}}(digest,person_id,binding,id_chain) VALUES($1,$2,$3::jsonb,$4::jsonb) ON CONFLICT DO NOTHING",
+                "INSERT INTO {{tables.approval_binding_versions}}(digest,person_id,binding,id_chain,organisation) VALUES($1,$2,$3::jsonb,$4::jsonb,$5) ON CONFLICT DO NOTHING",
                 ref,
                 row["person_id"],
                 json.dumps(body["binding"]),
                 json.dumps(chain),
+                row["organisation"],
             )
             await tx.execute(
-                """INSERT INTO {{tables.approval_requests}}(operation_id,digest,requester_hash,person_id,request_bytes,created_at,deadline)
-                VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING""",
+                """INSERT INTO {{tables.approval_requests}}(operation_id,digest,requester_hash,person_id,request_bytes,created_at,deadline,organisation)
+                VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT DO NOTHING""",
                 locator,
                 checked["digest"],
                 requester.commitment,
@@ -360,10 +385,13 @@ class Enrollments:
                 raw,
                 r["not_before"],
                 r["deadline"],
+                row["organisation"],
             )
             request = await tx.fetch_one(
-                "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 FOR UPDATE",
+                "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND organisation=$2 AND person_id=$3 FOR UPDATE",
                 locator,
+                row["organisation"],
+                row["person_id"],
             )
             if (request["digest"], request["requester_hash"]) != (
                 checked["digest"],
@@ -371,10 +399,11 @@ class Enrollments:
             ):
                 raise Refused("selection_conflict")
             await tx.execute(
-                "UPDATE {{tables.approval_enrollments}} SET binding_ref=$1,confirmation_id=$2 WHERE person_id=$3",
+                "UPDATE {{tables.approval_enrollments}} SET binding_ref=$1,confirmation_id=$2 WHERE person_id=$3 AND organisation=$4",
                 ref,
                 locator,
                 row["person_id"],
+                row["organisation"],
             )
             answer = await self.store.decision_answer(request, locator, db=tx)
             self._bounds(row, issuer=issuer, requester=requester)
@@ -385,8 +414,10 @@ class Enrollments:
             row = await self._row(tx, locator)
             self._browser(row, csrf)
             request = await tx.fetch_one(
-                "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND outcome='pending' FOR UPDATE",
+                "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND outcome='pending' AND organisation=$2 AND person_id=$3 FOR UPDATE",
                 row["confirmation_id"],
+                row["organisation"],
+                row["person_id"],
             )
             if request is None:
                 raise Refused("request_not_found")
@@ -399,6 +430,7 @@ class Enrollments:
                 min(request["deadline"], row["browser_deadline"]),
                 session_hash=token_commitment(csrf),
                 operation_id=row["confirmation_id"],
+                organisation=row["organisation"],
             )
             result["request"] = parse(bytes(request["request_bytes"]))
             result["display"] = check_definition(result["request"])["display"]
@@ -418,11 +450,17 @@ class Enrollments:
             if issuer.key != row["issuer"]:
                 raise Refused("issuer_mismatch")
             request = await tx.fetch_one(
-                "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 FOR UPDATE",
+                "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND organisation=$2 AND person_id=$3 FOR UPDATE",
                 row["confirmation_id"],
+                row["organisation"],
+                row["person_id"],
             )
             challenge = await self.ceremonies._challenge(
-                tx, identifier, row["person_id"], "approval"
+                tx,
+                identifier,
+                row["person_id"],
+                "approval",
+                organisation=row["organisation"],
             )
             if (
                 challenge["session_hash"] != token_commitment(csrf)
@@ -430,11 +468,13 @@ class Enrollments:
             ):
                 raise Refused("challenge_binding_mismatch")
             credential = await self.ceremonies._credential(
-                tx, row["person_id"], assertion["id"]
+                tx, row["person_id"], assertion["id"], organisation=row["organisation"]
             )
             version = await tx.fetch_one(
-                "SELECT binding,id_chain FROM {{tables.approval_binding_versions}} WHERE digest=$1",
+                "SELECT binding,id_chain FROM {{tables.approval_binding_versions}} WHERE digest=$1 AND organisation=$2 AND person_id=$3",
                 row["binding_ref"],
+                row["organisation"],
+                row["person_id"],
             )
             Ceremonies._bounds(
                 int(time.time()), trust=issuer, challenge=challenge, request=request
@@ -468,10 +508,11 @@ class Enrollments:
                 assertion, credential, challenge["challenge"]
             )
             await tx.execute(
-                "UPDATE {{tables.approval_credentials}} SET sign_count=$1 WHERE person_id=$2 AND credential_id=$3",
+                "UPDATE {{tables.approval_credentials}} SET sign_count=$1 WHERE person_id=$2 AND credential_id=$3 AND organisation=$4",
                 counter,
                 row["person_id"],
                 assertion["id"],
+                row["organisation"],
             )
             await tx.execute(
                 "UPDATE {{tables.approval_challenges}} SET consumed=true WHERE challenge_id=$1",
@@ -508,12 +549,14 @@ class Enrollments:
             if row["binding_ref"] != checked["binding_commitment"]:
                 raise Refused("binding_mismatch")
             await tx.execute(
-                "UPDATE {{tables.approval_enrollments}} SET state='active',intent=NULL,browser_hash=NULL,browser_deadline=NULL WHERE person_id=$1",
+                "UPDATE {{tables.approval_enrollments}} SET state='active',intent=NULL,browser_hash=NULL,browser_deadline=NULL WHERE person_id=$1 AND organisation=$2",
                 trust.person,
+                row["organisation"],
             )
             await tx.execute(
-                "UPDATE {{tables.approval_credentials}} SET registration=NULL,client_extension_results=NULL WHERE person_id=$1",
+                "UPDATE {{tables.approval_credentials}} SET registration=NULL,client_extension_results=NULL WHERE person_id=$1 AND organisation=$2",
                 trust.person,
+                row["organisation"],
             )
             self._bounds(row, issuer=trust, requester=requester)
             return {
@@ -526,23 +569,11 @@ class Enrollments:
     async def cleanup(self, now):
         async with self.store.transaction() as tx:
             rows = await tx.fetch_all(
-                "SELECT person_id FROM {{tables.approval_enrollments}} WHERE state='pending' AND deadline<=$1 ORDER BY deadline LIMIT 128 FOR UPDATE SKIP LOCKED",
+                "SELECT organisation,person_id,confirmation_id FROM {{tables.approval_enrollments}} WHERE state='pending' AND deadline<=$1 ORDER BY deadline LIMIT 128 FOR UPDATE SKIP LOCKED",
                 now,
             )
             for row in rows:
-                # These never became active people at the service. This deletes
-                # private pending enrollment data, never a public registry record.
-                for table in (
-                    "approval_challenges",
-                    "approval_sessions",
-                    "approval_credentials",
-                    "approval_binding_versions",
-                    "approval_enrollments",
-                ):
-                    await tx.execute(
-                        "DELETE FROM {{tables." + table + "}} WHERE person_id=$1",
-                        row["person_id"],
-                    )
+                await self._delete_pending(tx, row, now)
             await tx.execute(
                 "DELETE FROM {{tables.approval_challenges}} WHERE challenge_id IN (SELECT challenge_id FROM {{tables.approval_challenges}} WHERE deadline<=$1 LIMIT 128 FOR UPDATE SKIP LOCKED)",
                 now,
@@ -552,3 +583,30 @@ class Enrollments:
                 now,
             )
             return len(rows)
+
+    async def _delete_pending(self, tx, row, now):
+        if row["confirmation_id"] is not None:
+            request = await tx.fetch_one(
+                "SELECT * FROM {{tables.approval_requests}} WHERE organisation=$1 AND person_id=$2 AND operation_id=$3 FOR UPDATE",
+                row["organisation"],
+                row["person_id"],
+                row["confirmation_id"],
+            )
+            if request is not None:
+                await self.store._expire(tx, request, now)
+        # One expired pending enrollment: fixed five deletes, no active/public
+        # identity is changed. Expiry need not wait for the background sweep.
+        for table in (
+            "approval_challenges",
+            "approval_sessions",
+            "approval_credentials",
+            "approval_binding_versions",
+            "approval_enrollments",
+        ):
+            await tx.execute(
+                "DELETE FROM {{tables."
+                + table
+                + "}} WHERE organisation=$1 AND person_id=$2",
+                row["organisation"],
+                row["person_id"],
+            )

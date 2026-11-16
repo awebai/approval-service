@@ -43,17 +43,19 @@ class Ceremonies:
         self.session_seconds = session_seconds
         self.challenge_seconds = challenge_seconds
 
-    async def _enrollment(self, conn, person):
+    async def _enrollment(self, conn, person, *, organisation):
         row = await conn.fetch_one(
-            "SELECT * FROM {{tables.approval_enrollments}} WHERE person_id=$1 FOR UPDATE",
+            "SELECT * FROM {{tables.approval_enrollments}} WHERE person_id=$1 AND organisation=$2 FOR UPDATE",
             person,
+            organisation,
         )
         if row is None or row["state"] != "active":
             raise Refused("enrollment_not_active")
         version = await conn.fetch_one(
-            "SELECT * FROM {{tables.approval_binding_versions}} WHERE digest=$1 AND person_id=$2",
+            "SELECT * FROM {{tables.approval_binding_versions}} WHERE digest=$1 AND person_id=$2 AND organisation=$3",
             row["binding_ref"],
             person,
+            organisation,
         )
         if version is None:
             raise Refused("binding_unavailable")
@@ -68,11 +70,12 @@ class Ceremonies:
         return {**row, "_binding_version": version}
 
     @staticmethod
-    async def _credential(conn, person, credential_id):
+    async def _credential(conn, person, credential_id, *, organisation):
         row = await conn.fetch_one(
-            "SELECT * FROM {{tables.approval_credentials}} WHERE person_id=$1 AND credential_id=$2 AND NOT retired FOR UPDATE",
+            "SELECT * FROM {{tables.approval_credentials}} WHERE person_id=$1 AND credential_id=$2 AND NOT retired AND organisation=$3 FOR UPDATE",
             person,
             credential_id,
+            organisation,
         )
         if row is None:
             raise Refused("credential_not_enrolled")
@@ -121,9 +124,10 @@ class Ceremonies:
 
     async def _session(self, conn, token, csrf, person, enrollment):
         session = await conn.fetch_one(
-            "SELECT * FROM {{tables.approval_sessions}} WHERE token_hash=$1 AND person_id=$2 FOR UPDATE",
+            "SELECT * FROM {{tables.approval_sessions}} WHERE token_hash=$1 AND person_id=$2 AND organisation=$3 FOR UPDATE",
             commitment(token),
             person,
+            enrollment["organisation"],
         )
         if session is None or session["identity_key"] != enrollment["identity_key"]:
             raise Refused("session_invalid")
@@ -142,10 +146,11 @@ class Ceremonies:
         *,
         session_hash=None,
         operation_id=None,
+        organisation=None,
     ):
         identifier = secrets.token_urlsafe(32)
         await conn.execute(
-            "INSERT INTO {{tables.approval_challenges}}(challenge_id,person_id,purpose,operation_id,session_hash,challenge,issued_at,deadline) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
+            "INSERT INTO {{tables.approval_challenges}}(challenge_id,person_id,purpose,operation_id,session_hash,challenge,issued_at,deadline,organisation) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)",
             identifier,
             person,
             purpose,
@@ -154,6 +159,7 @@ class Ceremonies:
             challenge,
             now,
             deadline,
+            organisation,
         )
         return {
             "id": identifier,
@@ -164,15 +170,19 @@ class Ceremonies:
         }
 
     async def login_options(self):
-        # A discoverable ceremony does not accept a person ID and exposes no
-        # credential IDs. Only a verified response can create a session.
         async with self.store.transaction() as conn:
             now = int(time.time())
             challenge = hashlib.sha256(
                 b"aweb.human-approval-login/1\n" + secrets.token_bytes(32)
             ).digest()
             result = await self._issue(
-                conn, None, "login", challenge, now, now + self.challenge_seconds
+                conn,
+                None,
+                "login",
+                challenge,
+                now,
+                now + self.challenge_seconds,
+                organisation=None,
             )
             self._bounds(
                 int(time.time()),
@@ -196,8 +206,8 @@ class Ceremonies:
         row = await self.store.db.fetch_one(
             """SELECT e.person_id,e.organisation,e.identity_key,v.id_chain
             FROM {{tables.approval_enrollments}} e
-            JOIN {{tables.approval_credentials}} c ON c.person_id=e.person_id
-            JOIN {{tables.approval_binding_versions}} v ON v.digest=e.binding_ref
+            JOIN {{tables.approval_credentials}} c ON c.person_id=e.person_id AND c.organisation=e.organisation
+            JOIN {{tables.approval_binding_versions}} v ON v.digest=e.binding_ref AND v.organisation=e.organisation AND v.person_id=e.person_id
             WHERE e.user_handle=$1 AND e.state='active'
             AND c.credential_id=$2 AND NOT c.retired""",
             handle,
@@ -213,12 +223,13 @@ class Ceremonies:
         }
 
     @staticmethod
-    async def _challenge(conn, identifier, person, purpose):
+    async def _challenge(conn, identifier, person, purpose, *, organisation=None):
         row = await conn.fetch_one(
-            "SELECT * FROM {{tables.approval_challenges}} WHERE challenge_id=$1 AND person_id IS NOT DISTINCT FROM $2 AND purpose=$3 FOR UPDATE",
+            "SELECT * FROM {{tables.approval_challenges}} WHERE challenge_id=$1 AND person_id IS NOT DISTINCT FROM $2 AND purpose=$3 AND organisation IS NOT DISTINCT FROM $4 FOR UPDATE",
             identifier,
             person,
             purpose,
+            organisation,
         )
         if row is None:
             raise Refused("challenge_not_found")
@@ -259,12 +270,18 @@ class Ceremonies:
             person = trust.person
             handle = decode(user_handle)
             async with self.store.transaction() as conn:
-                enrollment = await self._enrollment(conn, person)
+                enrollment = await self._enrollment(
+                    conn, person, organisation=trust.organisation
+                )
                 self._bind_enrollment(enrollment, trust)
                 if not hmac.compare_digest(bytes(enrollment["user_handle"]), handle):
                     raise Refused("credential_not_enrolled")
-                challenge = await self._challenge(conn, identifier, None, "login")
-                credential = await self._credential(conn, person, assertion["id"])
+                challenge = await self._challenge(
+                    conn, identifier, None, "login", organisation=None
+                )
+                credential = await self._credential(
+                    conn, person, assertion["id"], organisation=trust.organisation
+                )
                 self._bounds(int(time.time()), trust=trust, challenge=challenge)
                 counter = self._assertion(assertion, credential, challenge["challenge"])
                 token = secrets.token_urlsafe(32)
@@ -272,23 +289,25 @@ class Ceremonies:
                 now = int(time.time())
                 deadline = now + self.session_seconds
                 await conn.execute(
-                    "UPDATE {{tables.approval_credentials}} SET sign_count=$1 WHERE person_id=$2 AND credential_id=$3",
+                    "UPDATE {{tables.approval_credentials}} SET sign_count=$1 WHERE person_id=$2 AND credential_id=$3 AND organisation=$4",
                     counter,
                     person,
                     credential["credential_id"],
+                    trust.organisation,
                 )
                 await conn.execute(
                     "UPDATE {{tables.approval_challenges}} SET consumed=true WHERE challenge_id=$1",
                     identifier,
                 )
                 await conn.execute(
-                    "INSERT INTO {{tables.approval_sessions}}(token_hash,person_id,identity_key,credential_id,csrf_hash,deadline) VALUES($1,$2,$3,$4,$5,$6)",
+                    "INSERT INTO {{tables.approval_sessions}}(token_hash,person_id,identity_key,credential_id,csrf_hash,deadline,organisation) VALUES($1,$2,$3,$4,$5,$6,$7)",
                     commitment(token),
                     person,
                     enrollment["identity_key"],
                     credential["credential_id"],
                     commitment(csrf),
                     deadline,
+                    trust.organisation,
                 )
                 self._bounds(int(time.time()), trust=trust, challenge=challenge)
                 return {"session": token, "csrf": csrf, "deadline": deadline}
@@ -307,14 +326,19 @@ class Ceremonies:
         self, person, operation_id, session_token, csrf, trust, requester
     ):
         async with self.store.transaction() as conn:
-            enrollment = await self._enrollment(conn, person)
+            enrollment = await self._enrollment(
+                conn, person, organisation=trust.organisation
+            )
             self._bind_enrollment(enrollment, trust)
             session = await self._session(conn, session_token, csrf, person, enrollment)
-            await self._credential(conn, person, session["credential_id"])
+            await self._credential(
+                conn, person, session["credential_id"], organisation=trust.organisation
+            )
             request = await conn.fetch_one(
-                "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND person_id=$2 FOR UPDATE",
+                "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND person_id=$2 AND organisation=$3 FOR UPDATE",
                 operation_id,
                 person,
+                trust.organisation,
             )
             if request is None or request["requester_hash"] != requester.commitment:
                 raise Refused("request_not_found")
@@ -350,6 +374,7 @@ class Ceremonies:
                 ),
                 session_hash=commitment(session_token),
                 operation_id=operation_id,
+                organisation=trust.organisation,
             )
             self._bounds(
                 int(time.time()),
@@ -374,25 +399,41 @@ class Ceremonies:
     ):
         try:
             async with self.store.transaction() as conn:
-                enrollment = await self._enrollment(conn, person)
+                enrollment = await self._enrollment(
+                    conn, person, organisation=trust.organisation
+                )
                 self._bind_enrollment(enrollment, trust)
                 session = await self._session(
                     conn, session_token, csrf, person, enrollment
                 )
                 request = await conn.fetch_one(
-                    "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND person_id=$2 FOR UPDATE",
+                    "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND person_id=$2 AND organisation=$3 FOR UPDATE",
                     operation_id,
                     person,
+                    trust.organisation,
                 )
                 if request is None or request["requester_hash"] != requester.commitment:
                     raise Refused("request_not_found")
-                challenge = await self._challenge(conn, identifier, person, "approval")
+                challenge = await self._challenge(
+                    conn,
+                    identifier,
+                    person,
+                    "approval",
+                    organisation=trust.organisation,
+                )
                 if challenge["operation_id"] != operation_id or challenge[
                     "session_hash"
                 ] != commitment(session_token):
                     raise Refused("challenge_binding_mismatch")
-                credential = await self._credential(conn, person, assertion["id"])
-                await self._credential(conn, person, session["credential_id"])
+                credential = await self._credential(
+                    conn, person, assertion["id"], organisation=trust.organisation
+                )
+                await self._credential(
+                    conn,
+                    person,
+                    session["credential_id"],
+                    organisation=trust.organisation,
+                )
                 self._bounds(
                     int(time.time()),
                     trust=trust,
@@ -444,16 +485,16 @@ class Ceremonies:
                     covered=r,
                 )
                 await conn.execute(
-                    "UPDATE {{tables.approval_credentials}} SET sign_count=$1 WHERE person_id=$2 AND credential_id=$3",
+                    "UPDATE {{tables.approval_credentials}} SET sign_count=$1 WHERE person_id=$2 AND credential_id=$3 AND organisation=$4",
                     counter,
                     person,
                     credential["credential_id"],
+                    trust.organisation,
                 )
                 await conn.execute(
                     "UPDATE {{tables.approval_challenges}} SET consumed=true WHERE challenge_id=$1",
                     identifier,
                 )
-                # The receipt verifier and the real UV assertion ran above.
                 await self.store._terminal(
                     conn,
                     request,
@@ -471,8 +512,6 @@ class Ceremonies:
                     requester=requester,
                     covered=r,
                 )
-                # No awaited read/write remains after this check: a SQL lock wait
-                # cannot renew the original request, session or evidence lifetime.
                 return {"digest": checked.digest, "outcome": "approved"}
         except (
             ValueError,
@@ -487,14 +526,19 @@ class Ceremonies:
 
     async def deny(self, person, operation_id, session_token, csrf, trust, requester):
         async with self.store.transaction() as conn:
-            enrollment = await self._enrollment(conn, person)
+            enrollment = await self._enrollment(
+                conn, person, organisation=trust.organisation
+            )
             self._bind_enrollment(enrollment, trust)
             session = await self._session(conn, session_token, csrf, person, enrollment)
-            await self._credential(conn, person, session["credential_id"])
+            await self._credential(
+                conn, person, session["credential_id"], organisation=trust.organisation
+            )
             row = await conn.fetch_one(
-                "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND person_id=$2 FOR UPDATE",
+                "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND person_id=$2 AND organisation=$3 FOR UPDATE",
                 operation_id,
                 person,
+                trust.organisation,
             )
             if row is None or row["requester_hash"] != requester.commitment:
                 raise Refused("request_not_found")

@@ -1,4 +1,4 @@
-"""Approval service's pooled PostgreSQL state. No org keys or external effects."""
+"""Approval service's pooled, organisation-scoped PostgreSQL state."""
 
 from __future__ import annotations
 
@@ -17,7 +17,6 @@ class StoreRefused(ValueError):
 
 
 def request_row(row):
-    """asyncpg keeps JSON as text; expose only the explicit retained assertion."""
     if row is not None and isinstance(row["assertion"], str):
         return {**row, "assertion": json.loads(row["assertion"])}
     return row
@@ -25,7 +24,7 @@ def request_row(row):
 
 class Store:
     def __init__(
-        self, dsn: str, *, schema="approval", min_connections=1, max_connections=10
+        self, dsn, *, schema="approval", min_connections=1, max_connections=10
     ):
         if not re.fullmatch(r"[a-z][a-z0-9_]{0,62}", schema):
             raise ValueError("invalid schema")
@@ -41,14 +40,12 @@ class Store:
         )
 
     async def connect(self):
-        """One pool for the process lifespan, shared by ceremonies and polling."""
         await self.db.connect()
 
     async def close(self):
         await self.db.disconnect()
 
     async def migrate(self):
-        """Explicit installation command; the shared runner owns checksums/locking."""
         return await AsyncMigrationManager(
             self.db,
             migrations_path=str(files("approval_service").joinpath("migrations")),
@@ -61,22 +58,25 @@ class Store:
     @staticmethod
     async def _terminal(tx, row, outcome, now, assertion=None, binding_ref=None):
         changed = await tx.fetch_one(
-            """UPDATE {{tables.approval_requests}} SET outcome=$1, decided_at=$2,
-            request_bytes=NULL, admission=NULL, assertion=$3::jsonb,binding_ref=$4
-            WHERE operation_id=$5 AND outcome='pending' RETURNING *""",
+            """UPDATE {{tables.approval_requests}} SET outcome=$1,decided_at=$2,
+            request_bytes=NULL,admission=NULL,assertion=$3::jsonb,binding_ref=$4
+            WHERE organisation=$5 AND person_id=$6 AND operation_id=$7 AND outcome='pending' RETURNING *""",
             outcome,
             now,
             json.dumps(assertion) if assertion is not None else None,
             binding_ref,
+            row["organisation"],
+            row["person_id"],
             row["operation_id"],
         )
         if changed is None:
             raise StoreRefused("already_decided")
         await tx.execute(
-            "INSERT INTO {{tables.approval_audit}}(operation_id,digest,person_id,decided_at,outcome) VALUES($1,$2,$3,$4,$5)",
+            "INSERT INTO {{tables.approval_audit}}(organisation,person_id,operation_id,digest,decided_at,outcome) VALUES($1,$2,$3,$4,$5,$6)",
+            row["organisation"],
+            row["person_id"],
             row["operation_id"],
             row["digest"],
-            row["person_id"],
             now,
             outcome,
         )
@@ -89,7 +89,9 @@ class Store:
                 row = await Store._terminal(tx, row, "expired", now)
             if row["assertion"] is not None:
                 await tx.execute(
-                    "UPDATE {{tables.approval_requests}} SET assertion=NULL WHERE operation_id=$1",
+                    "UPDATE {{tables.approval_requests}} SET assertion=NULL WHERE organisation=$1 AND person_id=$2 AND operation_id=$3",
+                    row["organisation"],
+                    row["person_id"],
                     row["operation_id"],
                 )
                 row = {**row, "assertion": None}
@@ -105,48 +107,52 @@ class Store:
         now,
         deadline,
         *,
+        organisation,
         admission=None,
     ):
         if deadline <= now:
             raise StoreRefused("request_expired")
         async with self.transaction() as tx:
-            # Serialize this requester's bounded queue and duplicate admission only.
             await tx.execute(
                 "SELECT pg_advisory_xact_lock(hashtextextended($1,0))", requester_hash
             )
-            owned = await tx.fetch_one(
-                "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 FOR UPDATE",
+            row = await tx.fetch_one(
+                "SELECT * FROM {{tables.approval_requests}} WHERE organisation=$1 AND person_id=$2 AND operation_id=$3 FOR UPDATE",
+                organisation,
+                person_id,
                 operation_id,
             )
-            if owned:
-                if (owned["digest"], owned["requester_hash"], owned["person_id"]) != (
-                    digest,
-                    requester_hash,
-                    person_id,
-                ):
+            if row:
+                if (row["digest"], row["requester_hash"]) != (digest, requester_hash):
                     raise StoreRefused("selection_conflict")
-                return await self._expire(tx, owned, now)
-            old = await tx.fetch_one(
-                "SELECT * FROM {{tables.approval_requests}} WHERE requester_hash=$1 AND digest=$2 FOR UPDATE",
+                return await self._expire(tx, row, now)
+            row = await tx.fetch_one(
+                "SELECT * FROM {{tables.approval_requests}} WHERE organisation=$1 AND person_id=$2 AND requester_hash=$3 AND digest=$4 FOR UPDATE",
+                organisation,
+                person_id,
                 requester_hash,
                 digest,
             )
-            if old:
-                return await self._expire(tx, old, now)
+            if row:
+                return await self._expire(tx, row, now)
             count = await tx.fetch_one(
-                "SELECT count(*) AS n FROM {{tables.approval_requests}} WHERE requester_hash=$1 AND outcome='pending' AND deadline>$2",
+                "SELECT count(*) AS n FROM {{tables.approval_requests}} WHERE organisation=$1 AND requester_hash=$2 AND outcome='pending' AND deadline>$3",
+                organisation,
                 requester_hash,
                 now,
             )
             if count["n"] >= 32:
                 raise StoreRefused("pending_limit")
+            # Never look up enrollment here: a foreign/mistyped approver gets the
+            # same submit answer but cannot see this row in any person's list.
             row = await tx.fetch_one(
-                """INSERT INTO {{tables.approval_requests}}(operation_id,digest,requester_hash,person_id,request_bytes,created_at,deadline,admission)
-                VALUES($1,$2,$3,$4,$5,$6,$7,$8::jsonb) ON CONFLICT DO NOTHING RETURNING *""",
+                """INSERT INTO {{tables.approval_requests}}(organisation,person_id,operation_id,digest,requester_hash,request_bytes,created_at,deadline,admission)
+                VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb) ON CONFLICT DO NOTHING RETURNING *""",
+                organisation,
+                person_id,
                 operation_id,
                 digest,
                 requester_hash,
-                person_id,
                 request_bytes,
                 now,
                 deadline,
@@ -156,28 +162,24 @@ class Store:
                 raise StoreRefused("selection_conflict")
             return request_row(row)
 
-    async def pending(self, person_id, now=None):
-        if now is None:
-            rows = await self.db.fetch_all(
-                "SELECT * FROM {{tables.approval_requests}} WHERE person_id=$1 AND outcome='pending' ORDER BY created_at LIMIT 128",
-                person_id,
-            )
-        else:
-            rows = await self.db.fetch_all(
-                "SELECT * FROM {{tables.approval_requests}} WHERE person_id=$1 AND outcome='pending' AND deadline>$2 ORDER BY created_at LIMIT 128",
-                person_id,
-                now,
-            )
+    async def pending(self, person_id, *, organisation, now=None):
+        query = "SELECT * FROM {{tables.approval_requests}} WHERE organisation=$1 AND person_id=$2 AND outcome='pending'"
+        args = [organisation, person_id]
+        if now is not None:
+            query += " AND deadline>$3"
+            args.append(now)
+        rows = await self.db.fetch_all(query + " ORDER BY created_at LIMIT 128", *args)
         return [request_row(row) for row in rows]
 
-    async def refuse(self, operation_id, person_id, outcome, now):
+    async def refuse(self, operation_id, person_id, outcome, now, *, organisation):
         if outcome not in ("denied", "cancelled"):
             raise StoreRefused("invalid_outcome")
         async with self.transaction() as tx:
             row = await tx.fetch_one(
-                "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND person_id=$2 FOR UPDATE",
-                operation_id,
+                "SELECT * FROM {{tables.approval_requests}} WHERE organisation=$1 AND person_id=$2 AND operation_id=$3 FOR UPDATE",
+                organisation,
                 person_id,
+                operation_id,
             )
             if row is None:
                 raise StoreRefused("request_not_found")
@@ -185,11 +187,12 @@ class Store:
                 return await self._expire(tx, row, now)
             return await self._terminal(tx, row, outcome, now)
 
-    async def poll(self, operation_id, digest, requester_hash, now):
-        # An ordinary read acquires a pooled connection, without a transaction or
-        # exclusive lock. Only the expiry act re-reads under the row lock.
-        query = "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND digest=$2 AND requester_hash=$3"
-        args = (operation_id, digest, requester_hash)
+    async def poll(
+        self, operation_id, digest, requester_hash, now, *, organisation, person_id
+    ):
+        query = "SELECT * FROM {{tables.approval_requests}} WHERE organisation=$1 AND person_id=$2 AND operation_id=$3 AND digest=$4 AND requester_hash=$5"
+        args = (organisation, person_id, operation_id, digest, requester_hash)
+        # Ordinary polling takes a pooled read, no exclusive lock or transaction.
         row = await self.db.fetch_one(query, *args)
         if row is None:
             raise StoreRefused("request_not_found")
@@ -207,9 +210,11 @@ class Store:
             "receipt_available": row["assertion"] is not None and now < row["deadline"],
         }
 
-    async def audit(self, operation_id):
+    async def audit(self, operation_id, *, organisation, person_id):
         return await self.db.fetch_all(
-            "SELECT digest,person_id,decided_at,outcome FROM {{tables.approval_audit}} WHERE operation_id=$1",
+            "SELECT digest,person_id,organisation,decided_at,outcome FROM {{tables.approval_audit}} WHERE organisation=$1 AND person_id=$2 AND operation_id=$3",
+            organisation,
+            person_id,
             operation_id,
         )
 
@@ -226,6 +231,7 @@ class Store:
     async def decision_answer(self, row, locator, *, db=None):
         in_transaction = db is not None
         db = self.db if db is None else db
+        row = request_row(row)
         answer = {
             "version": 1,
             "locator": locator,
@@ -234,11 +240,12 @@ class Store:
             "state": row["outcome"],
             "approval": None,
         }
-        row = request_row(row)
         if row["assertion"] is not None:
             version = await db.fetch_one(
-                "SELECT binding,id_chain FROM {{tables.approval_binding_versions}} WHERE digest=$1",
+                "SELECT binding,id_chain FROM {{tables.approval_binding_versions}} WHERE digest=$1 AND organisation=$2 AND person_id=$3",
                 row["binding_ref"],
+                row["organisation"],
+                row["person_id"],
             )
             if version is None:
                 raise StoreRefused("binding_unavailable")
@@ -247,22 +254,30 @@ class Store:
                 "binding": json.loads(version["binding"]),
                 "id_chain": json.loads(version["id_chain"]),
             }
-        # SQL waits cannot keep an assertion readable beyond its original slot.
         now = int(time.time())
         if answer["approval"] is not None and now >= row["deadline"]:
             if in_transaction:
                 await self._expire(db, row, now)
             else:
                 await self.poll(
-                    row["operation_id"], row["digest"], row["requester_hash"], now
+                    row["operation_id"],
+                    row["digest"],
+                    row["requester_hash"],
+                    now,
+                    organisation=row["organisation"],
+                    person_id=row["person_id"],
                 )
             answer["approval"] = None
         return answer
 
-    async def cancel(self, operation_id, digest, requester_hash, now):
+    async def cancel(
+        self, operation_id, digest, requester_hash, now, *, organisation, person_id
+    ):
         async with self.transaction() as tx:
             row = await tx.fetch_one(
-                "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND digest=$2 AND requester_hash=$3 FOR UPDATE",
+                "SELECT * FROM {{tables.approval_requests}} WHERE organisation=$1 AND person_id=$2 AND operation_id=$3 AND digest=$4 AND requester_hash=$5 FOR UPDATE",
+                organisation,
+                person_id,
                 operation_id,
                 digest,
                 requester_hash,
