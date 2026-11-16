@@ -19,7 +19,7 @@ from nacl.signing import SigningKey
 
 root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(root / "tests"))
-from receipts import fixture, canon, b64
+from receipts import b64, canon
 
 out = root / "vectors/enrollment-lifecycle-v1.json"
 if out.exists():
@@ -98,6 +98,42 @@ def world(mode):
     c.pop("expected_intent_preimage", None)
     c.pop("expected_locator", None)
     old = copy.deepcopy(base["activation"])
+    old_private = ec.derive_private_key(13, ec.SECP256R1())
+    old_n = old_private.public_key().public_numbers()
+    old_body = old["binding"]["binding"]
+    old_body["credentials"][0]["key"] = b64(
+        cbor2.dumps(
+            {
+                1: 2,
+                3: -7,
+                -1: 1,
+                -2: old_n.x.to_bytes(32, "big"),
+                -3: old_n.y.to_bytes(32, "big"),
+            }
+        )
+    )
+    old["binding"] = sign("binding", "binding", old_body)
+    old_r = json.loads(
+        __import__("base64").urlsafe_b64decode(
+            old["creation_receipt"]["request_bytes"] + "=="
+        )
+    )
+    old_r["act"]["target"]["binding_commitment"] = digest(
+        "binding_commitment", old["binding"]
+    )
+    resign_request(old_r)
+    old["creation_receipt"].update(
+        request_bytes=b64(canon(old_r)),
+        binding=old["binding"],
+        assertion=assertion(old_r, old_private, old_body["credentials"][0]["id"]),
+    )
+    old_e = old["evidence"]["evidence"]
+    old_e["binding_commitment"] = digest("binding_commitment", old["binding"])
+    old_e["creation"]["receipt_commitment"] = digest(
+        "receipt_commitment", old["creation_receipt"]
+    )
+    old["evidence"] = sign("evidence", "identity_evidence", old_e)
+    c["previous_creation_receipt"] = old["creation_receipt"]
     c["previous"] = {
         "binding": old["binding"],
         "evidence": old["evidence"],
@@ -218,9 +254,28 @@ def world(mode):
         resign_request(tr)
         cb = copy.deepcopy(old["binding"])
         chain = copy.deepcopy(old["creation_receipt"]["id_chain"])
-        priv = fixture()["private"]
+        priv = old_private
         c["transition_trust"] = copy.deepcopy(base["trust"])
         if mode == "assisted":
+            priv = ec.derive_private_key(19, ec.SECP256R1())
+            helper_n = priv.public_key().public_numbers()
+            helper_entry = cb["binding"]["credentials"][0]
+            helper_entry.update(
+                id=b64(bytes([19]) * 32),
+                key=b64(
+                    cbor2.dumps(
+                        {
+                            1: 2,
+                            3: -7,
+                            -1: 1,
+                            -2: helper_n.x.to_bytes(32, "big"),
+                            -3: helper_n.y.to_bytes(32, "big"),
+                        }
+                    )
+                ),
+                grade="certified_hardware",
+                snapshot="sha256:" + "3" * 64,
+            )
             key = SigningKey(bytes([4]) * 32)
             helper = __import__(
                 "awid.did", fromlist=["stable_id_from_did_key"]
@@ -342,6 +397,24 @@ fault(
     "enrollment_identity_mismatch",
     lambda c: c["trust"].update(identity_key=c["previous"]["trust"]["identity_key"]),
 )
+c = copy.deepcopy(cases[0])
+c["id"] = "replacement-requester-supplies-saved-previous-evidence"
+c["activation"]["previous_evidence"] = c["previous"]["evidence"]
+c["previous"]["evidence"] = None
+cases.append(c)
+c = copy.deepcopy(cases[2])
+c["id"] = "recovery-with-missing-prior-history-records-a-new-creation"
+c["previous"]["evidence"] = None
+evidence_change(c, lambda e: e["transition"].update(previous_evidence_commitment=None))
+cases.append(c)
+c = copy.deepcopy(cases[0])
+c.update(
+    id="normal-replacement-missing-history-is-unavailable",
+    accept=False,
+    expected_error="enrollment_previous_unavailable",
+)
+c["previous"]["evidence"] = None
+cases.append(c)
 out.write_text(
     json.dumps({"version": 1, "cases": cases}, indent=2, ensure_ascii=False) + "\n"
 )

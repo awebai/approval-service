@@ -542,3 +542,234 @@ async def test_signed_http_enrollment_approval_and_foreign_organisation_fences(
                     person_id=person,
                 )
             )["request_bytes"] is None
+            # Sole-human recovery keeps the stable ID. Organisation authority
+            # cannot rotate it: the real registry requires the previous ID key.
+            from awid.registry import RegistryError
+
+            new_seed, new_public = generate_keypair()
+            new_key = did_from_public_key(new_public)
+            with pytest.raises(RegistryError) as foreign_rotation:
+                await registry.rotate_key(person, new_key, root_a, new_seed)
+            assert foreign_rotation.value.status_code == 403
+            assert (await registry.resolve_key(person)).current_did_key == person_key
+            rotated = await registry.rotate_key(person, new_key, person_seed, new_seed)
+            assert rotated.did_aw == person and rotated.current_did_key == new_key
+            recovery_intent = signed_intent(cert_a, new_key, root_a)
+            recovery_intent["intent"]["previous_binding_commitment"] = commitment(
+                "binding_commitment", binding
+            )
+            recovery_intent["signature"] = encode(
+                SigningKey(root_a)
+                .sign(
+                    domain("enrollment_intent") + canonical(recovery_intent["intent"])
+                )
+                .signature
+            )
+            response = await exchange(
+                client,
+                "enrollment_start",
+                {"version": 1, "intent": recovery_intent, "admission": empty},
+                root_a,
+                recovery_intent["intent"]["requester"],
+            )
+            assert response.status_code == 200, response.text
+            recovery_started = response.json()
+            read_answer(
+                "enrollment_start", recovery_started, status=200, intent=recovery_intent
+            )
+            recovery_locator = recovery_started["locator"]
+            opened = await browser(
+                client, "enrollment/options", {"locator": recovery_locator}
+            )
+            recovery_w = fixture()
+            raw, _ = Vendor().registration(
+                challenge=decode(recovery_intent["intent"]["challenge"]),
+                credential=recovery_w["receipt"]["binding"]["binding"]["credentials"][
+                    0
+                ],
+            )
+            await browser(
+                client,
+                "enrollment/register",
+                {
+                    "locator": recovery_locator,
+                    "csrf": opened["csrf"],
+                    "registration": raw,
+                    "client_extension_results": {"credProps": {"rk": True}},
+                },
+            )
+            response = await exchange(
+                client,
+                "enrollment_material",
+                {"version": 1, "intent": recovery_intent, "admission": empty},
+                root_a,
+                recovery_intent["intent"]["requester"],
+            )
+            assert response.status_code == 200, response.text
+            material = read_answer(
+                "enrollment_material",
+                response.json(),
+                status=200,
+                intent=recovery_intent,
+            )
+            assert len(material["registrations"]) == 1
+            new_entry = check_registration(
+                material["registrations"][0]["registration"],
+                expected_challenge=decode(recovery_intent["intent"]["challenge"]),
+                origin=ORIGIN,
+                rp_id=RP,
+                snapshot=None,
+                now=datetime.now(UTC),
+            ).binding_entry()
+            new_binding = sign_binding(
+                recovery_intent,
+                Ed25519PrivateKey.from_private_bytes(root_a),
+                [new_entry],
+            )
+            new_r = confirmation_request(recovery_intent, new_binding)
+            recovery_body = {
+                "version": 1,
+                "intent": recovery_intent,
+                "binding": new_binding,
+                "request_bytes": encode(canonical(new_r)),
+                "admission": empty,
+            }
+            response = await exchange(
+                client,
+                "enrollment_confirm",
+                recovery_body,
+                root_a,
+                recovery_intent["intent"]["requester"],
+            )
+            assert (
+                response.status_code == 200 and response.json()["state"] == "pending"
+            ), response.text
+            options = await browser(
+                client,
+                "enrollment/confirmation/options",
+                {"locator": recovery_locator, "csrf": opened["csrf"]},
+            )
+            await browser(
+                client,
+                "enrollment/confirmation/finish",
+                {
+                    "locator": recovery_locator,
+                    "csrf": opened["csrf"],
+                    "id": options["id"],
+                    "assertion": assertion(
+                        recovery_w["private"], -7, new_r, new_entry["id"]
+                    ),
+                },
+            )
+            response = await exchange(
+                client,
+                "enrollment_confirm",
+                recovery_body,
+                root_a,
+                recovery_intent["intent"]["requester"],
+            )
+            assert (
+                response.status_code == 200 and response.json()["state"] == "approved"
+            ), response.text
+            new_c = assemble_receipt(
+                canonical(new_r),
+                response.json(),
+                locator=recovery_locator,
+                intent=recovery_intent,
+            )
+            new_trust = await read_trust(
+                registry,
+                [cert_a],
+                person=person,
+                identity_key=new_key,
+                organisation=org_a,
+            )
+            assert new_trust.person == person and new_trust.identity_key == new_key
+            assert (
+                check_creation_proof(
+                    new_c,
+                    intent=recovery_intent,
+                    issuer_key=new_trust.issuer,
+                    requester=recovery_intent["intent"]["requester"],
+                    origin=ORIGIN,
+                    rp_id=RP,
+                    now=int(time.time()),
+                    nonce_keys={"k1": b"holder-owned-nonce-secret-for-test"},
+                    pending_trust=new_trust,
+                )["state"]
+                == "pending"
+            )
+            new_e = copy.deepcopy(evidence)
+            new_e.update(
+                subject={
+                    "id": person,
+                    "certificate": new_trust.certificate,
+                    "key": new_key,
+                },
+                binding_commitment=commitment("binding_commitment", new_binding),
+                creation={
+                    "credential": new_entry["id"],
+                    "grade": new_entry["grade"],
+                    "receipt_commitment": commitment("receipt_commitment", new_c),
+                },
+                transition={
+                    "mode": "recreated",
+                    "before": {
+                        "subject": evidence["subject"],
+                        "binding_commitment": commitment("binding_commitment", binding),
+                    },
+                    "previous_evidence_commitment": commitment(
+                        "identity_evidence_commitment", signed_e
+                    ),
+                    "confirmation_receipt_commitment": commitment(
+                        "receipt_commitment", new_c
+                    ),
+                    "approval_receipt_commitment": None,
+                },
+            )
+            recovery_activation = {
+                "version": 1,
+                "intent": recovery_intent,
+                "binding": new_binding,
+                "creation_receipt": new_c,
+                "id_chain": [cert_a],
+                "evidence": {
+                    "evidence": new_e,
+                    "signature": encode(
+                        SigningKey(root_a)
+                        .sign(domain("identity_evidence") + canonical(new_e))
+                        .signature
+                    ),
+                },
+            }
+            carrier = {"kind": "identity", "id": person, "key": new_key}
+            recovery_activation["carrier"] = carrier
+            response = await exchange(
+                client,
+                "enrollment_activate",
+                recovery_activation,
+                new_seed,
+                carrier,
+            )
+            assert (
+                response.status_code == 200 and response.json()["state"] == "active"
+            ), response.text
+            old_session = await client.get("/browser/pending")
+            assert (
+                old_session.status_code == 403
+                and old_session.json()["error"]["code"] == "session_invalid"
+            )
+            login = await browser(client, "login/options", {})
+            await browser(
+                client,
+                "login/finish",
+                {
+                    "id": login["id"],
+                    "assertion": login_assertion(recovery_w, login),
+                    "user_handle": recovery_started["public_key"]["user"]["id"],
+                },
+            )
+            assert (
+                new_e["transition"]["mode"] == "recreated"
+                and new_e["creation"] != evidence["creation"]
+            )

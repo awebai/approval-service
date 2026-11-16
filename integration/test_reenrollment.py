@@ -107,3 +107,400 @@ async def test_active_recovery_requires_the_new_identity_key_to_be_current(store
         intent, issuer=public, requester=caller, current=after
     )
     assert pending["state"] == "pending" and pending["locator"] != original["locator"]
+
+
+async def pending_ceremony(service, intent, issuer, caller, w, *, current=None):
+    from datetime import UTC, datetime
+
+    from receipts import assertion
+    from vendor import Vendor
+
+    from approval_service.answers import assemble_receipt
+    from approval_service.encoding import decode
+    from approval_service.registration import check_registration
+
+    from .test_enrollment import confirmation_request, sign_binding
+
+    public = PublicIssuer(
+        intent["intent"]["pending_certificate"]["certificate"]["issuer_key"],
+        int(time.time()),
+    )
+    started = await service.start(
+        intent, issuer=public, requester=caller, current=current
+    )
+    opened = await service.browser_options(started["locator"])
+    raw, _ = Vendor().registration(
+        challenge=decode(intent["intent"]["challenge"]),
+        credential=w["receipt"]["binding"]["binding"]["credentials"][0],
+    )
+    await service.register(
+        started["locator"], opened["csrf"], raw, {"credProps": {"rk": True}}
+    )
+    material = await service.material(intent, issuer=public, requester=caller)
+    assert len(material["registrations"]) == 1
+    entry = check_registration(
+        material["registrations"][0]["registration"],
+        expected_challenge=decode(intent["intent"]["challenge"]),
+        origin=ORIGIN,
+        rp_id=RP,
+        snapshot=None,
+        now=datetime.now(UTC),
+    ).binding_entry()
+    b = sign_binding(intent, issuer, [entry])
+    r = confirmation_request(intent, b)
+    body = {
+        "version": 1,
+        "intent": intent,
+        "binding": b,
+        "request_bytes": encode(canonical(r)),
+        "admission": {"team_certificate": None, "id_chain": []},
+    }
+    assert (await service.confirm(body, issuer=public, requester=caller))[
+        "state"
+    ] == "pending"
+    opened = await service.browser_options(started["locator"])
+    options = await service.confirmation_options(started["locator"], opened["csrf"])
+    await service.finish_confirmation(
+        started["locator"],
+        opened["csrf"],
+        options["id"],
+        assertion(w["private"], -7, r, entry["id"]),
+        issuer=public,
+    )
+    answer = await service.confirm(body, issuer=public, requester=caller)
+    c = assemble_receipt(
+        canonical(r), answer, locator=started["locator"], intent=intent
+    )
+    return started, b, c, entry
+
+
+async def approve_transition(store, actor, request, caller):
+    import hashlib
+
+    from receipts import assertion
+
+    from approval_service.answers import assemble_receipt
+    from approval_service.verify import verify_for_effect
+
+    w, trust, binding, creation, started = actor
+    w["receipt"].update(binding=binding, id_chain=creation["id_chain"])
+    ceremonies = Ceremonies(store, origin=ORIGIN, rp_id=RP)
+    options = await ceremonies.login_options()
+    session = await ceremonies.finish_login(
+        options["id"],
+        login_assertion(w, options),
+        started["public_key"]["user"]["id"],
+        trust,
+    )
+    raw = canonical(request)
+    locator = "transition-" + request["approver"]
+    digest = hashlib.sha256(domain("request") + raw).hexdigest()
+    await store.prepare(
+        locator,
+        digest,
+        caller.commitment,
+        trust.person,
+        raw,
+        int(time.time()),
+        request["deadline"],
+        organisation=trust.organisation,
+    )
+    options = await ceremonies.approval_options(
+        trust.person, locator, session["session"], session["csrf"], trust, caller
+    )
+    await ceremonies.finish_approval(
+        trust.person,
+        locator,
+        options["id"],
+        assertion(
+            w["private"], -7, request, binding["binding"]["credentials"][0]["id"]
+        ),
+        session["session"],
+        session["csrf"],
+        trust,
+        caller,
+    )
+    selected = await store.poll(
+        locator,
+        digest,
+        caller.commitment,
+        int(time.time()),
+        organisation=trust.organisation,
+        person_id=trust.person,
+    )
+    answer = await store.decision_answer(selected, locator)
+    receipt = assemble_receipt(raw, answer, locator=locator)
+    checked = verify_for_effect(
+        receipt,
+        expected_request=request,
+        presenter=request["requester"],
+        now=int(time.time()),
+        trust=trust,
+        required_grade="passkey_uv",
+        nonce_keys={"issuer": b"native-transition-enforcer-secret"},
+    )
+    assert checked.person == trust.person
+    return receipt
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "mode,missing_history",
+    [
+        ("unbroken", False),
+        ("assisted", False),
+        ("recreated", False),
+        ("recreated", True),
+    ],
+    ids=["unbroken", "assisted", "recreated", "recreated-without-old-history"],
+)
+async def test_real_replacement_activation_retires_only_the_old_generation(
+    store, mode, missing_history
+):
+    import hmac
+    import json
+
+    from nacl.signing import SigningKey
+    from receipts import fixture
+
+    from approval_service.definitions import definition_ref
+
+    old_w, trust, _bootstrap, old_b, old_c, old_start = await enroll_person(store)
+    before = await store.db.fetch_one(
+        "SELECT evidence FROM {{tables.approval_enrollments}} WHERE enrollment_locator=$1",
+        old_start["locator"],
+    )
+    old_e = json.loads(before["evidence"])
+    if missing_history:
+        # 118 stored B but not E. Reproduce that metadata state, while all
+        # credentials and sessions still come from the real enrollment path.
+        await store.db.execute(
+            "UPDATE {{tables.approval_enrollments}} SET evidence=NULL WHERE enrollment_locator=$1",
+            old_start["locator"],
+        )
+    purpose = "enroll_person" if mode == "recreated" else "replace_person_keys"
+    intent, issuer, caller, after = replacement_intent(trust, old_b, purpose=purpose)
+    if mode == "unbroken":
+        from approval_service.requester import AdmittedRequester
+
+        original_requester = {
+            "kind": "identity",
+            "id": trust.person,
+            "key": trust.identity_key,
+        }
+        intent["intent"]["requester"] = original_requester
+        intent["signature"] = encode(
+            issuer.sign(domain("enrollment_intent") + canonical(intent["intent"]))
+        )
+        caller = AdmittedRequester(
+            canonical(original_requester), trust.identity_key, int(time.time())
+        )
+    service = Enrollments(
+        store, origin=ORIGIN, rp_id=RP, grading=EnrollmentGrading("passkey_only", None)
+    )
+    new_w = fixture()
+    started, b, c, entry = await pending_ceremony(
+        service,
+        intent,
+        issuer,
+        caller,
+        new_w,
+        current=after if mode == "recreated" else trust,
+    )
+    transition = {
+        "mode": mode,
+        "before": {
+            "subject": old_e["evidence"]["subject"],
+            "binding_commitment": commitment("binding_commitment", old_b),
+        },
+        "previous_evidence_commitment": None
+        if missing_history
+        else commitment("identity_evidence_commitment", old_e),
+        "confirmation_receipt_commitment": commitment("receipt_commitment", c),
+        "approval_receipt_commitment": None,
+    }
+    e = copy.deepcopy(old_e["evidence"])
+    e.update(
+        subject={
+            "id": after.person,
+            "certificate": after.certificate,
+            "key": after.identity_key,
+        },
+        binding_commitment=commitment("binding_commitment", b),
+        transition=transition,
+    )
+    value = {
+        "version": 1,
+        "intent": intent,
+        "binding": b,
+        "creation_receipt": c,
+        "id_chain": c["id_chain"],
+    }
+    if mode == "recreated":
+        e["creation"] = {
+            "credential": entry["id"],
+            "grade": entry["grade"],
+            "receipt_commitment": commitment("receipt_commitment", c),
+        }
+        assert e["creation"] != old_e["evidence"]["creation"]
+    else:
+        actor = (old_w, trust, old_b, old_c, old_start)
+        if mode == "assisted":
+            helper_i, helper_issuer, helper_t, helper_caller, helper_w = (
+                enrollment_world()
+            )
+            helper_seed = SigningKey(bytes([4]) * 32)
+            from awid.did import stable_id_from_did_key
+
+            helper_key = did_from_public_key(bytes(helper_seed.verify_key))
+            person = stable_id_from_did_key(helper_key)
+            hi = helper_i["intent"]
+            hc = hi["pending_certificate"]["certificate"]
+            hi.update(person=person, identity_key=helper_key)
+            hc["id"] = person
+            hi["pending_certificate"]["signature"] = encode(
+                helper_issuer.sign(id_certificate_signing_bytes(hc))
+            )
+            helper_i["signature"] = encode(
+                helper_issuer.sign(domain("enrollment_intent") + canonical(hi))
+            )
+            helper_t = replace(
+                helper_t,
+                person=person,
+                identity_key=helper_key,
+                certificate=id_certificate_id(hc),
+            )
+            hs, hb, hcpt, he = await pending_ceremony(
+                service, helper_i, helper_issuer, helper_caller, helper_w
+            )
+            eb = {
+                "version": 1,
+                "kind": "human",
+                "organisation": helper_t.organisation,
+                "subject": {
+                    "id": person,
+                    "certificate": helper_t.certificate,
+                    "key": helper_key,
+                },
+                "issuer": helper_t.issuer,
+                "binding_commitment": commitment("binding_commitment", hb),
+                "creation": {
+                    "credential": he["id"],
+                    "grade": he["grade"],
+                    "receipt_commitment": commitment("receipt_commitment", hcpt),
+                },
+            }
+            await service.activate(
+                {
+                    "version": 1,
+                    "intent": helper_i,
+                    "binding": hb,
+                    "creation_receipt": hcpt,
+                    "id_chain": hcpt["id_chain"],
+                    "evidence": {
+                        "evidence": eb,
+                        "signature": encode(
+                            helper_issuer.sign(
+                                domain("identity_evidence") + canonical(eb)
+                            )
+                        ),
+                    },
+                },
+                trust=helper_t,
+                requester=helper_caller,
+            )
+            actor = (helper_w, helper_t, hb, hcpt, hs)
+        r = {
+            "version": 1,
+            "purpose": "act_approval",
+            "organisation": trust.organisation,
+            "approver": actor[1].person,
+            "requester": intent["intent"]["requester"],
+            "enforcer": {"audience": "https://holder.example.test"},
+            "definition": definition_ref("human.enrollment.replace"),
+            "act": {
+                "operation": "human.enrollment.replace",
+                "target": {
+                    "person": trust.person,
+                    "before": {
+                        "certificate": trust.certificate,
+                        "identity_key": trust.identity_key,
+                        "binding_commitment": commitment("binding_commitment", old_b),
+                    },
+                    "after": {
+                        "certificate": after.certificate,
+                        "identity_key": after.identity_key,
+                        "binding_commitment": commitment("binding_commitment", b),
+                    },
+                    "continuity": mode,
+                },
+                "expected_revision": 1,
+            },
+            "not_before": int(time.time()) - 1,
+            "deadline": int(time.time()) + 120,
+            "nonce": {"kid": "issuer", "value": ""},
+        }
+        r["nonce"]["value"] = encode(
+            hmac.digest(
+                b"native-transition-enforcer-secret",
+                domain("nonce") + canonical(r),
+                "sha256",
+            )
+        )
+        receipt = await approve_transition(store, actor, r, caller)
+        value["transition_receipt"] = receipt
+        transition["approval_receipt_commitment"] = commitment(
+            "receipt_commitment", receipt
+        )
+        assert e["creation"] == old_e["evidence"]["creation"]
+    value["evidence"] = {
+        "evidence": e,
+        "signature": encode(issuer.sign(domain("identity_evidence") + canonical(e))),
+    }
+    if mode == "unbroken":
+        from approval_service.canonical import parse
+        from approval_service.encoding import decode
+
+        assert parse(decode(c["request_bytes"]))["requester"] == original_requester
+        assert intent["intent"]["requester"] == original_requester
+        with pytest.raises(Refused, match="requester_mismatch"):
+            await service.activate(value, trust=after, requester=caller)
+        carrier = {"kind": "identity", "id": after.person, "key": after.identity_key}
+        value["carrier"] = carrier
+        caller = AdmittedRequester(
+            canonical(carrier), after.identity_key, int(time.time())
+        )
+    assert (await service.activate(value, trust=after, requester=caller))[
+        "state"
+    ] == "active"
+    assert (await service.activate(value, trust=after, requester=caller))[
+        "state"
+    ] == "active"
+    rows = await store.db.fetch_all(
+        "SELECT state,enrollment_locator FROM {{tables.approval_enrollments}} WHERE organisation=$1 AND person_id=$2",
+        trust.organisation,
+        trust.person,
+    )
+    assert {row["enrollment_locator"]: row["state"] for row in rows} == {
+        old_start["locator"]: "retired",
+        started["locator"]: "active",
+    }
+    ceremonies = Ceremonies(store, origin=ORIGIN, rp_id=RP)
+    options = await ceremonies.login_options()
+    with pytest.raises(Refused, match="credential_not_enrolled"):
+        await ceremonies.finish_login(
+            options["id"],
+            login_assertion(old_w, options),
+            old_start["public_key"]["user"]["id"],
+            after,
+        )
+    new_w["receipt"].update(binding=b, id_chain=c["id_chain"])
+    options = await ceremonies.login_options()
+    assert (
+        await ceremonies.finish_login(
+            options["id"],
+            login_assertion(new_w, options),
+            started["public_key"]["user"]["id"],
+            after,
+        )
+    )["session"]

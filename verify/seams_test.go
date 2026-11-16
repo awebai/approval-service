@@ -96,6 +96,19 @@ func TestIssuerEnrollmentSeam(t *testing.T) {
 					checked, e = CheckCreationProof(object(object(c, "activation"), "creation_receipt"), object(c, "intent"), in, map[string][]byte{"k1": secret})
 				}
 				if text(c, "phase") == "activation" {
+					if presenter, ok := c["presenter"].(map[string]any); ok {
+						in.Requester = presenter
+					}
+					if auth, ok := c["activation_authorization"].(string); ok {
+						raw, err := Canonical(c["activation"])
+						if err != nil {
+							t.Fatal(err)
+						}
+						_, err = CheckHTTP(auth, raw, HTTPInput{Requester: in.Requester, Origin: in.Origin, Method: "POST", Path: "/v1/enrollments/activate", Purpose: "enrollment_activate", Now: in.Now})
+						if err != nil {
+							t.Fatalf("carrier signature did not verify: %v", err)
+						}
+					}
 					checked, e = CheckActivation(object(c, "activation"), in)
 				}
 			}

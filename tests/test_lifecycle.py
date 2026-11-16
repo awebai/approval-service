@@ -51,3 +51,18 @@ def test_lifecycle_shared_construction(case):
         with pytest.raises(Refused) as error:
             run()
         assert error.value.code == case["expected_error"]
+
+
+def test_previous_creation_receipts_are_real_checked_constructions():
+    from approval_service.canonical import parse
+    from approval_service.verify import verify_historical
+
+    for case in CASES:
+        if case["accept"]:
+            c = case["previous_creation_receipt"]
+            checked = verify_historical(
+                c,
+                expected_request=parse(decode(c["request_bytes"])),
+                trust=trust(case["previous"]["trust"]),
+            )
+            assert checked.person == case["previous"]["trust"]["person"]

@@ -107,10 +107,22 @@ def test_issuer_service_enrollment_shared_construction(case):
                 nonce_keys={"k1": decode(case["nonce_key"])},
             )
         if case["phase"] == "activation":
+            carrier = case.get("presenter", case["requester"])
+            if "activation_authorization" in case:
+                check_http(
+                    case["activation_authorization"],
+                    canonical(case["activation"]),
+                    requester=carrier,
+                    origin=case["origin"],
+                    method="POST",
+                    path="/v1/enrollments/activate",
+                    purpose="enrollment_activate",
+                    now=case["now"],
+                )
             return check_activation(
                 case["activation"],
                 issuer_key=case["issuer_key"],
-                requester=case["requester"],
+                requester=carrier,
                 origin=case["origin"],
                 rp_id=case["rp_id"],
                 now=case["now"],
