@@ -260,7 +260,13 @@ async def approve_transition(store, actor, request, caller):
         ("recreated", True),
         ("assisted-retired-helper", False),
     ],
-    ids=["unbroken", "assisted", "recreated", "recreated-without-old-history"],
+    ids=[
+        "unbroken",
+        "assisted",
+        "recreated",
+        "recreated-without-old-history",
+        "retired-helper-refused",
+    ],
 )
 async def test_real_replacement_activation_retires_only_the_old_generation(
     store, mode, missing_history
@@ -283,8 +289,8 @@ async def test_real_replacement_activation_retires_only_the_old_generation(
     )
     old_e = json.loads(before["evidence"])
     if missing_history:
-        # 118 stored B but not E. Reproduce that metadata state, while all
-        # credentials and sessions still come from the real enrollment path.
+        # Missing public history is not a new authority source. Credentials
+        # and sessions still come from the real enrollment path.
         await store.db.execute(
             "UPDATE {{tables.approval_enrollments}} SET evidence=NULL WHERE enrollment_locator=$1",
             old_start["locator"],
@@ -470,7 +476,7 @@ async def test_real_replacement_activation_retires_only_the_old_generation(
     }
     if retired_helper:
         # Retire the helper via a complete real recovery, not a flag/SQL seed.
-        helper_after = await recover_actor(service, store, helper_t, hb, helper_w)
+        helper_after = await recover_actor(service, store, helper_t, hb)
         from receipts import assertion
 
         from approval_service.verify import verify_for_effect, verify_historical
@@ -564,7 +570,7 @@ async def test_real_replacement_activation_retires_only_the_old_generation(
     )["session"]
 
 
-async def recover_actor(service, store, trust, binding, world):
+async def recover_actor(service, store, trust, binding):
     """A real new generation makes the old helper credential withdrawn."""
     import json
 

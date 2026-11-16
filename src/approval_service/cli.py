@@ -45,7 +45,7 @@ async def operate(args):
         # Refuse startup without the current schema; a server never applies it.
         row = await store.db.fetch_one(
             "SELECT count(*) AS n FROM {{tables.schema_migrations}} WHERE module_name='awsign' AND filename=$1",
-            "002_enrollment_generations.sql",
+            "001_initial.sql",
         )
         if row["n"] != 1:
             raise RuntimeError("Run awsign migrate before starting this service")

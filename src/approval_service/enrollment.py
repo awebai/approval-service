@@ -650,14 +650,18 @@ class Enrollments:
                 previous = self._historical_state(version, before)
                 receipt = value.get("transition_receipt")
                 if receipt is not None:
-                    # A helper must have a previously committed enrollment at
-                    # this service. Pending signed B is not a trust anchor.
+                    # A helper must still be active. Only the target's exact
+                    # BEFORE generation may be retired, for an idempotent
+                    # retry of its own unbroken replacement.
                     proof_version = await tx.fetch_one(
                         """SELECT v.*,e.state,e.evidence FROM {{tables.approval_binding_versions}} v
                         JOIN {{tables.approval_enrollments}} e ON e.enrollment_locator=v.enrollment_locator
-                        WHERE v.digest=$1 AND v.organisation=$2 AND e.state IN ('active','retired')""",
+                        WHERE v.digest=$1 AND v.organisation=$2 AND v.digest=e.binding_ref
+                        AND (e.state='active' OR (e.state='retired' AND e.enrollment_locator=$3 AND e.person_id=$4))""",
                         commitment("binding_commitment", receipt["binding"]),
                         trust.organisation,
+                        before["enrollment_locator"],
+                        trust.person,
                     )
                     if proof_version is None:
                         raise Refused("transition_receipt_unavailable")

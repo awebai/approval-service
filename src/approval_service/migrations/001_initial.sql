@@ -1,4 +1,4 @@
--- The service has not been deployed: one initial, organisation-scoped schema.
+-- Initial organisation-scoped enrollment generations and decision state.
 CREATE TABLE approval_enrollments (
     organisation text NOT NULL,
     person_id text NOT NULL,
@@ -16,15 +16,21 @@ CREATE TABLE approval_enrollments (
     browser_deadline bigint,
     confirmation_id text,
     admission jsonb,
-    PRIMARY KEY (organisation,person_id)
+    previous_locator text,
+    evidence jsonb,
+    PRIMARY KEY (organisation,person_id,enrollment_locator),
+    FOREIGN KEY(organisation,person_id,previous_locator) REFERENCES approval_enrollments(organisation,person_id,enrollment_locator)
 );
+CREATE UNIQUE INDEX approval_one_active_enrollment ON approval_enrollments(organisation,person_id) WHERE state='active';
+CREATE UNIQUE INDEX approval_one_pending_enrollment ON approval_enrollments(organisation,person_id) WHERE state='pending';
 CREATE TABLE approval_binding_versions (
     digest text PRIMARY KEY,
     organisation text NOT NULL,
     person_id text NOT NULL,
     binding jsonb NOT NULL,
     id_chain jsonb NOT NULL,
-    FOREIGN KEY (organisation,person_id) REFERENCES approval_enrollments(organisation,person_id)
+    enrollment_locator text NOT NULL,
+    FOREIGN KEY (organisation,person_id,enrollment_locator) REFERENCES approval_enrollments(organisation,person_id,enrollment_locator)
 );
 CREATE TABLE approval_credentials (
     organisation text NOT NULL,
@@ -39,9 +45,10 @@ CREATE TABLE approval_credentials (
     registration jsonb,
     client_extension_results jsonb,
     binding_entry jsonb NOT NULL,
-    PRIMARY KEY(organisation,person_id,credential_id),
-    UNIQUE(organisation,person_id,public_key),
-    FOREIGN KEY (organisation,person_id) REFERENCES approval_enrollments(organisation,person_id)
+    enrollment_locator text NOT NULL,
+    PRIMARY KEY(organisation,person_id,enrollment_locator,credential_id),
+    UNIQUE(organisation,person_id,enrollment_locator,public_key),
+    FOREIGN KEY (organisation,person_id,enrollment_locator) REFERENCES approval_enrollments(organisation,person_id,enrollment_locator)
 );
 CREATE TABLE approval_requests (
     organisation text NOT NULL,
@@ -83,8 +90,9 @@ CREATE TABLE approval_sessions (
     csrf_hash text NOT NULL,
     deadline bigint NOT NULL,
     retired boolean NOT NULL DEFAULT false,
+    enrollment_locator text NOT NULL,
     PRIMARY KEY(organisation,person_id,token_hash),
-    FOREIGN KEY(organisation,person_id,credential_id) REFERENCES approval_credentials(organisation,person_id,credential_id)
+    FOREIGN KEY(organisation,person_id,enrollment_locator,credential_id) REFERENCES approval_credentials(organisation,person_id,enrollment_locator,credential_id)
 );
 CREATE TABLE approval_challenges (
     challenge_id text PRIMARY KEY,
@@ -97,9 +105,11 @@ CREATE TABLE approval_challenges (
     issued_at bigint NOT NULL,
     deadline bigint NOT NULL,
     consumed boolean NOT NULL DEFAULT false,
-    FOREIGN KEY(organisation,person_id) REFERENCES approval_enrollments(organisation,person_id),
+    enrollment_locator text,
+    FOREIGN KEY(organisation,person_id,enrollment_locator) REFERENCES approval_enrollments(organisation,person_id,enrollment_locator),
     FOREIGN KEY(organisation,person_id,operation_id) REFERENCES approval_requests(organisation,person_id,operation_id),
     CHECK ((organisation IS NOT NULL AND person_id IS NOT NULL) OR (organisation IS NULL AND person_id IS NULL AND purpose='login')),
+    CHECK ((person_id IS NULL AND enrollment_locator IS NULL) OR (person_id IS NOT NULL AND enrollment_locator IS NOT NULL)),
     CHECK (deadline>issued_at)
 );
 ALTER TABLE approval_enrollments ADD CONSTRAINT enrollment_confirmation_scope

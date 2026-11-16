@@ -141,8 +141,8 @@ requires revoking that ID and creating a new one.
 The `enrollment-lifecycle-v1` vectors cover the shared Python/Go activation
 checks. Previous enrollment state and historical transition Trust are checked
 inputs, not receipt-supplied authority. The service takes them from previously
-committed binding versions. An older installation that did not store E can
-receive the issuer-authenticated saved public E from its requester; it does not
+committed binding versions. Unavailable prior E can be supplied as the
+issuer-authenticated saved public statement from its requester; it does not
 reconstruct it from an act archive. Recovery can explicitly record unavailable
 prior history while starting a new evidence history after the break.
 

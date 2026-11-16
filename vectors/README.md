@@ -103,7 +103,7 @@ assertion is checked under independently trusted historical input; the helper
 is not relabelled as the target. The enforcer still checks current permission,
 its own nonce/deadline and atomic application of the effect. Activation is not
 that effect. `previous_evidence` optionally carries the requester's saved public
-statement when an older service did not retain it; it is verified under the
+statement when prior history is unavailable; it is verified under the
 known prior issuer and binding, never a supplied trust root.
 
 The `previous.trust` and `transition_trust` entries in these vectors represent
