@@ -23,7 +23,7 @@ from nacl.signing import SigningKey
 from .canonical import canonical, parse
 from .definitions import check_definition
 from .encoding import decode, encode
-from .verify import Refused, verify_for_effect, verify_historical
+from .verify import Refused, _check_nonce, verify_for_effect, verify_historical
 from .wire import SCHEMA, domain, validate, validate_site
 
 
@@ -180,31 +180,12 @@ def check_activation(value, *, issuer_key, requester, origin, rp_id, now, trust)
         ):
             raise Refused("enrollment_identity_mismatch")
         c = value["creation_receipt"]
-        raw = decode(c["request_bytes"])
-        r = parse(raw)
-        validate("request", r)
-        if r["purpose"] != "enrollment_confirmation":
-            raise Refused("purpose_invalid")
-        if canonical(r["requester"]) != canonical(requester):
-            raise Refused("requester_mismatch")
-        if not r["not_before"] <= now < r["deadline"]:
-            raise Refused("request_expired")
         if canonical(c["binding"]) != canonical(value["binding"]):
             raise Refused("binding_mismatch")
-        check_definition(r)
-        checked = verify_historical(c, expected_request=r, trust=trust)
-        if checked.origin != origin:
-            raise Refused("origin_invalid")
+        checked, bh, _r = _creation_assertion(
+            c, requester=requester, origin=origin, now=now, trust=trust
+        )
         b = value["binding"]["binding"]
-        bh = commitment("binding_commitment", value["binding"])
-        target = r["act"].get("target", {})
-        if (
-            target.get("person"),
-            target.get("certificate"),
-            target.get("identity_key"),
-            target.get("binding_commitment"),
-        ) != (trust.person, trust.certificate, trust.identity_key, bh):
-            raise Refused("creation_target_mismatch")
         if canonical(value["id_chain"]) != canonical(c["id_chain"]):
             raise Refused("identity_chain_mismatch")
         # The caller's read_trust validated this chain against public status.
@@ -320,3 +301,84 @@ def make_needs_human(request, *, origin):
         "request_bytes": encode(raw),
         "digest": hashlib.sha256(domain("request") + raw).hexdigest(),
     }
+
+
+def _creation_assertion(receipt, *, requester, origin, now, trust):
+    validate("receipt", receipt)
+    request = parse(decode(receipt["request_bytes"]))
+    check_definition(request)
+    if request["purpose"] != "enrollment_confirmation":
+        raise Refused("purpose_invalid")
+    if canonical(request["requester"]) != canonical(requester):
+        raise Refused("requester_mismatch")
+    if not request["not_before"] <= now < request["deadline"]:
+        raise Refused("request_expired")
+    checked = verify_historical(receipt, expected_request=request, trust=trust)
+    if checked.origin != origin:
+        raise Refused("origin_invalid")
+    bh = commitment("binding_commitment", receipt["binding"])
+    target = request["act"]["target"]
+    if (
+        target["person"],
+        target["certificate"],
+        target["identity_key"],
+        target["binding_commitment"],
+    ) != (trust.person, trust.certificate, trust.identity_key, bh):
+        raise Refused("creation_target_mismatch")
+    return checked, bh, request
+
+
+def check_creation_proof(
+    receipt,
+    *,
+    intent,
+    issuer_key,
+    requester,
+    origin,
+    rp_id,
+    now,
+    pending_trust,
+    nonce_keys,
+):
+    """Issuer-only check BEFORE public issuance; result remains pending.
+
+    pending_trust combines the exact issuer-signed pending certificate/key with
+    independently checked CURRENT issuer authority and its observation time.
+    It is NOT a claim that the person is already in the registry. The issuer
+    still owns enrollment authorization and atomic nonce/certificate issuance.
+    """
+    try:
+        pending = check_enrollment_intent(
+            intent,
+            issuer_key=issuer_key,
+            requester=requester,
+            origin=origin,
+            rp_id=rp_id,
+            now=now,
+        )
+        trust = pending_trust
+        if trust is None or not 0 <= now - trust.observed_at <= 60:
+            raise Refused("issuer_unavailable")
+        if (trust.person, trust.certificate, trust.identity_key, trust.issuer) != (
+            pending["person"],
+            pending["certificate"],
+            pending["identity_key"],
+            issuer_key,
+        ):
+            raise Refused("enrollment_identity_mismatch")
+        checked, bh, request = _creation_assertion(
+            receipt, requester=requester, origin=origin, now=now, trust=trust
+        )
+        _check_nonce(request, nonce_keys)
+        return {
+            "person": trust.person,
+            "state": "pending",
+            "binding_commitment": bh,
+            "credential": checked.credential,
+            "grade": checked.grade,
+            "digest": checked.digest,
+        }
+    except Refused:
+        raise
+    except (ValueError, KeyError, TypeError, ValidationError) as exc:
+        raise Refused("creation_invalid") from exc

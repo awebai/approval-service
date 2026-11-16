@@ -347,11 +347,18 @@ func VerifyForEffect(receipt map[string]any, in EffectInputs) (CheckedApproval, 
 	if !ok || grades[out.Grade] < required {
 		return out, refuse("grade_insufficient")
 	}
+	if e = checkNonce(request, in.NonceKeys); e != nil {
+		return out, e
+	}
+	return out, nil
+}
+
+func checkNonce(request map[string]any, keys map[string][]byte) error {
 	nonce := object(request, "nonce")
 	kid := text(nonce, "kid")
-	secret := in.NonceKeys[kid]
+	secret := keys[kid]
 	if len(secret) == 0 {
-		return out, refuse("nonce_invalid")
+		return refuse("nonce_invalid")
 	}
 	core := map[string]any{}
 	for k, v := range request {
@@ -360,14 +367,14 @@ func VerifyForEffect(receipt map[string]any, in EffectInputs) (CheckedApproval, 
 	core["nonce"] = map[string]any{"kid": kid, "value": ""}
 	payload, e := Canonical(core)
 	if e != nil {
-		return out, e
+		return e
 	}
 	mac := hmac.New(sha256.New, secret)
 	mac.Write(domain("nonce"))
 	mac.Write(payload)
 	value, e := decode(text(nonce, "value"))
 	if e != nil || !hmac.Equal(value, mac.Sum(nil)) {
-		return out, refuse("nonce_invalid")
+		return refuse("nonce_invalid")
 	}
-	return out, nil
+	return nil
 }

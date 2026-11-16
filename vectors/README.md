@@ -24,7 +24,9 @@ original deadlines. A checked signature is not current requester admission.
 `issuer-service-enrollment-v1.json` pins the exact issuer-signed intent, proposed
 ID certificate and issuer challenge, pending binding, separate creation
 assertion/receipt and acyclic issuer-signed human creation evidence. The intent
-only produces `pending`; activation also requires the independently acquired,
+only produces `pending`; the issuer's shared creation-proof check validates its
+own nonce/deadline and still returns pending. It consumes the nonce with its
+certificate-issuance transaction. Activation also requires the independently acquired,
 current COMMITTED identity Trust and matching evidence/proof. The service must
 compare the credential set against its private pending registration rows. The
 same shared registration verifier checks the raw create response at service and

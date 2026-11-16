@@ -160,6 +160,7 @@ type EnrollmentInput struct {
 	Trust        *Trust
 }
 type CheckedEnrollment struct {
+	Credential, Grade, Digest                                           string
 	Person, Certificate, IdentityKey, State, Locator, BindingCommitment string
 	Preimage                                                            []byte
 }
@@ -230,44 +231,13 @@ func CheckActivation(value map[string]any, in EnrollmentInput) (CheckedEnrollmen
 		return bad("enrollment_identity_mismatch")
 	}
 	receipt := object(value, "creation_receipt")
-	raw, e := decode(text(receipt, "request_bytes"))
-	if e != nil {
-		return bad("activation_invalid")
-	}
-	r, e := Parse(raw)
-	if e != nil || validate("request", r) != nil {
-		return bad("activation_invalid")
-	}
-	if text(r, "purpose") != "enrollment_confirmation" {
-		return bad("purpose_invalid")
-	}
-	if !equalValue(r["requester"], in.Requester) {
-		return bad("requester_mismatch")
-	}
-	if in.Now < number(r, "not_before") || in.Now >= number(r, "deadline") {
-		return bad("request_expired")
-	}
 	if !equalValue(receipt["binding"], value["binding"]) {
 		return bad("binding_mismatch")
 	}
-	if e = CheckDefinition(r); e != nil {
-		return out, e
-	}
-	checked, e := VerifyHistorical(receipt, r, *trust)
+	checked, bh, _r, e := creationAssertion(receipt, in)
+	_ = _r
 	if e != nil {
 		return out, e
-	}
-	if checked.Origin != in.Origin {
-		return bad("origin_invalid")
-	}
-	bh, e := Commitment("binding_commitment", value["binding"])
-	if e != nil {
-		return bad("activation_invalid")
-	}
-	act := object(r, "act")
-	target, ok := act["target"].(map[string]any)
-	if !ok || target["person"] != trust.Person || target["certificate"] != trust.Certificate || target["identity_key"] != trust.IdentityKey || target["binding_commitment"] != bh {
-		return bad("creation_target_mismatch")
 	}
 	if !equalValue(value["id_chain"], receipt["id_chain"]) {
 		return bad("identity_chain_mismatch")
@@ -381,4 +351,70 @@ func MakeNeedsHuman(request map[string]any, origin string) (int, map[string]any,
 	}
 	d := sha256.Sum256(append(domain("request"), raw...))
 	return int(wireSchema["x-enforcer"].(map[string]any)["needs_human_status"].(float64)), map[string]any{"version": json.Number("1"), "status": "needs_human", "approval_origin": origin, "request_bytes": base64.RawURLEncoding.EncodeToString(raw), "digest": hex.EncodeToString(d[:])}, nil
+}
+
+func creationAssertion(receipt map[string]any, in EnrollmentInput) (CheckedApproval, string, map[string]any, error) {
+	var out CheckedApproval
+	bad := func(code string) (CheckedApproval, string, map[string]any, error) { return out, "", nil, refuse(code) }
+	if validate("receipt", receipt) != nil {
+		return bad("creation_invalid")
+	}
+	raw, e := decode(text(receipt, "request_bytes"))
+	if e != nil {
+		return bad("creation_invalid")
+	}
+	r, e := Parse(raw)
+	if e != nil || validate("request", r) != nil {
+		return bad("creation_invalid")
+	}
+	if e = CheckDefinition(r); e != nil {
+		return out, "", nil, e
+	}
+	if text(r, "purpose") != "enrollment_confirmation" {
+		return bad("purpose_invalid")
+	}
+	if !equalValue(r["requester"], in.Requester) {
+		return bad("requester_mismatch")
+	}
+	if in.Now < number(r, "not_before") || in.Now >= number(r, "deadline") {
+		return bad("request_expired")
+	}
+	checked, e := VerifyHistorical(receipt, r, *in.Trust)
+	if e != nil {
+		return out, "", nil, e
+	}
+	if checked.Origin != in.Origin {
+		return bad("origin_invalid")
+	}
+	bh, e := Commitment("binding_commitment", receipt["binding"])
+	if e != nil {
+		return bad("creation_invalid")
+	}
+	target := object(object(r, "act"), "target")
+	if target["person"] != in.Trust.Person || target["certificate"] != in.Trust.Certificate || target["identity_key"] != in.Trust.IdentityKey || target["binding_commitment"] != bh {
+		return bad("creation_target_mismatch")
+	}
+	return checked, bh, r, nil
+}
+func CheckCreationProof(receipt, intent map[string]any, in EnrollmentInput, nonceKeys map[string][]byte) (CheckedEnrollment, error) {
+	var out CheckedEnrollment
+	pending, e := CheckEnrollmentIntent(intent, in)
+	if e != nil {
+		return out, e
+	}
+	t := in.Trust
+	if t == nil || in.Now < t.ObservedAt || in.Now-t.ObservedAt > 60 {
+		return out, refuse("issuer_unavailable")
+	}
+	if t.Person != pending.Person || t.Certificate != pending.Certificate || t.IdentityKey != pending.IdentityKey || t.Issuer != in.IssuerKey {
+		return out, refuse("enrollment_identity_mismatch")
+	}
+	checked, bh, r, e := creationAssertion(receipt, in)
+	if e != nil {
+		return out, e
+	}
+	if e = checkNonce(r, nonceKeys); e != nil {
+		return out, e
+	}
+	return CheckedEnrollment{Person: t.Person, State: "pending", BindingCommitment: bh, Credential: checked.Credential, Grade: checked.Grade, Digest: checked.Digest}, nil
 }

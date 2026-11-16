@@ -71,6 +71,13 @@ func TestIssuerEnrollmentSeam(t *testing.T) {
 				if checked.Locator != text(c, "expected_locator") || !bytes.Equal(checked.Preimage, want) {
 					t.Fatal("wrong intent bytes/locator")
 				}
+				if text(c, "phase") == "creation" {
+					if presenter, ok := c["presenter"].(map[string]any); ok {
+						in.Requester = presenter
+					}
+					secret, _ := decode(text(c, "nonce_key"))
+					checked, e = CheckCreationProof(object(object(c, "activation"), "creation_receipt"), object(c, "intent"), in, map[string][]byte{"k1": secret})
+				}
 				if text(c, "phase") == "activation" {
 					checked, e = CheckActivation(object(c, "activation"), in)
 				}
@@ -83,6 +90,9 @@ func TestIssuerEnrollmentSeam(t *testing.T) {
 			}
 			if e == nil && (checked.Person != text(c, "expected_person") || checked.State != text(c, "expected_state")) {
 				t.Fatal("wrong person or pending/active boundary")
+			}
+			if e == nil && text(c, "phase") == "creation" && (checked.Credential != text(c, "expected_credential") || checked.Grade != text(c, "expected_grade") || checked.Digest != text(c, "expected_digest")) {
+				t.Fatal("wrong checked creation credential/grade/digest")
 			}
 		})
 	}

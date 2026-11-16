@@ -516,6 +516,37 @@ enrollment_cases.append(
     }
 )
 
+# The issuer checks creation BEFORE a public person exists. Checking the
+# assertion/nonce does not activate the pending service enrollment.
+creation_base = copy.deepcopy(
+    next(c for c in enrollment_cases if c["id"] == "activation-valid")
+)
+for fault in ["valid", "wrong-nonce", "wrong-presenter", "expired"]:
+    c = copy.deepcopy(creation_base)
+    c.update(
+        expected_credential=credential["id"],
+        expected_grade=credential["grade"],
+        expected_digest=hashlib.sha256(
+            domain("request") + canon(confirmation)
+        ).hexdigest(),
+        id="issuer-creation-" + fault,
+        phase="creation",
+        accept=fault == "valid",
+        expected_state="pending",
+        nonce_key=b64(secret),
+        trust_source="current issuer plus exact pending certificate; not current person membership",
+    )
+    if fault == "wrong-nonce":
+        c["nonce_key"] = b64(b"other-secret")
+        c["expected_error"] = "nonce_invalid"
+    elif fault == "wrong-presenter":
+        c["presenter"] = {**controller, "key": did(person_key)}
+        c["expected_error"] = "requester_mismatch"
+    elif fault == "expired":
+        c["now"] = 1300
+        c["expected_error"] = "enrollment_expired"
+    enrollment_cases.append(c)
+
 # 3. Enforcer's challenge answer -> exact requester presentation and live proof.
 needs = {
     "version": 1,

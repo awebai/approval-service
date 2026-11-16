@@ -305,15 +305,19 @@ def verify_for_effect(
             or GRADES[result.grade] < GRADES[required_grade]
         ):
             raise Refused("grade_insufficient")
-        nonce = request["nonce"]
-        _closed(nonce, "kid value")
-        secret = nonce_keys.get(nonce["kid"])
-        if not secret:
-            raise Refused("nonce_invalid")
-        core = {**request, "nonce": {"kid": nonce["kid"], "value": ""}}
-        expected = hmac.digest(secret, NONCE_PREFIX + canonical(core), "sha256")
-        if not hmac.compare_digest(decode(nonce["value"]), expected):
-            raise Refused("nonce_invalid")
+        _check_nonce(request, nonce_keys)
         return result
     except (InvalidJSON, EncodingError, ValidationError) as exc:
         raise Refused("invalid_encoding") from exc
+
+
+def _check_nonce(request, nonce_keys):
+    nonce = request["nonce"]
+    _closed(nonce, "kid value")
+    secret = nonce_keys.get(nonce["kid"])
+    if not secret:
+        raise Refused("nonce_invalid")
+    core = {**request, "nonce": {"kid": nonce["kid"], "value": ""}}
+    expected = hmac.digest(secret, NONCE_PREFIX + canonical(core), "sha256")
+    if not hmac.compare_digest(decode(nonce["value"]), expected):
+        raise Refused("nonce_invalid")

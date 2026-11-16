@@ -9,6 +9,7 @@ from approval_service.canonical import canonical
 from approval_service.encoding import decode
 from approval_service.seams import (
     check_activation,
+    check_creation_proof,
     check_enrollment_intent,
     check_http,
     check_presentation,
@@ -88,6 +89,18 @@ def test_issuer_service_enrollment_shared_construction(case):
         )
         assert checked["locator"] == case["expected_locator"]
         assert checked["preimage"] == decode(case["expected_intent_preimage"])
+        if case["phase"] == "creation":
+            return check_creation_proof(
+                case["activation"]["creation_receipt"],
+                intent=case["intent"],
+                issuer_key=case["issuer_key"],
+                requester=case.get("presenter", case["requester"]),
+                origin=case["origin"],
+                rp_id=case["rp_id"],
+                now=case["now"],
+                pending_trust=trust(case["trust"]),
+                nonce_keys={"k1": decode(case["nonce_key"])},
+            )
         if case["phase"] == "activation":
             return check_activation(
                 case["activation"],
@@ -104,6 +117,10 @@ def test_issuer_service_enrollment_shared_construction(case):
     if case["accept"]:
         assert result["person"] == case["expected_person"]
         assert result["state"] == case["expected_state"]
+        if case["phase"] == "creation":
+            assert result["credential"] == case["expected_credential"]
+            assert result["grade"] == case["expected_grade"]
+            assert result["digest"] == case["expected_digest"]
 
 
 @pytest.mark.parametrize("case", corpus("enforcer-requester"), ids=lambda c: c["id"])
