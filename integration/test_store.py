@@ -1,6 +1,7 @@
 """Real PostgreSQL controls. Requires the isolated placement's database URL."""
 
 import pytest
+
 from approval_service.store import StoreRefused
 
 

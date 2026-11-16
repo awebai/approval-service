@@ -11,7 +11,7 @@ dependencies = [
     "httpx>=0.28,<1",
     "fastapi>=0.116,<1",
     "uvicorn>=0.35,<1",
-    "psycopg[binary]>=3.2,<4",
+    "pgdbm>=0.5,<0.6",
     "awid-service==0.5.40rc1",
 ]
 

@@ -9,7 +9,9 @@ import json
 import sys
 import time
 from pathlib import Path
+
 import pytest
+
 from approval_service.canonical import canonical
 from approval_service.ceremonies import Ceremonies
 from approval_service.encoding import decode
@@ -72,6 +74,7 @@ async def active_port(store):
 
 def login_assertion(w, options, *, uv=True):
     import copy
+
     from cryptography.hazmat.primitives import hashes
     from cryptography.hazmat.primitives.asymmetric import ec
 
