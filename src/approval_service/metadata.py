@@ -21,6 +21,29 @@ POLICY = json.loads(
 )
 
 
+METADATA_WARNING_SECONDS = 7 * 86400
+
+
+def metadata_health(snapshot, *, now):
+    """One operator warning rule, shared by the service and its monitor CLI."""
+    remaining = int((snapshot.valid_until - now).total_seconds())
+    warning = (
+        "metadata_expired"
+        if remaining <= 0
+        else "metadata_expiring"
+        if remaining <= METADATA_WARNING_SECONDS
+        else None
+    )
+    return {
+        "sequence": snapshot.sequence,
+        "digest": snapshot.digest,
+        "next_update": snapshot.next_update.isoformat(),
+        "valid_until": snapshot.valid_until.isoformat(),
+        "seconds_remaining": remaining,
+        "warning": warning,
+    }
+
+
 class MetadataRefused(ValueError):
     pass
 
@@ -60,10 +83,11 @@ class Snapshot:
     next_update: datetime
     entries: tuple[dict, ...]
     by_aaguid: dict[str, dict]
+    valid_until: datetime
 
     def model(self, aaguid, *, now, attestation_chain=(), authenticator_version=None):
         """Return one eligible model, or None (only passkey grade is established)."""
-        if now >= self.next_update:
+        if now >= min(self.next_update, self.valid_until):
             return None
         entry = self.by_aaguid.get(aaguid.lower())
         if entry is None:
@@ -149,6 +173,7 @@ def load_snapshot(
             .verify(certificates[0], certificates[1:])
         )
         revocations = [x509.load_der_x509_crl(raw) for raw in crls]
+        validation_deadlines = [c.not_valid_after_utc for c in chain]
         for certificate, parent in pairwise(chain):
             valid = []
             for crl in revocations:
@@ -172,6 +197,7 @@ def load_snapshot(
                 valid.append(crl)
             if not valid:
                 raise MetadataRefused("metadata_revocation_unavailable")
+            validation_deadlines.append(max(crl.next_update_utc for crl in valid))
             if any(
                 crl.get_revoked_certificate_by_serial_number(certificate.serial_number)
                 is not None
@@ -209,7 +235,14 @@ def load_snapshot(
                 if name in index:
                     raise MetadataRefused("metadata_model_duplicate")
                 index[name] = entry
-        return Snapshot(blob_sha256, sequence, next_update, tuple(entries), index)
+        return Snapshot(
+            blob_sha256,
+            sequence,
+            next_update,
+            tuple(entries),
+            index,
+            min(next_update, *validation_deadlines),
+        )
     except MetadataRefused:
         raise
     except (

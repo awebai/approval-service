@@ -23,7 +23,7 @@ from urllib.parse import urlsplit
 
 import httpx
 
-from .metadata import load_snapshot
+from .metadata import load_snapshot, metadata_health
 
 
 class CacheRefused(ValueError):
@@ -84,15 +84,10 @@ def _read(path, limit):
     return raw
 
 
-def _artifact(client, cache, spec):
-    digest = spec["sha256"]
+def _download(client, spec):
+    """Bounded HTTPS fetch from trusted operator URLs; not yet a trusted artifact."""
     limit = spec["max_bytes"]
-    if (
-        not isinstance(digest, str)
-        or not re.fullmatch("[0-9a-f]{64}", digest)
-        or type(limit) is not int
-        or not 1 <= limit <= 33554432
-    ):
+    if type(limit) is not int or not 1 <= limit <= 33554432:
         raise CacheRefused("artifact_pin_invalid")
     uri = urlsplit(spec["url"])
     if (
@@ -103,20 +98,33 @@ def _artifact(client, cache, spec):
         or uri.fragment
     ):
         raise CacheRefused("artifact_url_invalid")
+    chunks = []
+    size = 0
+    with client.stream("GET", spec["url"]) as response:
+        response.raise_for_status()
+        for chunk in response.iter_bytes(65536):
+            size += len(chunk)
+            if size > limit:
+                raise CacheRefused("artifact_too_large")
+            chunks.append(chunk)
+    return b"".join(chunks)
+
+
+def _artifact(client, cache, spec):
+    digest = spec["sha256"]
+    limit = spec["max_bytes"]
+    if (
+        not isinstance(digest, str)
+        or not re.fullmatch("[0-9a-f]{64}", digest)
+        or type(limit) is not int
+        or not 1 <= limit <= 33554432
+    ):
+        raise CacheRefused("artifact_pin_invalid")
     target = cache / (digest + ".artifact")
     if target.exists():
         raw = _read(target, limit)
     else:
-        chunks = []
-        size = 0
-        with client.stream("GET", spec["url"]) as response:
-            response.raise_for_status()
-            for chunk in response.iter_bytes(65536):
-                size += len(chunk)
-                if size > limit:
-                    raise CacheRefused("artifact_too_large")
-                chunks.append(chunk)
-        raw = b"".join(chunks)
+        raw = _download(client, spec)
         if hashlib.sha256(raw).hexdigest() != digest:
             raise CacheRefused("artifact_pin_mismatch")
         _atomic(target, raw)
@@ -185,18 +193,18 @@ def main():
     )
     parser.add_argument("--cache-dir", type=Path, required=True)
     parser.add_argument("--manifest", type=Path)
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="exit 2 when a verified input expires within seven days",
+    )
     args = parser.parse_args()
     manifest = json.loads(args.manifest.read_text()) if args.manifest else None
     snapshot = fetch_and_pin(args.cache_dir, manifest=manifest)
-    print(
-        json.dumps(
-            {
-                "digest": snapshot.digest,
-                "sequence": snapshot.sequence,
-                "next_update": snapshot.next_update.isoformat(),
-            }
-        )
-    )
+    report = metadata_health(snapshot, now=datetime.now(UTC))
+    print(json.dumps(report))
+    if args.check and report["warning"] is not None:
+        raise SystemExit(2)
 
 
 if __name__ == "__main__":

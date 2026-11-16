@@ -1,0 +1,64 @@
+name: Review metadata pin renewal
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: metadata-pin-renewal
+  cancel-in-progress: false
+jobs:
+  propose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PIN_BRANCH: automation/metadata-pin
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
+      - run: uv sync --frozen --python 3.13
+      - name: Verify the current upstream against the existing pinned root
+        run: |
+          uv run python -m approval_service.metadata_update \
+            --manifest src/approval_service/data/mds-pin-v1.json \
+            --cache-dir "$RUNNER_TEMP/verified-metadata"
+          uv run python -m approval_service.metadata_cache \
+            --manifest src/approval_service/data/mds-pin-v1.json \
+            --cache-dir "$RUNNER_TEMP/verified-metadata"
+      - name: Open or update the review request; never merge or deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          PIN_FILE=src/approval_service/data/mds-pin-v1.json
+          if git diff --quiet -- "$PIN_FILE"; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          EXPECTED=''
+          if git ls-remote --exit-code --heads origin "$PIN_BRANCH" > "$RUNNER_TEMP/pin-ref"; then
+            read -r EXPECTED _ < "$RUNNER_TEMP/pin-ref"
+          fi
+          git switch -c "$PIN_BRANCH"
+          git add -- "$PIN_FILE"
+          git commit -m 'Renew verified FIDO metadata pins'
+          # Only this dedicated automation branch is replaced; the PR must be
+          # reviewed at its latest head. Main is never changed by this workflow.
+          git push --force-with-lease="refs/heads/$PIN_BRANCH:$EXPECTED" origin "HEAD:refs/heads/$PIN_BRANCH"
+          EXISTING=$(gh pr list --head "$PIN_BRANCH" --state open --json number --jq '.[0].number // empty')
+          if [ -z "$EXISTING" ]; then
+            cat > "$RUNNER_TEMP/metadata-pr.md" <<'BODY'
+          Verified the live blob and CRLs under the existing pinned root. Review
+          the sequence, deadlines and pin delta at this exact head. No root,
+          policy, release or deployment is changed. No vendor bytes are committed.
+
+          The approval-service maintainer reviews and lands this pin. Deployment
+          operators then install the reviewed pin, retain its external cache and
+          reload hardware grading before the earliest input deadline. A newer
+          automation run can replace this branch; review the latest head.
+          BODY
+            gh pr create --head "$PIN_BRANCH" --base main --title 'Renew verified FIDO metadata pins' --body-file "$RUNNER_TEMP/metadata-pr.md"
+          fi

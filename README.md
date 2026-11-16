@@ -88,3 +88,8 @@ APPROVAL_MDS_CACHE=/private/path/mds-cache uv run pytest -q artifact_tests
 
 That historical artifact check is not a current enrollment or physical-device
 qualification. Raw cached data stays private and outside the repository.
+
+Service enrollment uses the explicit operator policy in
+`approval_service.grading.EnrollmentGrading`; hardware input loading cannot fall
+back to passkey-only. The daily reviewed pin-renewal job and operator warning,
+cache and refresh responsibilities are in [deployment notes](docs/deployment.md).

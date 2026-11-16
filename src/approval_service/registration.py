@@ -208,8 +208,10 @@ def check_registration(response, *, expected_challenge, origin, rp_id, snapshot,
     attestation remains passkey grade. Invalid UP/UV/signature/binding refuses.
     """
     try:
-        if snapshot is not None and now>=snapshot.next_update:
+        if snapshot is not None and now >= snapshot.next_update:
             raise Refused("snapshot_expired")
+        if snapshot is not None and now >= snapshot.valid_until:
+            raise Refused("snapshot_validation_expired")
         validate_site(origin, rp_id)
         validate("registration", response)
         client = decode(response["client_data_json"])
