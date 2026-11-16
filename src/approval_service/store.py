@@ -181,26 +181,6 @@ class Store:
                 (person_id, now),
             ).fetchall()
 
-    def decide(self, operation_id, digest, requester_hash, assertion, binding_ref, now):
-        """Trusted storage primitive, not an approval API. Ceremonies use _terminal
-        inside their own single challenge/session/counter/decision transaction.
-        """
-        with self.connection() as conn, conn.transaction():
-            row = conn.execute(
-                "SELECT * FROM approval_requests WHERE operation_id=%s FOR UPDATE",
-                (operation_id,),
-            ).fetchone()
-            if row is None or (row["digest"], row["requester_hash"]) != (
-                digest,
-                requester_hash,
-            ):
-                raise StoreRefused("request_not_found")
-            if row["outcome"] != "pending":
-                raise StoreRefused("already_decided")
-            if now >= row["deadline"]:
-                raise StoreRefused("request_expired")
-            return self._terminal(conn, row, "approved", now, assertion, binding_ref)
-
     def refuse(self, operation_id, person_id, outcome, now):
         if outcome not in ("denied", "cancelled"):
             raise StoreRefused("invalid_outcome")

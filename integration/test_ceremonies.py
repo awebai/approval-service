@@ -16,6 +16,7 @@ from approval_service.canonical import canonical
 from approval_service.ceremonies import Ceremonies
 from approval_service.encoding import decode
 from approval_service.requester import AdmittedRequester
+from approval_service.store import StoreRefused
 from approval_service.verify import Refused, Trust
 
 sys.path.insert(0, str(Path(__file__).parents[1] / "tests"))
@@ -178,6 +179,21 @@ def test_login_never_approves_and_act_uv_is_single_consumed_and_recoverable(stor
         == saved["assertion"]
     )
     assert store.audit("operation")[0]["outcome"] == "approved"
+    assert store.pending(person) == []
+    with pytest.raises(StoreRefused):
+        store.poll(
+            "operation",
+            result["digest"],
+            "not-the-original-requester",
+            int(time.time()),
+        )
+    expired = store.poll(
+        "operation", result["digest"], requester.commitment, w["request"]["deadline"]
+    )
+    assert expired["outcome"] == "approved"
+    assert expired["assertion"] is None
+    assert expired["request_bytes"] is None
+    assert expired["receipt_available"] is False
 
 
 def test_no_uv_login_and_wrong_csrf_do_not_create_or_consume_authority(store):
