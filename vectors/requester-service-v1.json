@@ -653,6 +653,19 @@
       "mode": "read",
       "expected_error": "requester_mismatch",
       "expected_http_status": 403
+    },
+    {
+      "id": "poll-answer-missing-original-request",
+      "phase": "answer",
+      "kind": "poll",
+      "answer": "eyJhcHByb3ZhbCI6bnVsbCwiZGVhZGxpbmUiOjEzMDAsImRpZ2VzdCI6ImY2YzZjMjFhNGU1YzFmMDgwMWE2MjJiNTdlYWY1ZGUzZmQ2YzQ1NjAzOWU0NTE1YmE1MTAyNjE3ZDhmZGRmNWUiLCJsb2NhdG9yIjoicmVxdWVzdC1sb2NhdG9yLTEiLCJzdGF0ZSI6InBlbmRpbmciLCJ2ZXJzaW9uIjoxfQ",
+      "response_status": 200,
+      "request_bytes": null,
+      "intent": null,
+      "locator": "request-locator-1",
+      "accept": false,
+      "mode": "read",
+      "expected_error": "request_mismatch"
     }
   ]
 }
