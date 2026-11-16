@@ -129,7 +129,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "awid-service", specifier = "==0.5.40rc2" },
+    { name = "awid-service", specifier = "==0.5.39" },
     { name = "cbor2", specifier = ">=6.1.2,<7" },
     { name = "cryptography", specifier = ">=46,<51" },
     { name = "fastapi", specifier = ">=0.116,<1" },
@@ -149,7 +149,7 @@ dev = [
 
 [[package]]
 name = "awid-service"
-version = "0.5.40rc2"
+version = "0.5.39"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "base58" },
@@ -166,9 +166,9 @@ dependencies = [
     { name = "typer" },
     { name = "uvicorn", extra = ["standard"] },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/39/e0/9d3f04287b9a4709428945ee14702fa4086a58d51507ac4a90e97f1565d6/awid_service-0.5.40rc2.tar.gz", hash = "sha256:fda1a80014de0966f8898143ab5bdbc4f4879bd0fbe7533dcf71fab33d7c4b50", size = 501705, upload-time = "2026-11-14T17:40:45.571Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a7/49/cffe827479c51434a9716cbb865c20c236ab4e41c42a2eb420319c2928e5/awid_service-0.5.39.tar.gz", hash = "sha256:6df346ef36e5daa8c284020b004eac7f3f27d13042458c01a33f37d4403bf833", size = 457976, upload-time = "2026-11-11T14:19:03.561Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c9/4e/f1eb8f163e5ce059a27025ff57face9269286f6299468cc0c2a7c61de44a/awid_service-0.5.40rc2-py3-none-any.whl", hash = "sha256:ad66b0904a46029d2643bc17418c9fb799b6a4073dad5d5dfe1101e67421f28d", size = 209163, upload-time = "2026-11-14T17:40:44.373Z" },
+    { url = "https://files.pythonhosted.org/packages/2f/af/d46f85987c1bf2f52b9bbf2d4784d81dbeeb5452eb768e9d52d35f20a5e9/awid_service-0.5.39-py3-none-any.whl", hash = "sha256:41238e71d92cbe9ad5be9bb7f1ffa317ed9d55e0db7255e2599832c8ad43de30", size = 183155, upload-time = "2026-11-11T14:19:02.272Z" },
 ]
 
 [[package]]

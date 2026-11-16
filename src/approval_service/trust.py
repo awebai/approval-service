@@ -13,6 +13,7 @@ from dataclasses import dataclass
 
 from awid.did import public_key_from_did
 from awid.id_certificates import IDChainEvidence, id_certificate_id, verify_id_chain
+from awid.registry import CachedRegistryClient
 
 from .verify import Refused, Trust
 
@@ -94,10 +95,13 @@ def derive_trust(chain, *, person, identity_key, organisation, observation, now)
         raise Refused("identity_trust_invalid") from exc
 
 
-async def read_trust(registry, chain, *, person, identity_key, organisation):
+async def read_trust(
+    registry: CachedRegistryClient, chain, *, person, identity_key, organisation
+):
     """Use the configured AWID public resolver; no caller-provided status route.
 
-    A long-lived SDK CachedRegistryClient may serve a <=60s cached observation;
+    The production 0.5.39 CachedRegistryClient supplies this method (the plain
+    RegistryClient does not). A long-lived instance may serve a <=60s cached observation;
     its reported original age is retained. No protected/freshness extension or
     mutation is involved. Registry failures remain unavailable, never legacy.
     """

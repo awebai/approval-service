@@ -8,7 +8,8 @@ approval protocol; releases are held.
 Receipt verifiers take independently checked `Trust`; a binding carried in a
 receipt is not its own trust anchor. Python `approval_service.trust.read_trust`
 and Go `verify.ReadTrust` obtain public ID status and DNS authority through the
-configured AWID SDK resolver, then use the single chain-to-trust implementation
+configured AWID SDK resolver (Python uses the production 0.5.39
+`CachedRegistryClient` with Redis), then use the single chain-to-trust implementation
 in that language. Enforcers use this path rather than extracting keys from a
 receipt or writing their own chain/status interpretation.
 
