@@ -17,7 +17,7 @@ func TestSharedReceiptVectors(t *testing.T) {
 	if e = json.Unmarshal(raw, &f); e != nil {
 		t.Fatal(e)
 	}
-	if len(f.Cases) != 22 {
+	if len(f.Cases) != 24 {
 		t.Fatalf("missing vectors: %d", len(f.Cases))
 	}
 	for _, c := range f.Cases {

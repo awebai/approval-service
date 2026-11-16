@@ -12,10 +12,11 @@ from receipts import b64, canon, fixture, resign, signed_client
 out = root / "vectors/receipts.json"
 append_review = "--append-review" in sys.argv
 append_hostnames = "--append-hostnames" in sys.argv
-if out.exists() and not (append_review or append_hostnames):
+append_patterns = "--append-patterns" in sys.argv
+if out.exists() and not (append_review or append_hostnames or append_patterns):
     raise SystemExit("refuse to overwrite frozen vectors")
 cases = (
-    json.loads(out.read_text())["cases"] if (append_review or append_hostnames) else []
+    json.loads(out.read_text())["cases"] if (append_review or append_hostnames or append_patterns) else []
 )
 
 
@@ -38,7 +39,7 @@ def add(name, w, accept, now=1100, required_grade="passkey_uv"):
     )
 
 
-if not (append_review or append_hostnames):
+if not (append_review or append_hostnames or append_patterns):
     for algorithm in (-7, -8, -257):
         add("algorithm-" + str(algorithm), fixture(algorithm), True)
     for packaging in ("carried", "dropped", "superseded"):
@@ -80,7 +81,7 @@ if not (append_review or append_hostnames):
         False,
         required_grade="certified_hardware",
     )
-if not append_hostnames:
+if not (append_hostnames or append_patterns):
     # Six review regressions: each has a genuine issuer and assertion signature.
     import cbor2
 
@@ -151,6 +152,23 @@ if append_hostnames:
             )
         )
         add(name, w, False)
+if append_patterns:
+    import hmac
+    from receipts import NONCE_PREFIX
+
+    w = fixture()
+    b = w["receipt"]["binding"]["binding"]
+    b["credentials"][0]["snapshot"] = "sha256:" + "c" * 64 + "\n"
+    w["receipt"]["binding"] = resign(w, b)
+    add("snapshot-trailing-newline", w, False)
+    w = fixture()
+    r = w["request"]
+    r["definition"]["sha256"] += "\n"
+    r["nonce"]["value"] = ""
+    r["nonce"]["value"] = b64(hmac.digest(w["secret"], NONCE_PREFIX + canon(r), "sha256"))
+    w["receipt"]["request_bytes"] = b64(canon(r))
+    signed_client(w, canon)
+    add("definition-digest-trailing-newline", w, False)
 out.write_text(
     json.dumps(
         {
