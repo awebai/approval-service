@@ -72,9 +72,10 @@ next-update date and the highest previously installed sequence. Network errors
 and changed/expired inputs refuse installation. Updating the operator manifest
 is deliberate; the loader never trusts a newly fetched root or silently follows
 a changing upstream blob. Loading occurs at process startup or explicit refresh,
-not per approval. `check_registration` also refuses `snapshot_expired` if an
-installed snapshot expires while the process runs. Passkey-only enrollment
-explicitly supplies `snapshot=None`. An effective unscoped withdrawal disqualifies
+not per approval. Attested registration refuses an unavailable or expired
+snapshot rather than silently downgrading. Unattested passkeys remain available
+independently of hardware metadata. Explicit passkey-only grading supplies no
+snapshot and never claims certified hardware. An effective unscoped withdrawal disqualifies
 the model regardless of firmware version; a certificate-scoped withdrawal
 affects only that batch.
 

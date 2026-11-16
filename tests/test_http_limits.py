@@ -75,6 +75,7 @@ async def test_one_signing_key_cannot_reset_its_budget_with_identity_descriptors
     import json
     import time
     from pathlib import Path
+
     from approval_service.canonical import canonical, parse
     from approval_service.encoding import decode, encode
     from approval_service.seams import http_authorization

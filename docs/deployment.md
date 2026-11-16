@@ -13,10 +13,11 @@ browser. A released pin is configuration, not a permanent metadata archive.
 
 The service's enrollment composition uses `EnrollmentGrading.load` with an
 explicit operator mode: `hardware` or `passkey_only`. In hardware mode, cache
-location is required and every loading error refuses startup; no exception path
-passes `snapshot=None`. A running instance also refuses enrollment when its
-loaded blob, signer certificate or required CRL expires. Receipt-only checking
-and already-saved historical proofs do not require a current metadata download.
+location is required. Missing or expired metadata pauses hardware-attested
+registration, with an explicit metadata error and non-200 health status.
+Unattested passkeys remain available; a failed load never silently downgrades
+an attested key. Receipt-only checking and already-saved historical proofs do
+not require a current metadata download.
 Passkey-only mode deliberately passes no snapshot and promises passkey grade
 only. It is never selected because loading failed, timed out or returned stale
 data. Changing policy is an operator action, never an enrollment parameter.
@@ -88,7 +89,7 @@ are continuing requirements, not a one-time setup or a silent downgrade path.
   an origin. The registry must provide public exact-certificate status reads.
 - `AWSIGN_GRADING`: `hardware` by default; explicit `passkey_only` is for
   passkey-grade enrollment. `AWSIGN_MDS_CACHE` names the private persistent
-  metadata cache. A hardware-loading failure refuses startup.
+  metadata cache. Loading failures pause attested enrollment, not passkeys.
 
 Run `uv run awsign migrate`, then `uv run awsign serve --bind 127.0.0.1 --port 8030`.
 Disable proxy request-body logging. The process disables access logs, serves
