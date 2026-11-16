@@ -36,3 +36,7 @@ packages = ["src/approval_service"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_default_fixture_loop_scope = "function"
+
+[tool.uv.sources]
+# Temporary development source; use the released SDK version at server release.
+awid-service = { git = "https://github.com/awebai/aweb.git", rev = "9bbdd365d85ad6d476663a1484fe3060bb2b9679", subdirectory = "awid" }

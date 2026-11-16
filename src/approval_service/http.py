@@ -11,6 +11,7 @@ import json
 import logging
 import time
 from collections import OrderedDict
+from contextlib import asynccontextmanager
 from importlib.resources import files
 
 from asyncpg import UniqueViolationError
@@ -24,6 +25,7 @@ from .ceremonies import commitment as token_commitment
 from .definitions import check_definition
 from .encoding import decode
 from .enrollment import Enrollments, PublicIssuer
+from .grading import watch_metadata
 from .requester import AdmittedRequester
 from .seams import check_activation_carrier, check_http, commitment
 from .store import StoreRefused
@@ -53,9 +55,17 @@ class RateWindow:
             self.rows.popitem(last=False)
 
 
-def create_app(store, *, public, origin, rp_id, grading):
+def create_app(store, *, public, origin, rp_id, grading, requests_per_ip=600):
     validate_site(origin, rp_id)
-    app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+    if type(requests_per_ip) is not int or requests_per_ip < 1:
+        raise ValueError("requests_per_ip_invalid")
+
+    @asynccontextmanager
+    async def lifespan(_app):
+        async with watch_metadata(grading):
+            yield
+
+    app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
     ceremonies = Ceremonies(store, origin=origin, rp_id=rp_id)
     enrollments = Enrollments(store, origin=origin, rp_id=rp_id, grading=grading)
     rates = RateWindow()
@@ -65,6 +75,9 @@ def create_app(store, *, public, origin, rp_id, grading):
     @app.middleware("http")
     async def boundary(request, call_next):
         try:
+            if request.url.path.startswith("/v1/"):
+                peer = request.client.host if request.client is not None else "unknown"
+                rates.take(("requester_ip", peer), requests_per_ip)
             response = await call_next(request)
         except (Refused, StoreRefused) as exc:
             code = exc.code

@@ -172,3 +172,10 @@ a controller change requires affected bindings/statements to be re-signed by
 the new issuer. The holder has no automatic rotation/re-signing hook yet; this
 is not a requirement to repeat the person's registration ceremony. Historical
 verification uses explicit as-of authority inputs.
+
+The development lock pins the reviewed post-deletion AWID source so the service
+starts with its required exact-certificate status reader. At the server release,
+replace that Git pin with the released `awid-service` version. Requester routes
+also apply an operator-configured per-IP budget before processing input.
+For metadata renewal without restarting, install reviewed pins in
+`AWSIGN_MDS_MANIFEST`; see [deployment](docs/deployment.md#installing-metadata-without-restarting).

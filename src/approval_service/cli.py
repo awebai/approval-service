@@ -54,6 +54,7 @@ async def operate(args):
         grading = await asyncio.to_thread(
             EnrollmentGrading.load,
             mode=os.environ.get("AWSIGN_GRADING", "hardware"),
+            manifest_path=os.environ.get("AWSIGN_MDS_MANIFEST"),
             cache_dir=Path(
                 os.environ.get(
                     "AWSIGN_MDS_CACHE", str(Path.home() / ".cache/awsign/mds")
@@ -73,6 +74,9 @@ async def operate(args):
             origin=origin,
             rp_id=rp_id,
             grading=grading,
+            requests_per_ip=int(
+                os.environ.get("AWSIGN_REQUESTS_PER_IP_PER_MINUTE", "600")
+            ),
         )
 
         async def cleanup():

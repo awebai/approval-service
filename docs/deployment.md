@@ -99,15 +99,12 @@ bytes and expired assertion slots; unactivated pending enrollments expire too.
 
 Receipt-only enforcers and self-hosted key holders need no Redis. This service
 uses a bounded 60-second in-process public observation cache which preserves
-original age. No unavailable read renews an observation. The service lock
-selects `awid-service==0.5.40rc1`; the library declares
-`>=0.5.40rc1,<0.6` so consumers can select their newer SDK normally. rc1
-supplies plain ID-chain reads but lacks
-`get_team_certificate_status_fresh`. Service startup refuses that missing port;
-install the AWID release built from post-deletion main when available. Native
-source integration uses the actual post-deletion `awid/src` on `PYTHONPATH`,
-with its import path asserted by the test. It does not substitute a status
-response or a new registry API.
+original age. No unavailable read renews an observation. The development service lock selects the public post-deletion AWID SDK source
+at `9bbdd365d85ad6d476663a1484fe3060bb2b9679` (`awid` subdirectory). It supplies
+`get_team_certificate_status_fresh` in the normal installed environment.
+**Before the server release, replace this source pin with the released
+`awid-service` version.** SDK version numbers remain owned by the release.
+
 
 
 ## Enrollment link handling
@@ -133,6 +130,11 @@ forwarded client addresses (default `127.0.0.1,::1` for a loopback HTTPS proxy).
 Set it to the actual proxy addresses when the proxy is elsewhere, and configure
 that proxy to replace incoming forwarded headers. An empty setting trusts no
 forwarding; behind a proxy this makes the browser limit one shared budget.
+`AWSIGN_REQUESTS_PER_IP_PER_MINUTE` bounds all `/v1/*` attempts per observed
+client IP (default 600 per process), before body parsing, signature processing
+or public reads. The existing per-requester budget still applies. Raw forwarded
+headers are not used here; only the configured trusted-proxy handling can set
+the observed peer. An absent peer uses one shared bounded bucket.
 This changes rate accounting, never authentication or approval authority.
 `/health` uses the database check for liveness and reports hardware-enrollment
 readiness separately; expired metadata pauses new hardware enrollment while
@@ -146,3 +148,27 @@ mail account or organisation signature substitutes for that key. When it too
 is lost, revoke the old person ID and issue a new ID. Recovery evidence starts
 a new creation event after an explicit break, rather than inheriting the old
 evidence grade.
+
+
+## Installing metadata without restarting
+
+For hardware grading, set `AWSIGN_MDS_MANIFEST` to a persistent operator-owned
+JSON pin file and `AWSIGN_MDS_CACHE` to its private artifact cache. Install a
+reviewed manifest by replacing that file atomically. The process checks it once
+per minute; only a successfully pinned, signed, chain/CRL-checked, non-rollback
+snapshot replaces the running one. The key holder uses the same loader and
+watcher with `--mds-manifest FILE --mds-cache DIR`.
+
+A bad replacement leaves the previously verified snapshot usable only until
+its original earliest expiry. The health metadata reports `reload_error`, and
+the process logs reload failures and the seven-day validity warning. Once the
+old snapshot expires, hardware-mode enrollment refuses; sign-in and approvals
+continue. Passkey-only enrollment remains an explicit operator setting.
+
+The bundled initial pin expires on 2026-12-01 (an input CRL may expire earlier).
+The maintainer's daily metadata-pin workflow verifies upstream changes under
+the existing pinned root and opens the review request. The service maintainer
+reviews/lands the pin; deployment operators install it before the earliest
+reported deadline. Runtime does not adopt an unreviewed new pin or fetch vendor
+data per approval. With no external manifest path, the packaged pin remains
+in use until a new deployment installs its replacement.

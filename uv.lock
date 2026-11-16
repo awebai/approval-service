@@ -132,7 +132,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "asyncpg", specifier = ">=0.30,<1" },
-    { name = "awid-service", specifier = ">=0.5.40rc1,<0.6" },
+    { name = "awid-service", git = "https://github.com/awebai/aweb.git?subdirectory=awid&rev=9bbdd365d85ad6d476663a1484fe3060bb2b9679" },
     { name = "cbor2", specifier = ">=6.1.2,<7" },
     { name = "cryptography", specifier = ">=46,<51" },
     { name = "fastapi", specifier = ">=0.116,<1" },
@@ -153,8 +153,8 @@ dev = [
 
 [[package]]
 name = "awid-service"
-version = "0.5.40rc1"
-source = { registry = "https://pypi.org/simple" }
+version = "0.5.40rc2"
+source = { git = "https://github.com/awebai/aweb.git?subdirectory=awid&rev=9bbdd365d85ad6d476663a1484fe3060bb2b9679#9bbdd365d85ad6d476663a1484fe3060bb2b9679" }
 dependencies = [
     { name = "base58" },
     { name = "dnspython" },
@@ -169,10 +169,6 @@ dependencies = [
     { name = "redis" },
     { name = "typer" },
     { name = "uvicorn", extra = ["standard"] },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/28/37/5e07aed70ceb967b0feaca1afff1db40c2314ec41da1f332f95459f20364/awid_service-0.5.40rc1.tar.gz", hash = "sha256:38d266df99ec9b517658fd936a0e841aac71105e2afa4ef06aace7b7fbe8ef14", size = 465128, upload-time = "2026-11-12T21:29:04.952Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d8/61/9a40a720a3297d9391b0dd2f826aa740630684310b8dbb57158d831ba41d/awid_service-0.5.40rc1-py3-none-any.whl", hash = "sha256:325a73778b1d9fe84009b4b7a3e08940df3500e8aec9ce812ac673522a53841d", size = 186321, upload-time = "2026-11-12T21:29:03.482Z" },
 ]
 
 [[package]]
