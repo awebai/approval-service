@@ -11,7 +11,9 @@
     "binding_commitment": "aweb.human-enrollment-commitment/1\n",
     "receipt_commitment": "aweb.human-approval-receipt/1\n",
     "identity_evidence": "aweb.human-id-evidence/1\n",
-    "identity_evidence_commitment": "aweb.human-id-evidence-commitment/1\n"
+    "identity_evidence_commitment": "aweb.human-id-evidence-commitment/1\n",
+    "later_enrollment_evidence": "aweb.human-enrollment-evidence/1\n",
+    "later_enrollment_evidence_commitment": "aweb.human-enrollment-evidence-commitment/1\n"
   },
   "$defs": {
     "requester": {
@@ -679,7 +681,8 @@
           "type": "string",
           "enum": [
             "enroll_person",
-            "replace_person_keys"
+            "replace_person_keys",
+            "enroll_existing_person"
           ]
         },
         "organisation": {
@@ -966,48 +969,14 @@
       }
     },
     "enrollment_activation": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "version",
-        "intent",
-        "binding",
-        "creation_receipt",
-        "evidence",
-        "id_chain"
-      ],
-      "properties": {
-        "version": {
-          "const": 1,
-          "type": "integer"
+      "oneOf": [
+        {
+          "$ref": "#/$defs/enrollment_activation_creation"
         },
-        "intent": {
-          "$ref": "#/$defs/enrollment_intent"
-        },
-        "binding": {
-          "$ref": "#/$defs/binding"
-        },
-        "creation_receipt": {
-          "$ref": "#/$defs/receipt"
-        },
-        "evidence": {
-          "$ref": "#/$defs/creation_evidence"
-        },
-        "id_chain": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 8
-        },
-        "transition_receipt": {
-          "$ref": "#/$defs/receipt"
-        },
-        "previous_evidence": {
-          "$ref": "#/$defs/creation_evidence"
-        },
-        "carrier": {
-          "$ref": "#/$defs/requester"
+        {
+          "$ref": "#/$defs/enrollment_activation_later"
         }
-      }
+      ]
     },
     "submit_answer": {
       "type": "object",
@@ -1563,6 +1532,291 @@
           "$ref": "#/$defs/receipt"
         }
       }
+    },
+    "later_enrollment_evidence_body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "kind",
+        "organisation",
+        "subject",
+        "issuer",
+        "binding_commitment",
+        "enrollment"
+      ],
+      "properties": {
+        "version": {
+          "const": 1,
+          "type": "integer"
+        },
+        "kind": {
+          "const": "human_enrolled_later",
+          "type": "string"
+        },
+        "organisation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "subject": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "certificate",
+            "key"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "certificate": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            }
+          }
+        },
+        "issuer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "binding_commitment": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "transition": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "before",
+            "previous_evidence_commitment",
+            "confirmation_receipt_commitment",
+            "approval_receipt_commitment"
+          ],
+          "properties": {
+            "mode": {
+              "enum": [
+                "unbroken",
+                "assisted",
+                "recreated"
+              ]
+            },
+            "before": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "subject",
+                "binding_commitment"
+              ],
+              "properties": {
+                "subject": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "certificate",
+                    "key"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    },
+                    "certificate": {
+                      "type": "string",
+                      "pattern": "^sha256:[0-9a-f]{64}$"
+                    },
+                    "key": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    }
+                  }
+                },
+                "binding_commitment": {
+                  "type": "string",
+                  "pattern": "^sha256:[0-9a-f]{64}$"
+                }
+              }
+            },
+            "previous_evidence_commitment": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "pattern": "^sha256:[0-9a-f]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "confirmation_receipt_commitment": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "approval_receipt_commitment": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "pattern": "^sha256:[0-9a-f]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "enrollment": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "credential",
+            "grade",
+            "since",
+            "confirmation_receipt_commitment"
+          ],
+          "properties": {
+            "credential": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "maxLength": 1048576
+            },
+            "grade": {
+              "enum": [
+                "passkey_uv",
+                "certified_hardware"
+              ]
+            },
+            "since": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "confirmation_receipt_commitment": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          }
+        }
+      }
+    },
+    "later_enrollment_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence",
+        "signature"
+      ],
+      "properties": {
+        "evidence": {
+          "$ref": "#/$defs/later_enrollment_evidence_body"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "maxLength": 1048576
+        }
+      }
+    },
+    "enrollment_activation_creation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "intent",
+        "binding",
+        "creation_receipt",
+        "evidence",
+        "id_chain"
+      ],
+      "properties": {
+        "version": {
+          "const": 1,
+          "type": "integer"
+        },
+        "intent": {
+          "$ref": "#/$defs/enrollment_intent"
+        },
+        "binding": {
+          "$ref": "#/$defs/binding"
+        },
+        "creation_receipt": {
+          "$ref": "#/$defs/receipt"
+        },
+        "evidence": {
+          "$ref": "#/$defs/creation_evidence"
+        },
+        "id_chain": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8
+        },
+        "transition_receipt": {
+          "$ref": "#/$defs/receipt"
+        },
+        "previous_evidence": {
+          "$ref": "#/$defs/creation_evidence"
+        },
+        "carrier": {
+          "$ref": "#/$defs/requester"
+        }
+      }
+    },
+    "enrollment_activation_later": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "intent",
+        "binding",
+        "evidence",
+        "id_chain",
+        "confirmation_receipt"
+      ],
+      "properties": {
+        "version": {
+          "const": 2,
+          "type": "integer"
+        },
+        "intent": {
+          "$ref": "#/$defs/enrollment_intent"
+        },
+        "binding": {
+          "$ref": "#/$defs/binding"
+        },
+        "evidence": {
+          "$ref": "#/$defs/later_enrollment_evidence"
+        },
+        "id_chain": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8
+        },
+        "transition_receipt": {
+          "$ref": "#/$defs/receipt"
+        },
+        "previous_evidence": {
+          "$ref": "#/$defs/later_enrollment_evidence"
+        },
+        "carrier": {
+          "$ref": "#/$defs/requester"
+        },
+        "confirmation_receipt": {
+          "$ref": "#/$defs/receipt"
+        }
+      }
     }
   },
   "x-cbor-limits": {
@@ -1957,5 +2211,15 @@
     "enrollment_activate": [
       200
     ]
+  },
+  "x-statement-definitions": {
+    "human_enrolled_later": {
+      "id": "human.enrolled_later",
+      "version": 1,
+      "body_schema": "later_enrollment_evidence_body",
+      "signature_domain": "later_enrollment_evidence",
+      "meaning": "The issuer states that this person can approve with the credential and grade exercised in this enrollment ceremony. since is the issuer clock when signing this statement, not a registry-witnessed time or a WebAuthn signing time. enrollment.confirmation_receipt_commitment binds this ceremony receipt C; if transition is present it equals transition.confirmation_receipt_commitment. Earlier enrollment facts are referenced by the existing transition history. Existing replacement/recovery authority and modes remain unchanged. This states no creation fact.",
+      "display": "can approve since T (issuer's statement), grade G (issuer's statement)"
+    }
   }
 }

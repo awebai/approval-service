@@ -66,6 +66,7 @@ def test_statement_and_optional_raw_proof_have_independent_results():
 
 def test_statement_definition_includes_the_schema_and_issuer_time_claim():
     import hashlib
+
     from approval_service.canonical import canonical
     from approval_service.statements import statement_definition
 

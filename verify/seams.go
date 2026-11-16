@@ -63,11 +63,28 @@ type CheckedHTTP struct {
 }
 
 func HTTPAuthorization(body []byte, private ed25519.PrivateKey, requester map[string]any, origin, purpose string, issuedAt int64) (string, error) {
-	if len(private) != ed25519.PrivateKeySize {
+	if len(private) != ed25519.PrivateKeySize || validate("requester", requester) != nil {
 		return "", refuse("requester_mismatch")
 	}
 	public, e := awid.ExtractPublicKey(text(requester, "key"))
 	if e != nil || !bytes.Equal(public, private.Public().(ed25519.PublicKey)) {
+		return "", refuse("requester_mismatch")
+	}
+	return HTTPAuthorizationWithSigner(body, requester, origin, purpose, issuedAt, func(payload []byte, _ string) (string, []byte, error) {
+		return text(requester, "key"), ed25519.Sign(private, payload), nil
+	})
+}
+
+// HTTPAuthorizationWithSigner produces the frozen Awsign header without key
+// extraction. The unnamed callback type accepts awid.InteractiveSigner directly.
+// Its returned key and signature are checked against the frozen descriptor and
+// preimage; a refusal returns no header.
+func HTTPAuthorizationWithSigner(body []byte, requester map[string]any, origin, purpose string, issuedAt int64, sign func([]byte, string) (string, []byte, error)) (string, error) {
+	if sign == nil || validate("requester", requester) != nil {
+		return "", refuse("requester_mismatch")
+	}
+	expectedKey := text(requester, "key")
+	if _, err := awid.ExtractPublicKey(expectedKey); err != nil {
 		return "", refuse("requester_mismatch")
 	}
 	value, e := Parse(body)
@@ -87,11 +104,30 @@ func HTTPAuthorization(body []byte, private ed25519.PrivateKey, requester map[st
 	if e = validate("http_proof", proof); e != nil {
 		return "", e
 	}
+	proofBytes, e := Canonical(proof)
+	if e != nil {
+		return "", e
+	}
+	proof, e = Parse(proofBytes)
+	if e != nil {
+		return "", e
+	}
 	signed, e := preimage("http_request", proof)
 	if e != nil {
 		return "", e
 	}
-	packet := map[string]any{"proof": proof, "signature": base64.RawURLEncoding.EncodeToString(ed25519.Sign(private, signed))}
+	key, sig, e := sign(append([]byte(nil), signed...), "Authorize "+purpose+" at "+origin)
+	if e != nil {
+		return "", e
+	}
+	if key != expectedKey {
+		return "", refuse("requester_mismatch")
+	}
+	encoded := base64.RawURLEncoding.EncodeToString(sig)
+	if e = signature(expectedKey, encoded, signed); e != nil {
+		return "", e
+	}
+	packet := map[string]any{"proof": proof, "signature": encoded}
 	raw, e := Canonical(packet)
 	if e != nil {
 		return "", e
@@ -192,12 +228,34 @@ func checkEnrollmentIntent(signed map[string]any, in EnrollmentInput, live bool)
 		return bad("enrollment_challenge_invalid")
 	}
 	certificate := object(b, "pending_certificate")
-	if e = awid.VerifyIDCertificate(certificate, in.IssuerKey); e != nil {
+	c := object(certificate, "certificate")
+	later := text(b, "purpose") == "enroll_existing_person"
+	certificateKey := in.IssuerKey
+	if later {
+		certificateKey = text(c, "issuer_key")
+	}
+	if e = awid.VerifyIDCertificate(certificate, certificateKey); e != nil {
 		return bad("enrollment_invalid")
 	}
-	c := object(certificate, "certificate")
-	if text(c, "id") != text(b, "person") || text(c, "domain") != text(b, "organisation") || text(c, "kind") != "human" || text(c, "issuer_key") != in.IssuerKey {
+	if text(c, "id") != text(b, "person") || text(c, "domain") != text(b, "organisation") || text(c, "kind") != "human" || text(c, "issuer_key") != certificateKey {
 		return bad("enrollment_certificate_mismatch")
+	}
+	cid, e := awid.IDCertificateID(c)
+	if e != nil {
+		return bad("enrollment_invalid")
+	}
+
+	if later {
+		trust := in.Trust
+		if trust == nil || in.Now < trust.ObservedAt || in.Now-trust.ObservedAt > 60 {
+			return bad("identity_unavailable")
+		}
+		if trust.Person != text(b, "person") || trust.Organisation != text(b, "organisation") || trust.IdentityKey != text(b, "identity_key") || trust.Certificate != cid || trust.Issuer != in.IssuerKey {
+			return bad("enrollment_identity_mismatch")
+		}
+		if !equalValue(in.Requester, map[string]any{"kind": "identity", "id": trust.Person, "key": trust.IdentityKey}) {
+			return bad("requester_mismatch")
+		}
 	}
 	if _, e = awid.ExtractPublicKey(text(b, "identity_key")); e != nil {
 		return bad("enrollment_invalid")
@@ -209,10 +267,7 @@ func checkEnrollmentIntent(signed map[string]any, in EnrollmentInput, live bool)
 	if e = signature(in.IssuerKey, text(signed, "signature"), signedBytes); e != nil {
 		return out, e
 	}
-	cid, e := awid.IDCertificateID(c)
-	if e != nil {
-		return bad("enrollment_invalid")
-	}
+
 	locator, e := Commitment("enrollment_locator", signed)
 	if e != nil {
 		return bad("enrollment_invalid")
@@ -245,7 +300,16 @@ func CheckActivation(value map[string]any, in EnrollmentInput) (CheckedEnrollmen
 	if e = checkActivationCarrier(value, in); e != nil {
 		return out, e
 	}
-	receipt := object(value, "creation_receipt")
+	later := number(value, "version") == 2
+	intent := object(object(value, "intent"), "intent")
+	if _, previous := intent["previous_binding_commitment"]; later && !previous && text(intent, "purpose") != "enroll_existing_person" {
+		return bad("enrollment_purpose_mismatch")
+	}
+	receiptField := "creation_receipt"
+	if later {
+		receiptField = "confirmation_receipt"
+	}
+	receipt := object(value, receiptField)
 	if !equalValue(receipt["binding"], value["binding"]) {
 		return bad("binding_mismatch")
 	}
@@ -259,7 +323,6 @@ func CheckActivation(value map[string]any, in EnrollmentInput) (CheckedEnrollmen
 	}
 	chain := value["id_chain"].([]any)
 	found := false
-	intent := object(object(value, "intent"), "intent")
 	for _, c := range chain {
 		found = found || equalValue(c, intent["pending_certificate"])
 	}
@@ -268,16 +331,22 @@ func CheckActivation(value map[string]any, in EnrollmentInput) (CheckedEnrollmen
 	}
 	evidence := object(value, "evidence")
 	eb := object(evidence, "evidence")
-	signedBytes, e := preimage("identity_evidence", eb)
-	if e != nil {
-		return bad("activation_invalid")
-	}
-	if e = signature(in.IssuerKey, text(evidence, "signature"), signedBytes); e != nil {
-		return out, e
-	}
-	subject := map[string]any{"id": trust.Person, "certificate": trust.Certificate, "key": trust.IdentityKey}
-	if !equalValue(eb["subject"], subject) || text(eb, "organisation") != trust.Organisation || text(eb, "issuer") != in.IssuerKey {
-		return bad("evidence_subject_mismatch")
+	if later {
+		if _, e = checkEnrollmentStatement(evidence, *trust); e != nil {
+			return out, e
+		}
+	} else {
+		signedBytes, err := preimage("identity_evidence", eb)
+		if err != nil {
+			return bad("activation_invalid")
+		}
+		if err = signature(in.IssuerKey, text(evidence, "signature"), signedBytes); err != nil {
+			return out, err
+		}
+		subject := map[string]any{"id": trust.Person, "certificate": trust.Certificate, "key": trust.IdentityKey}
+		if !equalValue(eb["subject"], subject) || text(eb, "organisation") != trust.Organisation || text(eb, "issuer") != in.IssuerKey {
+			return bad("evidence_subject_mismatch")
+		}
 	}
 	ch, e := Commitment("receipt_commitment", receipt)
 	if e != nil {
@@ -287,13 +356,19 @@ func CheckActivation(value map[string]any, in EnrollmentInput) (CheckedEnrollmen
 	if text(eb, "binding_commitment") != bh {
 		return bad("evidence_binding_mismatch")
 	}
+	if later {
+		if e = matchEnrollmentConfirmation(eb, receipt, checked, bh); e != nil {
+			return out, e
+		}
+	}
+
 	_, hasPrevious := intent["previous_binding_commitment"]
 	_, hasTransition := eb["transition"]
 	if hasPrevious || hasTransition {
 		if e = checkLifecycle(value, in, creation); e != nil {
 			return out, e
 		}
-	} else if !equalValue(eb["creation"], creation) || text(intent, "purpose") != "enroll_person" {
+	} else if !later && (!equalValue(eb["creation"], creation) || text(intent, "purpose") != "enroll_person") {
 		return bad("evidence_binding_mismatch")
 	}
 

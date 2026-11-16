@@ -112,11 +112,14 @@ def check_http(authorization, body, *, requester, origin, method, path, purpose,
         raise Refused("http_invalid") from exc
 
 
-def check_enrollment_intent(signed, *, issuer_key, requester, origin, rp_id, now):
+def check_enrollment_intent(
+    signed, *, issuer_key, requester, origin, rp_id, now, trust=None
+):
     """issuer_key is checked public issuer authority, never taken from signed.
 
-    A proposed identity_key is not yet bound by public identity status: an ID
-    certificate contains no subject key. Ordinary pending enrollment needs
+    For creation, a proposed identity_key is not yet bound by public identity
+    status: an ID certificate contains no subject key. Existing-person
+    enrollment requires current committed Trust here; pending creation needs
     committed Trust at activation. Active-person recovery additionally requires
     that new key already current when the service starts the recovery. Pending is not active authority.
     """
@@ -128,11 +131,12 @@ def check_enrollment_intent(signed, *, issuer_key, requester, origin, rp_id, now
         rp_id=rp_id,
         now=now,
         live=True,
+        trust=trust,
     )
 
 
 def _check_enrollment_intent(
-    signed, *, issuer_key, requester, origin, rp_id, now, live
+    signed, *, issuer_key, requester, origin, rp_id, now, live, trust=None
 ):
     try:
         validate("enrollment_intent", signed)
@@ -150,14 +154,42 @@ def _check_enrollment_intent(
             raise Refused("enrollment_challenge_invalid")
         certificate = body["pending_certificate"]
         c = certificate["certificate"]
-        verify_id_certificate(certificate, issuer_key=issuer_key)
+        later = body["purpose"] == "enroll_existing_person"
+        # An existing certificate can be witnessed under an earlier controller
+        # epoch. The caller's SDK-checked current Trust, not this signature alone,
+        # establishes that its exact certificate is still admitted.
+        certificate_key = c["issuer_key"] if later else issuer_key
+        verify_id_certificate(certificate, issuer_key=certificate_key)
         if (c["id"], c["domain"], c["kind"], c["issuer_key"]) != (
             body["person"],
             body["organisation"],
             "human",
-            issuer_key,
+            certificate_key,
         ):
             raise Refused("enrollment_certificate_mismatch")
+        if later:
+            if trust is None or not 0 <= now - trust.observed_at <= 60:
+                raise Refused("identity_unavailable")
+            if (
+                trust.person,
+                trust.organisation,
+                trust.identity_key,
+                trust.certificate,
+                trust.issuer,
+            ) != (
+                body["person"],
+                body["organisation"],
+                body["identity_key"],
+                id_certificate_id(c),
+                issuer_key,
+            ):
+                raise Refused("enrollment_identity_mismatch")
+            if requester != {
+                "kind": "identity",
+                "id": trust.person,
+                "key": trust.identity_key,
+            }:
+                raise Refused("requester_mismatch")
         public_key_from_did(body["identity_key"])
         preimage = domain("enrollment_intent") + canonical(body)
         _signature(issuer_key, signed["signature"], preimage)
@@ -240,6 +272,7 @@ def check_activation(
             rp_id=rp_id,
             now=now,
             live=False,
+            trust=trust,
         )
         if (
             type(now) is not int
@@ -255,7 +288,13 @@ def check_activation(
         ):
             raise Refused("enrollment_identity_mismatch")
         check_activation_carrier(value, requester=requester, trust=trust)
-        c = value["creation_receipt"]
+        later = value["version"] == 2
+        if later and (
+            "previous_binding_commitment" not in value["intent"]["intent"]
+            and value["intent"]["intent"]["purpose"] != "enroll_existing_person"
+        ):
+            raise Refused("enrollment_purpose_mismatch")
+        c = value["confirmation_receipt"] if later else value["creation_receipt"]
         if canonical(c["binding"]) != canonical(value["binding"]):
             raise Refused("binding_mismatch")
         checked, bh, _r = _creation_assertion(
@@ -273,22 +312,27 @@ def check_activation(
             raise Refused("identity_chain_mismatch")
         evidence = value["evidence"]
         e = evidence["evidence"]
-        _signature(
-            issuer_key,
-            evidence["signature"],
-            domain("identity_evidence") + canonical(e),
-        )
-        expected_subject = {
-            "id": trust.person,
-            "certificate": trust.certificate,
-            "key": trust.identity_key,
-        }
-        if (
-            canonical(e["subject"]) != canonical(expected_subject)
-            or e["organisation"] != trust.organisation
-            or e["issuer"] != issuer_key
-        ):
-            raise Refused("evidence_subject_mismatch")
+        if later:
+            from .statements import _check_statement
+
+            _check_statement(evidence, trust)
+        else:
+            _signature(
+                issuer_key,
+                evidence["signature"],
+                domain("identity_evidence") + canonical(e),
+            )
+            expected_subject = {
+                "id": trust.person,
+                "certificate": trust.certificate,
+                "key": trust.identity_key,
+            }
+            if (
+                canonical(e["subject"]) != canonical(expected_subject)
+                or e["organisation"] != trust.organisation
+                or e["issuer"] != issuer_key
+            ):
+                raise Refused("evidence_subject_mismatch")
         new_creation = {
             "credential": checked.credential,
             "grade": checked.grade,
@@ -296,6 +340,10 @@ def check_activation(
         }
         if e["binding_commitment"] != bh:
             raise Refused("evidence_binding_mismatch")
+        if later:
+            from .statements import _match_confirmation
+
+            _match_confirmation(e, c, checked, bh)
         if (
             "previous_binding_commitment" in value["intent"]["intent"]
             or "transition" in e
@@ -308,7 +356,7 @@ def check_activation(
                 transition_trust=transition_trust,
                 new_creation=new_creation,
             )
-        elif (
+        elif not later and (
             e["creation"] != new_creation
             or value["intent"]["intent"]["purpose"] != "enroll_person"
         ):
@@ -434,12 +482,12 @@ def check_creation_proof(
     pending_trust,
     nonce_keys,
 ):
-    """Issuer-only check BEFORE public issuance; result remains pending.
+    """Issuer-only confirmation check; service activation remains pending.
 
-    pending_trust combines the exact issuer-signed pending certificate/key with
-    independently checked CURRENT issuer authority and its observation time.
-    It is NOT a claim that the person is already in the registry. The issuer
-    still owns enrollment authorization and atomic nonce/certificate issuance.
+    pending_trust combines the exact signed certificate/key with independently
+    checked CURRENT issuer authority and its observation time. For existing
+    people it is committed public Trust; for creation it does not claim public
+    registration. The issuer still owns authorization and nonce consumption.
     """
     try:
         pending = check_enrollment_intent(
@@ -449,6 +497,7 @@ def check_creation_proof(
             origin=origin,
             rp_id=rp_id,
             now=now,
+            trust=pending_trust,
         )
         trust = pending_trust
         if trust is None or not 0 <= now - trust.observed_at <= 60:

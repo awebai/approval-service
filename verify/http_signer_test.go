@@ -10,7 +10,7 @@ import (
 func TestHTTPInteractiveSignerPreservesFrozenPackets(t *testing.T) {
 	for _, item := range seamCases(t, "requester-service") {
 		c := item.(map[string]any)
-		if !c["accept"].(bool) || text(c, "phase") == "answer" || text(c, "phase") == "enrollment-request" {
+		if !c["accept"].(bool) || c["phase"] == "answer" || c["phase"] == "enrollment-request" {
 			continue
 		}
 		t.Run(text(c, "id"), func(t *testing.T) {
