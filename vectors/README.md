@@ -5,6 +5,9 @@ starts the first person's enrollment; the first person approves adding a
 DISTINCT second person. Test keys and identities are synthetic and public.
 The JSON schema and all domains, routes and limits live in
 `src/approval_service/data/format-v1.json`; Go embeds its generated projection.
+The same source bundles the closed `human.add` and limited
+`enrollment.confirm` act/display definitions. R carries the actual canonical
+content hash of that definition; no example hash or fetched definition is used.
 `tests/test_seams.py` and `verify/seams_test.go` consume these exact files.
 
 `requester-service-v1.json` pins the `Authorization: Awsign <base64url>` header,

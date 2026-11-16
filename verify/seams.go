@@ -241,11 +241,17 @@ func CheckActivation(value map[string]any, in EnrollmentInput) (CheckedEnrollmen
 	if text(r, "purpose") != "enrollment_confirmation" {
 		return bad("purpose_invalid")
 	}
+	if !equalValue(r["requester"], in.Requester) {
+		return bad("requester_mismatch")
+	}
 	if in.Now < number(r, "not_before") || in.Now >= number(r, "deadline") {
 		return bad("request_expired")
 	}
 	if !equalValue(receipt["binding"], value["binding"]) {
 		return bad("binding_mismatch")
+	}
+	if e = CheckDefinition(r); e != nil {
+		return out, e
 	}
 	checked, e := VerifyHistorical(receipt, r, *trust)
 	if e != nil {
@@ -320,6 +326,9 @@ func ReadNeedsHuman(value map[string]any, requester map[string]any, origin strin
 	if e != nil || validate("request", r) != nil {
 		return nil, refuse("needs_human_invalid")
 	}
+	if e = CheckDefinition(r); e != nil {
+		return nil, e
+	}
 	b, e := Canonical(r)
 	if e != nil || !bytes.Equal(raw, b) {
 		return nil, refuse("request_mismatch")
@@ -360,7 +369,7 @@ func CheckPresentation(value map[string]any, in EffectInputs, origin string) (Ch
 }
 
 func MakeNeedsHuman(request map[string]any, origin string) (int, map[string]any, error) {
-	if e := validate("request", request); e != nil {
+	if e := CheckDefinition(request); e != nil {
 		return 0, nil, e
 	}
 	if text(request, "purpose") != "act_approval" {

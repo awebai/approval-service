@@ -126,13 +126,15 @@ def request(purpose="act_approval"):
         purpose=purpose,
         organisation=org,
         approver=person,
-        requester=requester,
+        requester=controller if purpose == "enrollment_confirmation" else requester,
         enforcer={"audience": "urn:awsign:test:keyholder"},
     )
+    identifier = "human.add" if purpose == "act_approval" else "enrollment.confirm"
+    definition = S["x-act-definitions"][identifier]
     r["definition"] = {
-        "id": "human.add",
+        "id": identifier,
         "version": 1,
-        "sha256": hashlib.sha256(b"first-path-human-add-definition-v1").hexdigest(),
+        "sha256": hashlib.sha256(canon(definition)).hexdigest(),
     }
     target = (
         {"person": person, "certificate": cid, "identity_key": did(person_key)}
@@ -143,7 +145,7 @@ def request(purpose="act_approval"):
             "identity_key": did(second_key),
         }
     )
-    r["act"] = {"operation": "human.add", "target": target, "expected_revision": 1}
+    r["act"] = {"operation": identifier, "target": target, "expected_revision": 1}
     r["nonce"] = {"kid": "k1", "value": ""}
     r["nonce"]["value"] = b64(hmac.digest(secret, domain("nonce") + canon(r), "sha256"))
     return r
@@ -331,6 +333,17 @@ intent_body = {
     "deadline": 1300,
 }
 intent = sign(issuer, "enrollment_intent", "intent", intent_body)
+httpcase(
+    "controller-bootstrap-enrollment",
+    "enrollment_start",
+    {
+        "version": 1,
+        "intent": intent,
+        "admission": {"team_certificate": None, "id_chain": []},
+    },
+    who=controller,
+    k=issuer,
+)
 confirmation = request("enrollment_confirmation")
 confirmation["act"]["target"]["binding_commitment"] = hashof(
     "binding_commitment", binding
@@ -362,6 +375,13 @@ activation = {
     "evidence": evidence,
     "id_chain": [certificate],
 }
+httpcase(
+    "controller-presents-activation",
+    "enrollment_activate",
+    activation,
+    who=controller,
+    k=issuer,
+)
 enrollment_cases = []
 for phase in ["intent", "pending", "activation"]:
     enrollment_cases.append(
@@ -400,10 +420,24 @@ for fault in [
     "evidence-receipt-mismatch",
     "confirmation-target-mismatch",
     "malformed-creation-request",
+    "confirmation-requester-mismatch",
 ]:
     c = copy.deepcopy(activation_base)
     c.update(id=fault, accept=False)
-    if fault == "malformed-creation-request":
+    if fault == "confirmation-requester-mismatch":
+        req = copy.deepcopy(confirmation)
+        req["requester"] = requester
+        req["nonce"]["value"] = ""
+        req["nonce"]["value"] = b64(
+            hmac.digest(secret, domain("nonce") + canon(req), "sha256")
+        )
+        cc = receipt(req)
+        c["activation"]["creation_receipt"] = cc
+        eb = copy.deepcopy(ebody)
+        eb["creation"]["receipt_commitment"] = hashof("receipt_commitment", cc)
+        c["activation"]["evidence"] = sign(issuer, "identity_evidence", "evidence", eb)
+        c["expected_error"] = "requester_mismatch"
+    elif fault == "malformed-creation-request":
         c["activation"]["creation_receipt"]["request_bytes"] = b64(b"{}")
     elif fault == "wrong-issuer":
         c["issuer_key"] = did(other)
@@ -441,6 +475,46 @@ for fault in [
         eb["creation"]["receipt_commitment"] = hashof("receipt_commitment", cc)
         c["activation"]["evidence"] = sign(issuer, "identity_evidence", "evidence", eb)
     enrollment_cases.append(c)
+
+# The second-person enrollment is requested by the already active first person,
+# while the org controller remains the issuer. It is pending until its own
+# registration, creation proof and committed public identity exist.
+second_intent_body = copy.deepcopy(intent_body)
+second_certificate = {
+    "certificate": second_certificate_body,
+    "signature": b64(
+        issuer.sign(id_certificate_signing_bytes(second_certificate_body)).signature
+    ),
+}
+second_intent_body.update(
+    person=second_person,
+    pending_certificate=second_certificate,
+    identity_key=did(second_key),
+    requester=requester,
+    challenge=b64(bytes([18]) * 32),
+)
+second_intent = sign(issuer, "enrollment_intent", "intent", second_intent_body)
+enrollment_cases.append(
+    {
+        "id": "first-person-requests-second-enrollment",
+        "phase": "intent",
+        "accept": True,
+        "intent": second_intent,
+        "activation": activation,
+        "issuer_key": did(issuer),
+        "requester": requester,
+        "origin": origin,
+        "rp_id": "awsign.com",
+        "now": 1100,
+        "trust": None,
+        "expected_person": second_person,
+        "expected_locator": hashof("enrollment_locator", second_intent),
+        "expected_intent_preimage": b64(
+            domain("enrollment_intent") + canon(second_intent_body)
+        ),
+        "expected_state": "pending",
+    }
+)
 
 # 3. Enforcer's challenge answer -> exact requester presentation and live proof.
 needs = {
@@ -512,9 +586,36 @@ for fault in [
             "receipt": creation,
         }
     enforcer_cases.append(c)
+for name, error in [
+    ("unknown-definition", "definition_unavailable"),
+    ("unexpected-act-field", "definition_invalid"),
+]:
+    c = copy.deepcopy(enforcer_cases[0])
+    c.update(id=name, accept=False, expected_error=error)
+    changed = c["request"]
+    if name == "unknown-definition":
+        changed["definition"]["id"] = "unbundled"
+    else:
+        changed["act"]["uncovered_default"] = "refuse"
+    changed_raw = canon(changed)
+    c["needs_human"]["request_bytes"] = b64(changed_raw)
+    c["needs_human"]["digest"] = hashlib.sha256(
+        domain("request") + changed_raw
+    ).hexdigest()
+    enforcer_cases.append(c)
+
 for case in http_cases:
     if case["accept"]:
-        case.update(test_signing_seed=b64(bytes(person_key)), signed_at=1100)
+        case.update(
+            test_signing_seed=b64(
+                bytes(
+                    issuer
+                    if case["expected_requester"]["kind"] == "namespace_controller"
+                    else person_key
+                )
+            ),
+            signed_at=1100,
+        )
 
 for path, cases, scope in zip(
     outputs,

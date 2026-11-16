@@ -21,6 +21,7 @@ from jsonschema import ValidationError
 from nacl.signing import SigningKey
 
 from .canonical import canonical, parse
+from .definitions import check_definition
 from .encoding import decode, encode
 from .verify import Refused, verify_for_effect, verify_historical
 from .wire import SCHEMA, domain, validate, validate_site
@@ -184,10 +185,13 @@ def check_activation(value, *, issuer_key, requester, origin, rp_id, now, trust)
         validate("request", r)
         if r["purpose"] != "enrollment_confirmation":
             raise Refused("purpose_invalid")
+        if canonical(r["requester"]) != canonical(requester):
+            raise Refused("requester_mismatch")
         if not r["not_before"] <= now < r["deadline"]:
             raise Refused("request_expired")
         if canonical(c["binding"]) != canonical(value["binding"]):
             raise Refused("binding_mismatch")
+        check_definition(r)
         checked = verify_historical(c, expected_request=r, trust=trust)
         if checked.origin != origin:
             raise Refused("origin_invalid")
@@ -253,6 +257,7 @@ def read_needs_human(value, *, requester, origin, now, status):
         raw = decode(value["request_bytes"])
         r = parse(raw)
         validate("request", r)
+        check_definition(r)
         if raw != canonical(r):
             raise Refused("request_mismatch")
         if r["purpose"] != "act_approval":
@@ -304,7 +309,7 @@ def check_presentation(
 
 
 def make_needs_human(request, *, origin):
-    validate("request", request)
+    check_definition(request)
     if request["purpose"] != "act_approval":
         raise Refused("purpose_invalid")
     raw = canonical(request)

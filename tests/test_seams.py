@@ -36,8 +36,10 @@ def trust(value):
 def outcome(case, call):
     if case["accept"]:
         return call()
-    with pytest.raises(Refused):
+    with pytest.raises(Refused) as failure:
         call()
+    if "expected_error" in case:
+        assert failure.value.code == case["expected_error"]
 
 
 @pytest.mark.parametrize("case", corpus("requester-service"), ids=lambda c: c["id"])

@@ -43,6 +43,9 @@ func TestRequesterServiceSeam(t *testing.T) {
 			if (e == nil) != c["accept"].(bool) {
 				t.Fatalf("accept=%v expected=%v: %v", e == nil, c["accept"], e)
 			}
+			if expected, ok := c["expected_error"].(string); ok && (e == nil || e.Error() != expected) {
+				t.Fatalf("wrong refusal: %v want %s", e, expected)
+			}
 			if e == nil {
 				seed, _ := decode(text(c, "test_signing_seed"))
 				produced, err := HTTPAuthorization(body, ed25519.NewKeyFromSeed(seed), object(c, "expected_requester"), text(c, "origin"), text(c, "purpose"), number(c, "signed_at"))
@@ -74,6 +77,9 @@ func TestIssuerEnrollmentSeam(t *testing.T) {
 			}
 			if (e == nil) != c["accept"].(bool) {
 				t.Fatalf("accept=%v expected=%v: %v", e == nil, c["accept"], e)
+			}
+			if expected, ok := c["expected_error"].(string); ok && (e == nil || e.Error() != expected) {
+				t.Fatalf("wrong refusal: %v want %s", e, expected)
 			}
 			if e == nil && (checked.Person != text(c, "expected_person") || checked.State != text(c, "expected_state")) {
 				t.Fatal("wrong person or pending/active boundary")
@@ -108,6 +114,9 @@ func TestEnforcerRequesterSeam(t *testing.T) {
 			}
 			if (e == nil) != c["accept"].(bool) {
 				t.Fatalf("accept=%v expected=%v: %v", e == nil, c["accept"], e)
+			}
+			if expected, ok := c["expected_error"].(string); ok && (e == nil || e.Error() != expected) {
+				t.Fatalf("wrong refusal: %v want %s", e, expected)
 			}
 			if e == nil && digest != text(c, "expected_digest") {
 				t.Fatal("wrong request digest")
