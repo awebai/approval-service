@@ -67,3 +67,70 @@ async def test_missing_peer_has_a_shared_finite_budget():
     ) as caller:
         assert (await caller.get("/v1/missing")).status_code == 404
         assert (await caller.get("/v1/another")).status_code == 429
+
+
+@pytest.mark.asyncio
+async def test_one_signing_key_cannot_reset_its_budget_with_identity_descriptors():
+    import copy
+    import json
+    import time
+    from pathlib import Path
+    from approval_service.canonical import canonical, parse
+    from approval_service.encoding import decode, encode
+    from approval_service.seams import http_authorization
+
+    cases = json.loads(
+        (Path(__file__).parents[1] / "vectors/requester-service-v1.json").read_text()
+    )["cases"]
+    case = next(
+        c
+        for c in cases
+        if c.get("accept") and c.get("purpose") == "submit" and "test_signing_seed" in c
+    )
+    packet = parse(decode(case["body"]))
+    original = parse(decode(packet["request_bytes"]))
+    import asyncio
+
+    remaining = 60 - time.monotonic() % 60
+    if remaining < 3:
+        await asyncio.sleep(remaining + 0.05)
+    registry = RegistryClient("http://127.0.0.1:1")
+    app = create_app(
+        None,
+        public=PublicReader(registry),
+        origin=case["origin"],
+        rp_id=case["origin"][len("https://") :],
+        grading=EnrollmentGrading("passkey_only", None),
+    )
+    try:
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app), base_url=case["origin"]
+        ) as client:
+            for n in range(100):
+                r = copy.deepcopy(original)
+                r["requester"]["id"] = "did:aw:alias-" + str(n)
+                body = canonical(
+                    {
+                        **packet,
+                        "admission": {"team_certificate": None, "id_chain": []},
+                        "request_bytes": encode(canonical(r)),
+                    }
+                )
+                header = http_authorization(
+                    body,
+                    seed=decode(case["test_signing_seed"]),
+                    requester=r["requester"],
+                    origin=case["origin"],
+                    purpose="submit",
+                    issued_at=int(time.time()),
+                )
+                answer = await client.post(
+                    "/v1/requests/submit",
+                    content=body,
+                    headers={"Authorization": header},
+                )
+                assert answer.json()["error"]["code"] == (
+                    "identity_chain_required" if n < 32 else "rate_limited"
+                )
+    finally:
+        await registry.aclose()

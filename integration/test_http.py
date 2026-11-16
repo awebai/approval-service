@@ -167,7 +167,7 @@ async def test_registry_outage_and_malformed_evidence_keep_the_closed_http_contr
 
 
 @pytest.mark.asyncio
-async def test_database_liveness_remains_healthy_when_hardware_enrollment_pauses(store):
+async def test_health_monitor_reports_paused_hardware_enrollment(store):
     from datetime import timedelta
 
     from vendor import NOW, Vendor, signed_metadata
@@ -191,7 +191,7 @@ async def test_database_liveness_remains_healthy_when_hardware_enrollment_pauses
         httpx.AsyncClient(base_url=base, timeout=10.0) as client,
     ):
         response = await client.get("/health")
-        assert response.status_code == 200
+        assert response.status_code == 503
         assert response.json()["enrollment_ready"] is False
         assert response.json()["metadata"]["warning"]
 

@@ -116,8 +116,9 @@ def test_rollback_never_replaces_the_current_grader(transport, tmp_path):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("replacement", ["shape", "unlisted_exception"])
 async def test_process_watcher_observes_pin_changes_and_stops_cleanly(
-    transport, tmp_path
+    transport, tmp_path, replacement
 ):
     import asyncio
 
@@ -132,7 +133,11 @@ async def test_process_watcher_observes_pin_changes_and_stops_cleanly(
     )
     async with watch_metadata(grading, interval=0.02):
         # A malformed operator file does not kill the watcher.
-        path.write_text("[]")
+        bad = copy.deepcopy(old)
+        bad["artifacts"]["blob"].update(
+            url="https://localhost:invalid/blob", sha256="f" * 64
+        )
+        path.write_text("[]" if replacement == "shape" else json.dumps(bad))
         deadline = asyncio.get_running_loop().time() + 3
         while (
             grading._reload_error is None

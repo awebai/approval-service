@@ -48,7 +48,11 @@ def transport(tmp_path, monkeypatch):
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
             paths.append(self.path)
-            raw = payloads[self.path]
+            raw = payloads.get(self.path)
+            if raw is None:
+                self.send_response(404)
+                self.end_headers()
+                return
             self.send_response(200)
             self.send_header("Content-Length", str(len(raw)))
             self.end_headers()

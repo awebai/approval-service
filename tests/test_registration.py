@@ -380,3 +380,42 @@ def test_loaded_snapshot_cannot_outlive_its_verified_revocation_inputs():
             snapshot=snapshot,
             now=NOW + timedelta(days=8),
         )
+
+
+@pytest.mark.parametrize("fmt", ["none", "packed"])
+@pytest.mark.parametrize("state", ["expired", "missing"])
+def test_unattested_passkeys_remain_available_without_current_hardware_metadata(
+    snapshot, fmt, state
+):
+    from approval_service.grading import EnrollmentGrading
+
+    response, challenge, _, _ = registration(fmt=fmt)
+    grading = EnrollmentGrading("hardware", snapshot if state == "expired" else None)
+    result = grading.check(
+        response,
+        expected_challenge=challenge,
+        origin="https://approval.example.test",
+        rp_id="approval.example.test",
+        now=NOW.replace(year=NOW.year + 1),
+    )
+    assert result.grade == "passkey_uv"
+    assert result.snapshot is None
+    assert grading.mode == "hardware"
+    assert (
+        grading.status(now=NOW.replace(year=NOW.year + 1))["enrollment_ready"] is False
+    )
+
+
+def test_attested_registration_without_hardware_metadata_refuses():
+    from approval_service.grading import EnrollmentGrading
+
+    response, challenge = Vendor().registration()
+    grading = EnrollmentGrading("hardware", None)
+    with pytest.raises(Refused, match="snapshot_unavailable"):
+        grading.check(
+            response,
+            expected_challenge=challenge,
+            origin="https://approval.example.test",
+            rp_id="approval.example.test",
+            now=NOW,
+        )

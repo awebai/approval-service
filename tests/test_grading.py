@@ -7,7 +7,6 @@ from test_metadata_cache import manifest
 from vendor import NOW, Vendor
 
 from approval_service.grading import EnrollmentGrading
-from approval_service.metadata_cache import CacheRefused
 from approval_service.verify import Refused
 
 
@@ -21,10 +20,14 @@ def test_mode_is_explicit_and_hardware_requires_a_cache(tmp_path):
 def test_loading_failure_never_reaches_passkey_only(transport, tmp_path):
     config = manifest(transport)
     config["artifacts"]["blob"]["sha256"] = "0" * 64
-    with pytest.raises(CacheRefused, match="artifact_pin_mismatch"):
-        EnrollmentGrading.load(
-            mode="hardware", cache_dir=tmp_path / "cache", manifest=config, now=NOW
-        )
+    grading = EnrollmentGrading.load(
+        mode="hardware", cache_dir=tmp_path / "cache", manifest=config, now=NOW
+    )
+    assert grading.mode == "hardware"
+    assert grading.status(now=NOW)["enrollment_ready"] is False
+    assert (
+        grading.status(now=NOW)["metadata"]["reload_error"] == "metadata_reload_failed"
+    )
 
 
 def test_configured_hardware_stays_required_after_load_and_time_passes(
@@ -100,6 +103,7 @@ def test_warning_uses_earlier_revocation_deadline_and_not_only_blob_date():
     assert grading.status(now=NOW + timedelta(days=8))["enrollment_ready"] is False
 
 
-def test_hardware_policy_cannot_be_created_without_loaded_input():
-    with pytest.raises(Refused, match="snapshot_unavailable"):
-        EnrollmentGrading("hardware", None)
+def test_missing_hardware_input_is_reported_without_changing_the_policy():
+    grading = EnrollmentGrading("hardware", None)
+    assert grading.mode == "hardware"
+    assert grading.status(now=NOW)["enrollment_ready"] is False
