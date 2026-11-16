@@ -537,6 +537,53 @@ async def test_real_replacement_activation_retires_only_the_old_generation(
     assert (await service.activate(value, trust=after, requester=caller))[
         "state"
     ] == "active"
+    if mode == "assisted":
+        # The target's retired BEFORE key is allowed for an exact retry, not
+        # for manufacturing a new unbroken approval after assisted recovery.
+        from receipts import assertion
+        from approval_service.verify import verify_historical
+
+        forged_r = copy.deepcopy(r)
+        forged_r["approver"] = trust.person
+        forged_r["act"]["target"]["continuity"] = "unbroken"
+        forged_r["nonce"]["value"] = ""
+        forged_r["nonce"]["value"] = encode(
+            hmac.digest(
+                b"native-transition-enforcer-secret",
+                domain("nonce") + canonical(forged_r),
+                "sha256",
+            )
+        )
+        forged_c = {
+            "version": 1,
+            "request_bytes": encode(canonical(forged_r)),
+            "assertion": assertion(
+                old_w["private"], -7, forged_r, old_b["binding"]["credentials"][0]["id"]
+            ),
+            "binding": old_b,
+            "id_chain": old_c["id_chain"],
+        }
+        assert (
+            verify_historical(forged_c, expected_request=forged_r, trust=trust).person
+            == trust.person
+        )
+        changed = copy.deepcopy(value)
+        changed["transition_receipt"] = forged_c
+        changed_e = changed["evidence"]["evidence"]
+        changed_e["transition"].update(
+            mode="unbroken",
+            approval_receipt_commitment=commitment("receipt_commitment", forged_c),
+        )
+        changed["evidence"]["signature"] = encode(
+            issuer.sign(domain("identity_evidence") + canonical(changed_e))
+        )
+        with pytest.raises(Refused, match="enrollment_conflict"):
+            await service.activate(changed, trust=after, requester=caller)
+        stored = await store.db.fetch_one(
+            "SELECT evidence FROM {{tables.approval_enrollments}} WHERE enrollment_locator=$1",
+            started["locator"],
+        )
+        assert json.loads(stored["evidence"]) == value["evidence"]
     assert (await service.activate(value, trust=after, requester=caller))[
         "state"
     ] == "active"
