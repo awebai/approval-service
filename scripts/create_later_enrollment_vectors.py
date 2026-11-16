@@ -46,11 +46,17 @@ def commitment(purpose, value):
 
 
 w = fixture()
+w2 = fixture()
 person = stable_id_from_did_key(did(person_key))
 requester = {"kind": "identity", "id": person, "key": did(person_key)}
 
 
-def construction(certificate_signer=issuer):
+def construction(
+    certificate_signer=issuer, person_signer=person_key, alternative_credential=False
+):
+    person_key = person_signer
+    person = stable_id_from_did_key(did(person_key))
+    requester = {"kind": "identity", "id": person, "key": did(person_key)}
     cert = {
         "v": 1,
         "type": "aweb.id-certificate",
@@ -72,6 +78,10 @@ def construction(certificate_signer=issuer):
     b.update(
         person=person, certificate=cid, identity_key=did(person_key), issuer=did(issuer)
     )
+    if alternative_credential:
+        extra = copy.deepcopy(w2["receipt"]["binding"]["binding"]["credentials"][0])
+        extra["id"] = b64(b"second-enrolled-credential")
+        b["credentials"].append(extra)
     binding = signed(issuer, "binding", "binding", b)
     intent = signed(
         issuer,
@@ -125,7 +135,12 @@ def construction(certificate_signer=issuer):
         "request_bytes": b64(canon(r)),
         "binding": binding,
         "id_chain": [certificate],
-        "assertion": assertion(w["private"], -7, r, credential["id"]),
+        "assertion": assertion(
+            w2["private"] if alternative_credential else w["private"],
+            -7,
+            r,
+            b["credentials"][-1]["id"] if alternative_credential else credential["id"],
+        ),
     }
     e = {
         "version": 1,
@@ -138,6 +153,9 @@ def construction(certificate_signer=issuer):
             "credential": credential["id"],
             "grade": credential["grade"],
             "since": 1100,
+            "confirmation_receipt_commitment": commitment(
+                "receipt_commitment", receipt
+            ),
         },
     }
     return {
@@ -234,13 +252,13 @@ case(
 )
 case(
     "later-statement-cannot-be-creation",
-    error="enrollment_invalid",
+    error="activation_invalid",
     edit=lambda c: c["activation"]["evidence"]["evidence"].update(kind="human"),
     resign=True,
 )
 case(
     "no-creation-member",
-    error="enrollment_invalid",
+    error="activation_invalid",
     edit=lambda c: c["activation"]["evidence"]["evidence"].update(creation={}),
     resign=True,
 )
@@ -262,7 +280,7 @@ case(
 )
 case(
     "negative-issuer-time",
-    error="enrollment_invalid",
+    error="activation_invalid",
     edit=lambda c: c["activation"]["evidence"]["evidence"]["enrollment"].update(
         since=-1
     ),
@@ -272,6 +290,30 @@ case(
     "saved-confirmation-after-deadline",
     edit=lambda c: (c.update(now=1400), c["trust"].update(observed_at=1400)),
 )
+case(
+    "statement-names-another-confirmation",
+    error="evidence_binding_mismatch",
+    edit=lambda c: c["activation"]["evidence"]["evidence"]["enrollment"].update(
+        confirmation_receipt_commitment="sha256:" + "f" * 64
+    ),
+    resign=True,
+)
+case(
+    "confirmation-by-another-credential",
+    error="evidence_binding_mismatch",
+    value=construction(alternative_credential=True),
+)
+cases[-1]["confirmation_trust"] = copy.deepcopy(cases[-1]["trust"])
+other_person = construction(person_signer=old_issuer)
+case(
+    "confirmation-for-another-person",
+    error="binding_mismatch",
+    edit=lambda c: c["activation"].update(
+        confirmation_receipt=other_person["activation"]["confirmation_receipt"]
+    ),
+)
+cases[-1]["confirmation_trust"] = other_person["trust"]
+
 path.write_text(
     json.dumps(
         {
