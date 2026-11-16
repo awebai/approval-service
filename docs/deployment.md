@@ -99,8 +99,10 @@ bytes and expired assertion slots; unactivated pending enrollments expire too.
 
 Receipt-only enforcers and self-hosted key holders need no Redis. This service
 uses a bounded 60-second in-process public observation cache which preserves
-original age. No unavailable read renews an observation. The pinned
-`awid-service==0.5.40rc1` supplies plain ID-chain reads but lacks
+original age. No unavailable read renews an observation. The service lock
+selects `awid-service==0.5.40rc1`; the library declares
+`>=0.5.40rc1,<0.6` so consumers can select their newer SDK normally. rc1
+supplies plain ID-chain reads but lacks
 `get_team_certificate_status_fresh`. Service startup refuses that missing port;
 install the AWID release built from post-deletion main when available. Native
 source integration uses the actual post-deletion `awid/src` on `PYTHONPATH`,
