@@ -31,6 +31,8 @@ from .seams import (
 from .verify import Refused, Trust
 from .wire import SCHEMA, domain, validate
 
+CONFIRMED_ACTIVATION_RETENTION_SECONDS = 30 * 86400
+
 
 @dataclass(frozen=True)
 class PublicIssuer:
@@ -47,10 +49,12 @@ class Enrollments:
         self.origin, self.rp_id, self.grading = (origin, rp_id, grading)
 
     @staticmethod
-    def _bounds(row, *, issuer=None, requester=None, browser=False):
+    def _bounds(row, *, issuer=None, requester=None, browser=False, activation=False):
         now = int(time.time())
         Ceremonies._bounds(now, trust=issuer, requester=requester)
-        if now >= row["deadline"]:
+        if now >= row["deadline"] and not (
+            activation and row.get("confirmation_approved", False)
+        ):
             raise Refused("enrollment_expired")
         if browser and now >= row["browser_deadline"]:
             raise Refused("enrollment_browser_expired")
@@ -66,16 +70,26 @@ class Enrollments:
             now=int(time.time()),
         )
 
-    async def _row(self, tx, locator, *, pending=True):
+    async def _row(self, tx, locator, *, pending=True, activation=False):
+        query = "SELECT * FROM {{tables.approval_enrollments}} WHERE enrollment_locator=$1 FOR UPDATE"
+        if activation:
+            query = """SELECT e.*,EXISTS (
+                SELECT 1 FROM {{tables.approval_requests}} r
+                WHERE r.organisation=e.organisation AND r.person_id=e.person_id
+                AND r.operation_id=e.confirmation_id AND r.binding_ref=e.binding_ref
+                AND r.outcome='approved'
+            ) AS confirmation_approved
+            FROM {{tables.approval_enrollments}} e WHERE e.enrollment_locator=$1
+            FOR UPDATE OF e"""
         row = await tx.fetch_one(
-            "SELECT * FROM {{tables.approval_enrollments}} WHERE enrollment_locator=$1 FOR UPDATE",
+            query,
             locator,
         )
         if row is None:
             raise Refused("enrollment_not_found")
         if pending and row["state"] != "pending":
             raise Refused("enrollment_not_pending")
-        self._bounds(row)
+        self._bounds(row, activation=activation)
         return row
 
     def _browser(self, row, csrf):
@@ -346,6 +360,9 @@ class Enrollments:
 
     async def confirm(self, body, *, issuer, requester):
         validate("enrollment_confirm_request", body)
+        # Terminal receipt recovery remains a deadline-bound confirmation step;
+        # only activation may use a retained, approved pending enrollment.
+        self._check(body["intent"], issuer, requester)
         locator = commitment("enrollment_locator", body["intent"])
         old = await self.store.db.fetch_one(
             "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND organisation=$2 AND person_id=$3",
@@ -396,7 +413,6 @@ class Enrollments:
             rp_id=self.rp_id,
             now=int(time.time()),
         )
-        self._check(body["intent"], issuer, requester)
         locator = checked["locator"]
         raw = decode(body["request_bytes"])
         r = parse(raw)
@@ -612,7 +628,7 @@ class Enrollments:
                     canonical([trust.organisation, trust.person])
                 ).hexdigest(),
             )
-            row = await self._row(tx, locator, pending=False)
+            row = await self._row(tx, locator, pending=False, activation=True)
             if (
                 row["state"] not in ("pending", "active")
                 or row["requester_hash"]
@@ -726,7 +742,7 @@ class Enrollments:
                 "UPDATE {{tables.approval_credentials}} SET registration=NULL,client_extension_results=NULL WHERE enrollment_locator=$1",
                 locator,
             )
-            self._bounds(row, issuer=trust, requester=requester)
+            self._bounds(row, issuer=trust, requester=requester, activation=True)
             return {
                 "version": 1,
                 "locator": locator,
@@ -737,8 +753,17 @@ class Enrollments:
     async def cleanup(self, now):
         async with self.store.transaction() as tx:
             rows = await tx.fetch_all(
-                "SELECT organisation,person_id,confirmation_id,enrollment_locator FROM {{tables.approval_enrollments}} WHERE state='pending' AND deadline<=$1 ORDER BY deadline LIMIT 128 FOR UPDATE SKIP LOCKED",
+                """SELECT e.organisation,e.person_id,e.confirmation_id,e.enrollment_locator
+                FROM {{tables.approval_enrollments}} e
+                WHERE e.state='pending' AND e.deadline<=$1
+                AND (e.deadline<=$1-$2 OR NOT EXISTS (
+                    SELECT 1 FROM {{tables.approval_requests}} r
+                    WHERE r.organisation=e.organisation AND r.person_id=e.person_id
+                    AND r.operation_id=e.confirmation_id AND r.binding_ref=e.binding_ref
+                    AND r.outcome='approved'
+                )) ORDER BY e.deadline LIMIT 128 FOR UPDATE OF e SKIP LOCKED""",
                 now,
+                CONFIRMED_ACTIVATION_RETENTION_SECONDS,
             )
             for row in rows:
                 await self._delete_pending(tx, row, now)

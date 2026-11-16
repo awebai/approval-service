@@ -73,7 +73,15 @@ certificate/identity key and original deadline. They become usable only when
 it observes that issuer's committed public certificate and matching signed
 evidence naming those credentials, presented by the issuer or person. Pending
 enrollment proof-of-possession ceremonies are not ordinary signed-in sessions.
-Unactivated pending enrollments expire. This is one-directional observation:
+An unconfirmed pending enrollment expires at its original deadline. Once its
+confirmation is approved, its pending credentials remain usable for ACTIVATION
+only: browser, material, confirmation and sign-in gain no deadline extension.
+A new enrollment start for that person after the deadline replaces the old
+pending generation; otherwise the sweep removes it 30 days after that deadline.
+Activation ends pending retention by making the enrollment active. The raw
+assertion's retrieval window still ends at the original deadline; the requester
+must retain the creation receipt it already obtained.
+This is one-directional observation:
 no issuer/service prepare/commit protocol or mutual commit acknowledgment.
 For activation only, the authenticated carrier may be the intent's original
 requester or an identity descriptor naming that exact person and Trust's current

@@ -120,6 +120,13 @@ Before signing the enrollment binding, the issuer checks the number of
 registrations in the material against the number the person reports making.
 The link alone grants no signed-in session or active identity.
 
+After a person's confirmation is approved, the pending credentials remain for
+activation even after the intent deadline. The normal sweep removes them 30 days
+after that deadline; an earlier new enrollment start replaces the expired
+pending attempt. Unconfirmed attempts expire at the original deadline. Material,
+confirmation, browser ceremonies and raw assertion retrieval keep their original
+deadlines; the requester must save its receipt before retrieval closes.
+
 
 `AWSIGN_TRUSTED_PROXY_IPS` explicitly configures which proxy peers may supply
 forwarded client addresses (default `127.0.0.1,::1` for a loopback HTTPS proxy).
