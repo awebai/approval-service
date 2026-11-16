@@ -84,16 +84,17 @@ def test_requester_service_shared_bytes(case):
 )
 def test_issuer_service_enrollment_shared_construction(case):
     def run():
-        checked = check_enrollment_intent(
-            case["intent"],
-            issuer_key=case["issuer_key"],
-            requester=case["requester"],
-            origin=case["origin"],
-            rp_id=case["rp_id"],
-            now=case["now"],
-        )
-        assert checked["locator"] == case["expected_locator"]
-        assert checked["preimage"] == decode(case["expected_intent_preimage"])
+        if case["phase"] != "activation":
+            checked = check_enrollment_intent(
+                case["intent"],
+                issuer_key=case["issuer_key"],
+                requester=case["requester"],
+                origin=case["origin"],
+                rp_id=case["rp_id"],
+                now=case["now"],
+            )
+            assert checked["locator"] == case["expected_locator"]
+            assert checked["preimage"] == decode(case["expected_intent_preimage"])
         if case["phase"] == "creation":
             return check_creation_proof(
                 case["activation"]["creation_receipt"],

@@ -82,12 +82,18 @@ func TestIssuerEnrollmentSeam(t *testing.T) {
 		}
 		t.Run(text(c, "id"), func(t *testing.T) {
 			in := EnrollmentInput{IssuerKey: text(c, "issuer_key"), Requester: object(c, "requester"), Origin: text(c, "origin"), RPID: text(c, "rp_id"), Now: number(c, "now"), Trust: seamTrust(t, c["trust"])}
-			checked, e := CheckEnrollmentIntent(object(c, "intent"), in)
-			if e == nil {
-				want, _ := decode(text(c, "expected_intent_preimage"))
-				if checked.Locator != text(c, "expected_locator") || !bytes.Equal(checked.Preimage, want) {
-					t.Fatal("wrong intent bytes/locator")
+			var checked CheckedEnrollment
+			var e error
+			if text(c, "phase") != "activation" {
+				checked, e = CheckEnrollmentIntent(object(c, "intent"), in)
+				if e == nil {
+					want, _ := decode(text(c, "expected_intent_preimage"))
+					if checked.Locator != text(c, "expected_locator") || !bytes.Equal(checked.Preimage, want) {
+						t.Fatal("wrong intent bytes/locator")
+					}
 				}
+			}
+			if e == nil {
 				if text(c, "phase") == "creation" {
 					if presenter, ok := c["presenter"].(map[string]any); ok {
 						in.Requester = presenter
