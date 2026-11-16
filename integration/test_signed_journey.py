@@ -432,6 +432,23 @@ async def test_signed_http_enrollment_approval_and_foreign_organisation_fences(
                 headers={"Origin": ORIGIN},
             )
             assert denied.status_code == 404
+            for path, extra in [
+                ("approval/deny", {}),
+                (
+                    "approval/finish",
+                    {"id": options["id"], "assertion": creation_assertion},
+                ),
+            ]:
+                refused = await client.post(
+                    "/browser/" + path,
+                    json={
+                        "locator": hidden["locator"],
+                        "csrf": session["csrf"],
+                        **extra,
+                    },
+                    headers={"Origin": ORIGIN},
+                )
+                assert refused.status_code == 404
             submit = {
                 "version": 1,
                 "request_bytes": encode(canonical(r)),

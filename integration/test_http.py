@@ -207,6 +207,13 @@ async def test_trusted_proxy_keeps_separate_real_browser_rate_budgets(store):
         rp_id="approval.example.test",
         grading=EnrollmentGrading("passkey_only", None),
     )
+    # Keep the real fixed-minute window intact across this short HTTP burst.
+    import asyncio
+    import time
+
+    remaining = 60 - time.monotonic() % 60
+    if remaining < 5:
+        await asyncio.sleep(remaining + 0.05)
     config = server_config(app, bind="127.0.0.1", port=0, trusted_proxy_ips="127.0.0.1")
     async with (
         listener(app, config=config) as (base, _server),
