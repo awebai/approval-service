@@ -201,8 +201,8 @@ def test_the_shared_frozen_receipt_corpus(case):
 
 
 def test_shared_corpus_keeps_all_review_neighbors():
-    assert len(_CASES) == 17
-    assert len({c["id"] for c in _CASES}) == 17
+    assert len(_CASES) == 22
+    assert len({c["id"] for c in _CASES}) == 22
 
 
 @pytest.mark.parametrize(

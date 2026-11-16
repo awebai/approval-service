@@ -11,9 +11,10 @@ from receipts import b64, canon, fixture, resign, signed_client
 
 out = root / "vectors/receipts.json"
 append_review = "--append-review" in sys.argv
-if out.exists() and not append_review:
+append_hostnames = "--append-hostnames" in sys.argv
+if out.exists() and not (append_review or append_hostnames):
     raise SystemExit("refuse to overwrite frozen vectors")
-cases = json.loads(out.read_text())["cases"] if append_review else []
+cases = json.loads(out.read_text())["cases"] if (append_review or append_hostnames) else []
 
 
 def add(name, w, accept, now=1100, required_grade="passkey_uv"):
@@ -35,7 +36,7 @@ def add(name, w, accept, now=1100, required_grade="passkey_uv"):
     )
 
 
-if not append_review:
+if not (append_review or append_hostnames):
     for algorithm in (-7, -8, -257):
         add("algorithm-" + str(algorithm), fixture(algorithm), True)
     for packaging in ("carried", "dropped", "superseded"):
@@ -77,43 +78,68 @@ if not append_review:
         False,
         required_grade="certified_hardware",
     )
-# Six review regressions: each has a genuine issuer and assertion signature.
-import cbor2
+if not append_hostnames:
+    # Six review regressions: each has a genuine issuer and assertion signature.
+    import cbor2
 
-for name, mutate in [
-    ("cross-origin-true", lambda c: canon({**c, "crossOrigin": True})),
-    (
-        "client-duplicate-same",
-        lambda c: canon(c)[:-1] + b',"origin":"https://approval.example.test"}',
-    ),
-    (
-        "client-duplicate-first-foreign",
-        lambda c: b'{"origin":"https://foreign.example.test",' + canon(c)[1:],
-    ),
-    (
-        "client-padded-challenge",
-        lambda c: canon({**c, "challenge": c["challenge"] + "="}),
-    ),
-]:
+    for name, mutate in [
+        ("cross-origin-true", lambda c: canon({**c, "crossOrigin": True})),
+        (
+            "client-duplicate-same",
+            lambda c: canon(c)[:-1] + b',"origin":"https://approval.example.test"}',
+        ),
+        (
+            "client-duplicate-first-foreign",
+            lambda c: b'{"origin":"https://foreign.example.test",' + canon(c)[1:],
+        ),
+        (
+            "client-padded-challenge",
+            lambda c: canon({**c, "challenge": c["challenge"] + "="}),
+        ),
+    ]:
+        w = fixture()
+        signed_client(w, mutate)
+        add(name, w, False)
     w = fixture()
-    signed_client(w, mutate)
-    add(name, w, False)
-w = fixture()
-b = w["receipt"]["binding"]["binding"]
-b["origin"] = "https://APPROVAL.example.test"
-w["receipt"]["binding"] = resign(w, b)
-signed_client(w, canon)
-add("origin-uppercase-host", w, False)
-w = fixture()
-b = w["receipt"]["binding"]["binding"]
-other = copy.deepcopy(b["credentials"][0])
-other["id"] = b64(b"other-off-curve")
-other["key"] = b64(
-    cbor2.dumps({1: 2, 3: -7, -1: 1, -2: b"\x01" * 32, -3: b"\x02" * 32})
-)
-b["credentials"].append(other)
-w["receipt"]["binding"] = resign(w, b)
-add("unselected-off-curve-key", w, False)
+    b = w["receipt"]["binding"]["binding"]
+    b["origin"] = "https://APPROVAL.example.test"
+    w["receipt"]["binding"] = resign(w, b)
+    signed_client(w, canon)
+    add("origin-uppercase-host", w, False)
+    w = fixture()
+    b = w["receipt"]["binding"]["binding"]
+    other = copy.deepcopy(b["credentials"][0])
+    other["id"] = b64(b"other-off-curve")
+    other["key"] = b64(
+        cbor2.dumps({1: 2, 3: -7, -1: 1, -2: b"\x01" * 32, -3: b"\x02" * 32})
+    )
+    b["credentials"].append(other)
+    w["receipt"]["binding"] = resign(w, b)
+    add("unselected-off-curve-key", w, False)
+if append_hostnames:
+    import hashlib
+    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.asymmetric import ec
+
+    for name, rp in [
+        ("rp-uppercase", "APPROVAL.example.test"),
+        ("rp-space", "a b.example"),
+        ("rp-percent", "a%41.example"),
+        ("rp-trailing-dot", "approval.example.test."),
+        ("rp-raw-unicode", "approvál.example.test"),
+    ]:
+        w = fixture()
+        b = w["receipt"]["binding"]["binding"]
+        b["rp_id"] = rp
+        b["origin"] = "https://" + rp
+        w["receipt"]["binding"] = resign(w, b)
+        signed_client(w, canon)
+        a = w["receipt"]["assertion"]
+        from approval_service.encoding import decode
+        auth = hashlib.sha256(rp.encode()).digest() + decode(a["authenticator_data"])[32:]
+        a["authenticator_data"] = b64(auth)
+        a["signature"] = b64(w["private"].sign(auth + hashlib.sha256(decode(a["client_data_json"])).digest(), ec.ECDSA(hashes.SHA256())))
+        add(name, w, False)
 out.write_text(
     json.dumps(
         {
