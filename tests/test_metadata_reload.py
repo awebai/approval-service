@@ -154,3 +154,30 @@ async def test_process_watcher_observes_pin_changes_and_stops_cleanly(
     path.unlink()
     await asyncio.sleep(0.04)
     assert grading._reload_error is None
+
+
+@pytest.mark.asyncio
+async def test_service_lifespan_owns_the_shared_metadata_worker(transport, tmp_path):
+    import asyncio
+
+    from approval_service.http import create_app
+
+    config = manifest(transport)
+    path = tmp_path / "pin.json"
+    path.write_text(json.dumps(config))
+    grading = EnrollmentGrading.load(
+        mode="hardware", cache_dir=tmp_path / "cache", manifest_path=path, now=NOW
+    )
+    app = create_app(
+        None,
+        public=None,
+        origin="https://approval.example.test",
+        rp_id="approval.example.test",
+        grading=grading,
+    )
+    before = asyncio.all_tasks()
+    async with app.router.lifespan_context(app):
+        workers = asyncio.all_tasks() - before
+        assert len(workers) == 1
+        assert not next(iter(workers)).done()
+    assert all(worker.done() for worker in workers)

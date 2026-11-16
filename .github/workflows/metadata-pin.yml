@@ -58,7 +58,9 @@ jobs:
 
           The approval-service maintainer reviews and lands this pin. Deployment
           operators then install the reviewed pin, retain its external cache and
-          reload hardware grading before the earliest input deadline. A newer
+          replace their configured manifest file atomically before the earliest
+          input deadline. The service and holder verify and install it through
+          their shared background watcher; no process restart is needed. A newer
           automation run can replace this branch; review the latest head.
           BODY
             gh pr create --head "$PIN_BRANCH" --base main --title 'Renew verified FIDO metadata pins' --body-file "$RUNNER_TEMP/metadata-pr.md"
