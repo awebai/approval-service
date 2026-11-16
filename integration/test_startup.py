@@ -62,6 +62,9 @@ async def test_locked_product_starts_and_reports_metadata_readiness(
                     await asyncio.sleep(0.02)
             else:
                 raise AssertionError("normal locked service did not start")
+            assert response.status_code == 200
+            assert response.json()["enrollment_ready"] is (health_status == 200)
+            response = await client.get(f"http://127.0.0.1:{port}/health/enrollment")
             assert response.status_code == health_status
             assert response.json()["enrollment_ready"] is (health_status == 200)
             # Missing hardware metadata must not take sign-in down.
