@@ -166,8 +166,22 @@ def resign(world, binding):
 
 def signed_client(world, make_client):
     """Sign exact caller-chosen client bytes, including adversarial encodings."""
-    challenge=hashlib.sha256(PREFIX+canon(world["request"])).digest()
-    client=make_client({"type":"webauthn.get","challenge":b64(challenge),"origin":world["receipt"]["binding"]["binding"]["origin"],"crossOrigin":False})
-    auth=hashlib.sha256(b"approval.example.test").digest()+bytes([5])+b"\0"*4
-    sig=world["private"].sign(auth+hashlib.sha256(client).digest(),ec.ECDSA(hashes.SHA256()))
-    world["receipt"]["assertion"]={"id":world["receipt"]["assertion"]["id"],"client_data_json":b64(client),"authenticator_data":b64(auth),"signature":b64(sig)}
+    challenge = hashlib.sha256(PREFIX + canon(world["request"])).digest()
+    client = make_client(
+        {
+            "type": "webauthn.get",
+            "challenge": b64(challenge),
+            "origin": world["receipt"]["binding"]["binding"]["origin"],
+            "crossOrigin": False,
+        }
+    )
+    auth = hashlib.sha256(b"approval.example.test").digest() + bytes([5]) + b"\0" * 4
+    sig = world["private"].sign(
+        auth + hashlib.sha256(client).digest(), ec.ECDSA(hashes.SHA256())
+    )
+    world["receipt"]["assertion"] = {
+        "id": world["receipt"]["assertion"]["id"],
+        "client_data_json": b64(client),
+        "authenticator_data": b64(auth),
+        "signature": b64(sig),
+    }

@@ -7,7 +7,7 @@ from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(root / "tests"))
-from receipts import b64, fixture, resign, signed_client, canon
+from receipts import b64, canon, fixture, resign, signed_client
 
 out = root / "vectors/receipts.json"
 append_review = "--append-review" in sys.argv
@@ -79,15 +79,41 @@ if not append_review:
     )
 # Six review regressions: each has a genuine issuer and assertion signature.
 import cbor2
+
 for name, mutate in [
-    ("cross-origin-true", lambda c: canon({**c,"crossOrigin":True})),
-    ("client-duplicate-same", lambda c: canon(c)[:-1]+b',"origin":"https://approval.example.test"}'),
-    ("client-duplicate-first-foreign", lambda c: b'{"origin":"https://foreign.example.test",'+canon(c)[1:]),
-    ("client-padded-challenge", lambda c: canon({**c,"challenge":c["challenge"]+"="})),
+    ("cross-origin-true", lambda c: canon({**c, "crossOrigin": True})),
+    (
+        "client-duplicate-same",
+        lambda c: canon(c)[:-1] + b',"origin":"https://approval.example.test"}',
+    ),
+    (
+        "client-duplicate-first-foreign",
+        lambda c: b'{"origin":"https://foreign.example.test",' + canon(c)[1:],
+    ),
+    (
+        "client-padded-challenge",
+        lambda c: canon({**c, "challenge": c["challenge"] + "="}),
+    ),
 ]:
-    w=fixture();signed_client(w,mutate);add(name,w,False)
-w=fixture();b=w["receipt"]["binding"]["binding"];b["origin"]="https://APPROVAL.example.test";w["receipt"]["binding"]=resign(w,b);signed_client(w,canon);add("origin-uppercase-host",w,False)
-w=fixture();b=w["receipt"]["binding"]["binding"];other=copy.deepcopy(b["credentials"][0]);other["id"]=b64(b"other-off-curve");other["key"]=b64(cbor2.dumps({1:2,3:-7,-1:1,-2:b"\x01"*32,-3:b"\x02"*32}));b["credentials"].append(other);w["receipt"]["binding"]=resign(w,b);add("unselected-off-curve-key",w,False)
+    w = fixture()
+    signed_client(w, mutate)
+    add(name, w, False)
+w = fixture()
+b = w["receipt"]["binding"]["binding"]
+b["origin"] = "https://APPROVAL.example.test"
+w["receipt"]["binding"] = resign(w, b)
+signed_client(w, canon)
+add("origin-uppercase-host", w, False)
+w = fixture()
+b = w["receipt"]["binding"]["binding"]
+other = copy.deepcopy(b["credentials"][0])
+other["id"] = b64(b"other-off-curve")
+other["key"] = b64(
+    cbor2.dumps({1: 2, 3: -7, -1: 1, -2: b"\x01" * 32, -3: b"\x02" * 32})
+)
+b["credentials"].append(other)
+w["receipt"]["binding"] = resign(w, b)
+add("unselected-off-curve-key", w, False)
 out.write_text(
     json.dumps(
         {

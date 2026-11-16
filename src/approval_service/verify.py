@@ -15,6 +15,7 @@ from urllib.parse import urlsplit
 
 import cbor2
 from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 from jsonschema import ValidationError
 from nacl.bindings import crypto_core_ed25519_is_valid_point
@@ -22,6 +23,7 @@ from webauthn import verify_authentication_response
 from webauthn.helpers.exceptions import WebAuthnException
 
 from .canonical import InvalidJSON, canonical, parse
+from .client_data import ClientDataInvalid, verify_client_data
 from .encoding import EncodingError, decode
 from .wire import domain, validate
 
@@ -95,6 +97,13 @@ def _key(raw, algorithm):
                 isinstance(key.get(k), bytes) and len(key[k]) == 32 for k in (-2, -3)
             )
         )
+        if valid:
+            try:
+                ec.EllipticCurvePublicNumbers(
+                    int.from_bytes(key[-2]), int.from_bytes(key[-3]), ec.SECP256R1()
+                ).public_key()
+            except ValueError:
+                valid = False
     elif algorithm == -8:
         valid = (
             key.get(1) == 1
@@ -175,17 +184,26 @@ def _verify(receipt, expected_request, trust):
         )
     except (InvalidSignature, ValueError) as exc:
         raise Refused("issuer_signature_invalid") from exc
-    origin = urlsplit(b["origin"])
-    if (
-        origin.scheme != "https"
-        or origin.hostname != b["rp_id"]
-        or origin.username
-        or origin.password
-        or origin.path
-        or origin.query
-        or origin.fragment
-    ):
-        raise Refused("origin_invalid")
+    try:
+        origin = urlsplit(b["origin"])
+        port = origin.port
+        suffix = "" if port is None else ":" + str(port)
+        if (
+            origin.scheme != "https"
+            or origin.hostname != b["rp_id"]
+            or b["origin"] != "https://" + b["rp_id"] + suffix
+            or origin.username
+            or origin.password
+            or origin.path
+            or origin.query
+            or origin.fragment
+            or (port is not None and not 1 <= port <= 65535)
+        ):
+            raise Refused("origin_invalid")
+    except ValueError as exc:
+        if isinstance(exc, Refused):
+            raise
+        raise Refused("origin_invalid") from exc
     a = receipt["assertion"]
     _closed(a, "id client_data_json authenticator_data signature")
     selected = None
@@ -213,6 +231,15 @@ def _verify(receipt, expected_request, trust):
     if selected is None:
         raise Refused("credential_not_enrolled")
     digest = hashlib.sha256(REQUEST_PREFIX + raw).digest()
+    try:
+        verify_client_data(
+            decode(a["client_data_json"]),
+            expected_type="webauthn.get",
+            expected_challenge=digest,
+            expected_origin=b["origin"],
+        )
+    except ClientDataInvalid as exc:
+        raise Refused("assertion_invalid") from exc
     proof = {
         "id": a["id"],
         "rawId": a["id"],
