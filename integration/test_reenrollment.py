@@ -541,6 +541,7 @@ async def test_real_replacement_activation_retires_only_the_old_generation(
         # The target's retired BEFORE key is allowed for an exact retry, not
         # for manufacturing a new unbroken approval after assisted recovery.
         from receipts import assertion
+
         from approval_service.verify import verify_historical
 
         forged_r = copy.deepcopy(r)

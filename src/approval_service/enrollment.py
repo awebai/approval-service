@@ -621,6 +621,15 @@ class Enrollments:
                 ).hexdigest()
             ):
                 raise Refused("enrollment_conflict")
+            if (
+                row["state"] == "active"
+                and row["evidence"] is not None
+                and canonical(json.loads(row["evidence"]))
+                != canonical(value["evidence"])
+            ):
+                # The retired BEFORE exception permits the original retry,
+                # never rewriting an assisted/recreated history as unbroken.
+                raise Refused("enrollment_conflict")
             current = await tx.fetch_one(
                 "SELECT * FROM {{tables.approval_enrollments}} WHERE organisation=$1 AND person_id=$2 AND state='active' FOR UPDATE",
                 trust.organisation,

@@ -129,7 +129,9 @@ then commits the new identity key and signed evidence. Activation observes that
 committed identity, checks both proofs and the service's own credential grades,
 and atomically retires the old generation and its sessions. Expiring an
 unfinished attempt leaves the old generation usable. Historical receipt recovery
-still returns the binding originally selected at decision.
+still returns the binding originally selected at decision. An activated
+generation's issuer-signed evidence is immutable on retry; a new signature by
+a retired BEFORE key cannot relabel assisted history as unbroken.
 
 When every approval key is lost, the identity key can still sign its ordinary
 rotation. Recovery enrollment requires that new key to be current for the SAME
