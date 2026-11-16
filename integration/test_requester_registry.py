@@ -32,12 +32,13 @@ from approval_service.verify import Refused
 
 
 @asynccontextmanager
-async def listener(app):
+async def listener(app, *, config=None):
     sock = socket.socket()
     sock.bind(("127.0.0.1", 0))
     sock.listen()
     server = uvicorn.Server(
-        uvicorn.Config(app, log_level="warning", access_log=False, lifespan="on")
+        config
+        or uvicorn.Config(app, log_level="warning", access_log=False, lifespan="on")
     )
     task = asyncio.create_task(server.serve(sockets=[sock]))
     try:
