@@ -16,7 +16,9 @@ append_patterns = "--append-patterns" in sys.argv
 if out.exists() and not (append_review or append_hostnames or append_patterns):
     raise SystemExit("refuse to overwrite frozen vectors")
 cases = (
-    json.loads(out.read_text())["cases"] if (append_review or append_hostnames or append_patterns) else []
+    json.loads(out.read_text())["cases"]
+    if (append_review or append_hostnames or append_patterns)
+    else []
 )
 
 
@@ -154,6 +156,7 @@ if append_hostnames:
         add(name, w, False)
 if append_patterns:
     import hmac
+
     from receipts import NONCE_PREFIX
 
     w = fixture()
@@ -165,7 +168,9 @@ if append_patterns:
     r = w["request"]
     r["definition"]["sha256"] += "\n"
     r["nonce"]["value"] = ""
-    r["nonce"]["value"] = b64(hmac.digest(w["secret"], NONCE_PREFIX + canon(r), "sha256"))
+    r["nonce"]["value"] = b64(
+        hmac.digest(w["secret"], NONCE_PREFIX + canon(r), "sha256")
+    )
     w["receipt"]["request_bytes"] = b64(canon(r))
     signed_client(w, canon)
     add("definition-digest-trailing-newline", w, False)
