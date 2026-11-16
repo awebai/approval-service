@@ -452,7 +452,8 @@ An expired supplied snapshot refuses hardware-attested enrollment
 (`snapshot_expired`), rather than silently assigning a permanent lower grade.
 Unattested passkeys do not depend on hardware metadata. With hardware grading
 configured, missing metadata likewise refuses attested registration
-(`snapshot_unavailable`); readiness health is non-200 until metadata is current. Effective unscoped withdrawals end
+(`snapshot_unavailable`); `/health/enrollment` is non-200 until metadata is
+current, while `/health` remains database-only liveness. Effective unscoped withdrawals end
 model eligibility regardless of firmware; certificate scope remains specific.
 
 Verify before installation; reject rollback, untrusted replacement and expired

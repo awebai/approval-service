@@ -586,10 +586,17 @@ def create_app(store, *, public, origin, rp_id, grading, requests_per_ip=600):
             v["locator"], v["csrf"], v["id"], v["assertion"], issuer=issuer
         )
 
+    async def health_status():
+        await store.db.fetch_one("SELECT 1 AS ok")
+        return grading.status()
+
     @app.get("/health")
     async def health():
-        await store.db.fetch_one("SELECT 1 AS ok")
-        status = grading.status()
+        return JSONResponse(await health_status())
+
+    @app.get("/health/enrollment")
+    async def enrollment_health():
+        status = await health_status()
         return JSONResponse(
             status, status_code=200 if status["enrollment_ready"] else 503
         )

@@ -14,7 +14,7 @@ browser. A released pin is configuration, not a permanent metadata archive.
 The service's enrollment composition uses `EnrollmentGrading.load` with an
 explicit operator mode: `hardware` or `passkey_only`. In hardware mode, cache
 location is required. Missing or expired metadata pauses hardware-attested
-registration, with an explicit metadata error and non-200 health status.
+registration, with an explicit metadata error and non-200 enrollment-readiness status.
 Unattested passkeys remain available; a failed load never silently downgrades
 an attested key. Receipt-only checking and already-saved historical proofs do
 not require a current metadata download.
@@ -143,9 +143,11 @@ are checked against the certificate before discovery. Exact-status misses and
 discovered team keys are cached for at most 60 seconds; a bad signature under
 a cached key causes no further registry read. These are admission limits, not
 effect authority.
-`/health` returns 503 when the database is unavailable or hardware grading is
-not ready. Its body identifies metadata readiness; sign-in and approvals remain
-available during metadata expiry, as does registration of unattested passkeys.
+Load balancers and orchestrator probes use `/health`: database reachability
+keeps it at 200, even if hardware metadata expires. Its body reports enrollment
+state. Operator alerting uses `/health/enrollment`, which answers 503 while
+hardware grading is not ready. Sign-in, approvals and unattested passkey
+registration remain available during metadata expiry.
 
 Re-enrollment uses a separate pending generation, so run `awsign migrate` before
 starting the service with its initial generation-scoped schema.
