@@ -168,6 +168,10 @@ type CheckedEnrollment struct {
 }
 
 func CheckEnrollmentIntent(signed map[string]any, in EnrollmentInput) (CheckedEnrollment, error) {
+	return checkEnrollmentIntent(signed, in, true)
+}
+
+func checkEnrollmentIntent(signed map[string]any, in EnrollmentInput, live bool) (CheckedEnrollment, error) {
 	var out CheckedEnrollment
 	bad := func(code string) (CheckedEnrollment, error) { return out, refuse(code) }
 	if validate("enrollment_intent", signed) != nil {
@@ -180,7 +184,7 @@ func CheckEnrollmentIntent(signed map[string]any, in EnrollmentInput) (CheckedEn
 	if text(b, "origin") != in.Origin || text(b, "rp_id") != in.RPID || checkSite(in.Origin, in.RPID) != nil {
 		return bad("origin_invalid")
 	}
-	if in.Now < number(b, "not_before") || in.Now >= number(b, "deadline") {
+	if live && (in.Now < number(b, "not_before") || in.Now >= number(b, "deadline")) {
 		return bad("enrollment_expired")
 	}
 	challenge, e := decode(text(b, "challenge"))
@@ -215,6 +219,9 @@ func CheckEnrollmentIntent(signed map[string]any, in EnrollmentInput) (CheckedEn
 	}
 	return CheckedEnrollment{Person: text(b, "person"), Certificate: cid, IdentityKey: text(b, "identity_key"), State: "pending", Locator: locator, Preimage: signedBytes}, nil
 }
+
+// CheckActivation observes committed evidence under current Trust; it does not
+// renew or repeat the deadline-bound enrollment/confirmation ceremony.
 func CheckActivation(value map[string]any, in EnrollmentInput) (CheckedEnrollment, error) {
 	var out CheckedEnrollment
 	bad := func(code string) (CheckedEnrollment, error) { return out, refuse(code) }
@@ -224,7 +231,7 @@ func CheckActivation(value map[string]any, in EnrollmentInput) (CheckedEnrollmen
 	original := object(object(value, "intent"), "intent")["requester"].(map[string]any)
 	proofIn := in
 	proofIn.Requester = original
-	pending, e := CheckEnrollmentIntent(object(value, "intent"), proofIn)
+	pending, e := checkEnrollmentIntent(object(value, "intent"), proofIn, false)
 	if e != nil {
 		return out, e
 	}
@@ -242,7 +249,7 @@ func CheckActivation(value map[string]any, in EnrollmentInput) (CheckedEnrollmen
 	if !equalValue(receipt["binding"], value["binding"]) {
 		return bad("binding_mismatch")
 	}
-	checked, bh, _r, e := creationAssertion(receipt, proofIn)
+	checked, bh, _r, e := creationAssertion(receipt, proofIn, false)
 	_ = _r
 	if e != nil {
 		return out, e
@@ -371,7 +378,7 @@ func MakeNeedsHuman(request map[string]any, origin string) (int, map[string]any,
 	return int(wireSchema["x-enforcer"].(map[string]any)["needs_human_status"].(float64)), map[string]any{"version": json.Number("1"), "status": "needs_human", "approval_origin": origin, "request_bytes": base64.RawURLEncoding.EncodeToString(raw), "digest": hex.EncodeToString(d[:])}, nil
 }
 
-func creationAssertion(receipt map[string]any, in EnrollmentInput) (CheckedApproval, string, map[string]any, error) {
+func creationAssertion(receipt map[string]any, in EnrollmentInput, live bool) (CheckedApproval, string, map[string]any, error) {
 	var out CheckedApproval
 	bad := func(code string) (CheckedApproval, string, map[string]any, error) { return out, "", nil, refuse(code) }
 	if validate("receipt", receipt) != nil {
@@ -394,7 +401,7 @@ func creationAssertion(receipt map[string]any, in EnrollmentInput) (CheckedAppro
 	if !equalValue(r["requester"], in.Requester) {
 		return bad("requester_mismatch")
 	}
-	if in.Now < number(r, "not_before") || in.Now >= number(r, "deadline") {
+	if live && (in.Now < number(r, "not_before") || in.Now >= number(r, "deadline")) {
 		return bad("request_expired")
 	}
 	checked, e := VerifyHistorical(receipt, r, *in.Trust)
@@ -427,7 +434,7 @@ func CheckCreationProof(receipt, intent map[string]any, in EnrollmentInput, nonc
 	if t.Person != pending.Person || t.Certificate != pending.Certificate || t.IdentityKey != pending.IdentityKey || t.Issuer != in.IssuerKey {
 		return out, refuse("enrollment_identity_mismatch")
 	}
-	checked, bh, r, e := creationAssertion(receipt, in)
+	checked, bh, r, e := creationAssertion(receipt, in, true)
 	if e != nil {
 		return out, e
 	}

@@ -120,6 +120,20 @@ def check_enrollment_intent(signed, *, issuer_key, requester, origin, rp_id, now
     committed Trust at activation. Active-person recovery additionally requires
     that new key already current when the service starts the recovery. Pending is not active authority.
     """
+    return _check_enrollment_intent(
+        signed,
+        issuer_key=issuer_key,
+        requester=requester,
+        origin=origin,
+        rp_id=rp_id,
+        now=now,
+        live=True,
+    )
+
+
+def _check_enrollment_intent(
+    signed, *, issuer_key, requester, origin, rp_id, now, live
+):
     try:
         validate("enrollment_intent", signed)
         body = signed["intent"]
@@ -128,7 +142,9 @@ def check_enrollment_intent(signed, *, issuer_key, requester, origin, rp_id, now
         if (body["origin"], body["rp_id"]) != (origin, rp_id):
             raise Refused("origin_invalid")
         validate_site(origin, rp_id)
-        if type(now) is not int or not body["not_before"] <= now < body["deadline"]:
+        if live and (
+            type(now) is not int or not body["not_before"] <= now < body["deadline"]
+        ):
             raise Refused("enrollment_expired")
         if len(decode(body["challenge"])) != 32:
             raise Refused("enrollment_challenge_invalid")
@@ -210,19 +226,26 @@ def check_activation(
     A valid pending intent/B/creation proof alone remains pending. The public
     Trust is acquired through read_trust; it is not parsed from this payload.
     The issuer's nonce consumption/application rule is outside this service.
+    Once evidence exists this is observation, not a new enrollment ceremony:
+    intent and saved confirmation deadlines do not expire committed evidence.
     """
     try:
         validate("enrollment_activation", value)
         original = value["intent"]["intent"]["requester"]
-        pending = check_enrollment_intent(
+        pending = _check_enrollment_intent(
             value["intent"],
             issuer_key=issuer_key,
             requester=original,
             origin=origin,
             rp_id=rp_id,
             now=now,
+            live=False,
         )
-        if trust is None or not 0 <= now - trust.observed_at <= 60:
+        if (
+            type(now) is not int
+            or trust is None
+            or not 0 <= now - trust.observed_at <= 60
+        ):
             raise Refused("identity_unavailable")
         if (trust.person, trust.certificate, trust.identity_key, trust.issuer) != (
             pending["person"],
@@ -236,7 +259,7 @@ def check_activation(
         if canonical(c["binding"]) != canonical(value["binding"]):
             raise Refused("binding_mismatch")
         checked, bh, _r = _creation_assertion(
-            c, requester=original, origin=origin, now=now, trust=trust
+            c, requester=original, origin=origin, now=now, trust=trust, live=False
         )
         b = value["binding"]["binding"]
         if canonical(value["id_chain"]) != canonical(c["id_chain"]):
@@ -374,7 +397,7 @@ def make_needs_human(request, *, origin):
     }
 
 
-def _creation_assertion(receipt, *, requester, origin, now, trust):
+def _creation_assertion(receipt, *, requester, origin, now, trust, live=True):
     validate("receipt", receipt)
     request = parse(decode(receipt["request_bytes"]))
     check_definition(request)
@@ -382,7 +405,7 @@ def _creation_assertion(receipt, *, requester, origin, now, trust):
         raise Refused("purpose_invalid")
     if canonical(request["requester"]) != canonical(requester):
         raise Refused("requester_mismatch")
-    if not request["not_before"] <= now < request["deadline"]:
+    if live and not request["not_before"] <= now < request["deadline"]:
         raise Refused("request_expired")
     checked = verify_historical(receipt, expected_request=request, trust=trust)
     if checked.origin != origin:

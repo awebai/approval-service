@@ -509,6 +509,9 @@ It is a limited bootstrap ceremony, not ordinary LOGIN or application approval.
 The issuer independently verifies that proof and its OWN nonce, commits its
 person certificate, and signs E referencing B and that creation receipt. The
 service observes the committed certificate plus matching E, then activates.
+The shared activation verifier checks I and the saved creation proof without
+their ceremony deadlines once evidence exists; it still requires fresh current
+public Trust. Binding, material and confirmation remain deadline-bound.
 It does not require the as-yet-unissued E or an active person status as input
 to the pending ceremony. No issuer/service two-phase commit is introduced.
 If org policy requires another person's consent to add a human, that is a

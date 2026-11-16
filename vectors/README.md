@@ -27,8 +27,16 @@ assertion/receipt and acyclic issuer-signed human creation evidence. The intent
 only produces `pending`; the issuer's shared creation-proof check validates its
 own nonce/deadline and still returns pending. It consumes the nonce with its
 certificate-issuance transaction. Activation also requires the independently acquired,
-current COMMITTED identity Trust and matching evidence/proof. The service must
-compare the credential set against its private pending registration rows. The
+current COMMITTED identity Trust and matching evidence/proof.
+The shared activation check verifies the signed intent and saved confirmation
+as historical content: once matching committed evidence exists, neither
+ceremony deadline limits activation. Fresh current Trust is still required.
+Binding/confirmation and material requests remain deadline-bound; they cannot
+use the activation path to renew a ceremony. The deadline vectors exercise both
+the exact boundary and a later activation, plus stale/missing Trust and tampered
+intent/assertion refusals.
+The service must compare the credential set against its private pending
+registration rows. The
 same shared registration verifier checks the raw create response at service and
 issuer; these vectors exercise the binding/activation seam, not a hardware
 registration or database enrollment. The public human creation evidence has no

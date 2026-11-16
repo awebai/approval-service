@@ -7850,7 +7850,7 @@
             },
             "origin": "https://awsign.com",
             "rp_id": "awsign.com",
-            "challenge": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE",
+            "challenge": "ARERERERERERERERERERERERERERERERERERERERERE",
             "not_before": 1000,
             "deadline": 1300
           },

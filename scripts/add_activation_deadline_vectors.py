@@ -35,7 +35,10 @@ for name, now, fault, error in [
     elif fault == "no-evidence":
         c["activation"]["evidence"] = None
     elif fault == "intent":
-        c["activation"]["intent"]["intent"]["challenge"] = "AA" * 21 + "AAE"
+        challenge = c["activation"]["intent"]["intent"]["challenge"]
+        c["activation"]["intent"]["intent"]["challenge"] = (
+            ("A" if challenge[0] != "A" else "B") + challenge[1:]
+        )
     elif fault == "assertion":
         c["activation"]["creation_receipt"]["assertion"]["signature"] = "AA"
     if error:
