@@ -1865,7 +1865,14 @@
                 "$ref": "#/$defs/did_aw"
               },
               "root_id": {
-                "$ref": "#/$defs/did_aw"
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/did_aw"
+                  },
+                  {
+                    "$ref": "#/$defs/ed25519_did_key"
+                  }
+                ]
               },
               "root_key": {
                 "$ref": "#/$defs/ed25519_did_key"

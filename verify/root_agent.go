@@ -6,6 +6,8 @@ import (
 
 // These are independently checked SDK/lifecycle ports, NEVER fields trusted
 // from C. Effects, nonce consumption and grant storage stay with the enforcer.
+// A local root has ID == CurrentKey and ContinuousKeys == [ID], from its
+// SDK-verified person-to-root certificate, never from R.
 type RootIdentity struct {
 	ID, CurrentKey string
 	ContinuousKeys []string
@@ -83,7 +85,7 @@ func rootResult(approval CheckedApproval, request, target map[string]any, status
 // CheckRootAgentPresentation returns the WHOLE replacement list (empty
 // withdraws), never a union. The enforcer commits it with nonce consumption.
 // Its own configuration supplies the audience/kind, owned teams and revision.
-// ParentPerson is the immediate person parent from the registered, SDK-checked
+// ParentPerson is the immediate person parent from the SDK-checked
 // root link, never copied from the request or from nearest-human attribution.
 // An aw enforcer accepts ONLY an empty teams list.
 func CheckRootAgentPresentation(value map[string]any, in RootAgentInput) (CheckedRootAgent, error) {

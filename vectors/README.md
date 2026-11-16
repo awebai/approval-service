@@ -152,9 +152,11 @@ links need no receipt. These vectors do not claim that a holder stored a grant
 or that aw issued a certificate; those consumers own their effect tests.
 
 The root corpus also pins live refusal for another immediate person parent and
-for no person parent, before a grant can be returned. The consumer must register
-the person-to-root certificate before presentation and recheck that link on
-routine admission. Checked input ports do not stand in for that acquisition.
+for no person parent, before a grant can be returned. For a registered root, the consumer registers
+the person-to-root certificate before presentation. For a local `did:key` root,
+it presents that certificate with the request and the SDK verifies it against
+the person's current registered status. Both recheck the link on routine
+admission. Checked input ports do not stand in for that acquisition.
 `prepare-read` cases read revision 0 (first grant) and 7 (replacement) from the
 enforcer-built 428's unchanged R. Replacements advance the per-enforcer
 (organisation, person, root_id) grant revision once, including empty withdrawal;
@@ -170,3 +172,10 @@ rule changes the definition too; no global uncommitted rule can change a
 published definition under its existing hash. The two malformed-byte cases
 pin `invalid_encoding` for authenticator data and `presentation_invalid` for
 presentation request bytes in both languages.
+
+The local-root live/historical cases use an independently SDK-checked
+RootIdentity with id=current_key and continuous_keys=[id]. The local key must
+also equal R's root_id; a different root_key refuses `root_key_mismatch` in the
+shared definition check. A did:key person remains `definition_invalid`.
+`unsorted-and-foreign-teams` pins whole-list sortedness before per-team domain
+checks in both languages; it refuses `definition_invalid`.

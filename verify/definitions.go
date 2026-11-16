@@ -70,25 +70,39 @@ func CheckDefinition(request map[string]any) error {
 	}
 	if id == "agent.root.authorize" {
 		target := object(object(request, "act"), "target")
-		for _, field := range []string{"person", "root_id"} {
-			if _, err := awid.DecodeStableID(strings.TrimPrefix(text(target, field), "did:aw:")); err != nil {
+		if _, err := awid.DecodeStableID(strings.TrimPrefix(text(target, "person"), "did:aw:")); err != nil {
+			return refuse("definition_invalid")
+		}
+		rootID := text(target, "root_id")
+		if strings.HasPrefix(rootID, "did:aw:") {
+			if _, err := awid.DecodeStableID(strings.TrimPrefix(rootID, "did:aw:")); err != nil {
 				return refuse("definition_invalid")
 			}
+		} else if _, err := awid.ExtractPublicKey(rootID); err != nil {
+			return refuse("definition_invalid")
 		}
 		if _, err := awid.ExtractPublicKey(text(target, "root_key")); err != nil {
 			return refuse("definition_invalid")
 		}
-		previous := ""
-		for _, item := range target["teams"].([]any) {
+		if strings.HasPrefix(rootID, "did:key:") && text(target, "root_key") != rootID {
+			return refuse("root_key_mismatch")
+		}
+		teams := target["teams"].([]any)
+		// Like Python, check whole-list ordering before any team domain.
+		for i := 1; i < len(teams); i++ {
+			if teams[i].(string) < teams[i-1].(string) {
+				return refuse("definition_invalid")
+			}
+		}
+		for _, item := range teams {
 			team := item.(string)
 			domain, name, err := awid.ParseTeamID(team)
-			if err != nil || awid.BuildTeamID(domain, name) != team || team < previous {
+			if err != nil || awid.BuildTeamID(domain, name) != team {
 				return refuse("definition_invalid")
 			}
 			if domain != text(request, "organisation") {
 				return refuse("root_team_organisation_mismatch")
 			}
-			previous = team
 		}
 	}
 	return nil

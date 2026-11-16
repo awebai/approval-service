@@ -19,7 +19,11 @@ from .wire import validate
 
 @dataclass(frozen=True)
 class RootIdentity:
-    """The ID/current key and continuous key history already checked by the SDK."""
+    """The ID/current key and continuous key history already checked by the SDK.
+
+    A local root is built from its verified person-to-root certificate:
+    id == current_key, continuous_keys == [id]. Never build it from R.
+    """
 
     id: str
     current_key: str
@@ -111,8 +115,8 @@ def check_root_agent_presentation(
     """Check a live exact grant; return the ENTIRE replacement list, not a union.
 
     The custody owner supplies its own audience/kind, owned team descriptors,
-    revision and SDK-checked registered root identity. parent_person is the
-    immediate person parent of its checked, registered link, never a value
+    revision and SDK-checked root identity. parent_person is the
+    immediate person parent of its checked link, never a value
     copied from the request or from a nearest-human ancestor.
     It atomically consumes the nonce and records this replacement (empty
     withdraws) with its own effect transaction.

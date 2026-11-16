@@ -39,10 +39,17 @@ def check_definition(request):
         WireValidator(value["act_schema"]).validate(request["act"])
         if value["id"] == "agent.root.authorize":
             target = request["act"]["target"]
-            for identifier in (target["person"], target["root_id"]):
-                if validate_stable_id(identifier) != identifier:
-                    raise ValueError("noncanonical ID")
+            if validate_stable_id(target["person"]) != target["person"]:
+                raise ValueError("noncanonical person ID")
+            root_id = target["root_id"]
+            if root_id.startswith("did:aw:"):
+                if validate_stable_id(root_id) != root_id:
+                    raise ValueError("noncanonical root ID")
+            else:
+                public_key_from_did(root_id)
             public_key_from_did(target["root_key"])
+            if root_id.startswith("did:key:") and target["root_key"] != root_id:
+                raise Refused("root_key_mismatch")
             if target["teams"] != sorted(target["teams"]):
                 raise ValueError("teams must be sorted")
             for team in target["teams"]:

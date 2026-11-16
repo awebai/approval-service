@@ -447,7 +447,7 @@ for name, teams, error in [
 
 for name, field, value in [
     ("person-needs-did-aw", "person", "not-a-person"),
-    ("root-needs-registered-did-aw", "root_id", root_key),
+    ("root-needs-identity-id", "root_id", "not-a-root"),
     ("root-needs-did-key", "root_key", root_id),
     ("person-invalid-base58", "person", "did:aw:" + "0" * 28),
     ("root-key-invalid-base58", "root_key", "did:key:z6Mk" + "0" * 44),
