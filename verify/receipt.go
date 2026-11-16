@@ -14,8 +14,6 @@ import (
 	"encoding/json"
 	"errors"
 	"math/big"
-	"net/url"
-	"strconv"
 	"unicode/utf8"
 
 	"filippo.io/edwards25519"
@@ -183,20 +181,7 @@ func rawVerify(receipt, expected map[string]any, trust Trust) (map[string]any, C
 	}
 	origin := text(binding, "origin")
 	rp := text(binding, "rp_id")
-	u, e := url.Parse(origin)
-	if e != nil {
-		return fail("origin_invalid")
-	}
-	port := u.Port()
-	suffix := ""
-	if port != "" {
-		n, err := strconv.Atoi(port)
-		if err != nil || n < 1 || n > 65535 || strconv.Itoa(n) != port {
-			return fail("origin_invalid")
-		}
-		suffix = ":" + port
-	}
-	if u.Scheme != "https" || u.Hostname() != rp || origin != "https://"+rp+suffix || u.User != nil || u.Path != "" || u.RawQuery != "" || u.Fragment != "" {
+	if checkSite(origin, rp) != nil {
 		return fail("origin_invalid")
 	}
 	a := object(receipt, "assertion")
