@@ -499,6 +499,47 @@ for name, number in [("prepare-first-grant-read", 0), ("prepare-replacement-read
         ).hexdigest(),
     }
 
+# X2: a local root is its Ed25519 key, never a registry-stable ID.
+def local_root(c):
+    c["request"]["act"]["target"]["root_id"] = root_key
+    c["root"] = {
+        "id": root_key,
+        "current_key": root_key,
+        "continuous_keys": [root_key],
+    }
+    c["expected"]["root_id"] = root_key
+
+
+case("local-root-live-grant", edit=local_root, resign=True)
+case("local-root-historical-proof", phase="historical", edit=local_root, resign=True)
+
+
+def local_root_different_key(c):
+    local_root(c)
+    c["request"]["act"]["target"]["root_key"] = rotated_key
+
+
+case(
+    "local-root-different-key",
+    error="root_key_mismatch",
+    edit=local_root_different_key,
+    resign=True,
+)
+case(
+    "did-key-person-refused",
+    error="definition_invalid",
+    edit=lambda c: c["request"]["act"]["target"].update(person=person_key),
+    resign=True,
+)
+case(
+    "unsorted-and-foreign-teams",
+    error="definition_invalid",
+    edit=lambda c: c["request"]["act"]["target"].update(
+        teams=["z:other.example", "a:customer.example"]
+    ),
+    resign=True,
+)
+
 path.write_text(
     json.dumps(
         {
