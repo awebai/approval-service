@@ -1,0 +1,625 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:01:40Z"
+            },
+            "signature": "ooeeoQEBQ-OUn3tiZ8kgNB15iAWEE7I5d6t5Q2CbJ3dXxKc7FqDwih9jyJNf973tisrlv9jYPZ7eZSczFiDABw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "identity",
+            "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+          },
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "YyDgCaHUqK7spQXsxgAhCRf-7LYX2CfWm_9Rir5VfNVwV3MVkGjvOoPJdluVKFqiYqKZ9QZHU5xKSo-U3oHEBw"
+      },
+      "descriptor": {
+        "kind": "identity",
+        "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "origin": "https://approval.example.test",
+      "rp_id": "approval.example.test",
+      "now": 1100,
+      "observation": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "current_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "committed": false,
+        "observed_at": 1100
+      },
+      "accept": true,
+      "id": "pending-enrollment_start",
+      "purpose": "enrollment_start"
+    },
+    {
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:01:40Z"
+            },
+            "signature": "ooeeoQEBQ-OUn3tiZ8kgNB15iAWEE7I5d6t5Q2CbJ3dXxKc7FqDwih9jyJNf973tisrlv9jYPZ7eZSczFiDABw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "identity",
+            "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+          },
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "YyDgCaHUqK7spQXsxgAhCRf-7LYX2CfWm_9Rir5VfNVwV3MVkGjvOoPJdluVKFqiYqKZ9QZHU5xKSo-U3oHEBw"
+      },
+      "descriptor": {
+        "kind": "identity",
+        "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "origin": "https://approval.example.test",
+      "rp_id": "approval.example.test",
+      "now": 1100,
+      "observation": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "current_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "committed": false,
+        "observed_at": 1100
+      },
+      "accept": true,
+      "id": "pending-enrollment_material",
+      "purpose": "enrollment_material"
+    },
+    {
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:01:40Z"
+            },
+            "signature": "ooeeoQEBQ-OUn3tiZ8kgNB15iAWEE7I5d6t5Q2CbJ3dXxKc7FqDwih9jyJNf973tisrlv9jYPZ7eZSczFiDABw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "identity",
+            "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+          },
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "YyDgCaHUqK7spQXsxgAhCRf-7LYX2CfWm_9Rir5VfNVwV3MVkGjvOoPJdluVKFqiYqKZ9QZHU5xKSo-U3oHEBw"
+      },
+      "descriptor": {
+        "kind": "identity",
+        "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "origin": "https://approval.example.test",
+      "rp_id": "approval.example.test",
+      "now": 1100,
+      "observation": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "current_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "committed": false,
+        "observed_at": 1100
+      },
+      "accept": true,
+      "id": "pending-enrollment_confirm",
+      "purpose": "enrollment_confirm"
+    },
+    {
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:01:40Z"
+            },
+            "signature": "ooeeoQEBQ-OUn3tiZ8kgNB15iAWEE7I5d6t5Q2CbJ3dXxKc7FqDwih9jyJNf973tisrlv9jYPZ7eZSczFiDABw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "identity",
+            "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+          },
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "YyDgCaHUqK7spQXsxgAhCRf-7LYX2CfWm_9Rir5VfNVwV3MVkGjvOoPJdluVKFqiYqKZ9QZHU5xKSo-U3oHEBw"
+      },
+      "descriptor": {
+        "kind": "identity",
+        "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "origin": "https://approval.example.test",
+      "rp_id": "approval.example.test",
+      "now": 1100,
+      "observation": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "current_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "committed": false,
+        "observed_at": 1100
+      },
+      "accept": true,
+      "id": "pending-enrollment_activate",
+      "purpose": "enrollment_activate"
+    },
+    {
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:01:40Z"
+            },
+            "signature": "ooeeoQEBQ-OUn3tiZ8kgNB15iAWEE7I5d6t5Q2CbJ3dXxKc7FqDwih9jyJNf973tisrlv9jYPZ7eZSczFiDABw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "identity",
+            "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+          },
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "YyDgCaHUqK7spQXsxgAhCRf-7LYX2CfWm_9Rir5VfNVwV3MVkGjvOoPJdluVKFqiYqKZ9QZHU5xKSo-U3oHEBw"
+      },
+      "descriptor": {
+        "kind": "identity",
+        "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "origin": "https://approval.example.test",
+      "rp_id": "approval.example.test",
+      "now": 1100,
+      "observation": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "current_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "committed": false,
+        "observed_at": 1100
+      },
+      "accept": true,
+      "id": "pending-holder_binding",
+      "purpose": "holder_binding"
+    },
+    {
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:01:40Z"
+            },
+            "signature": "ooeeoQEBQ-OUn3tiZ8kgNB15iAWEE7I5d6t5Q2CbJ3dXxKc7FqDwih9jyJNf973tisrlv9jYPZ7eZSczFiDABw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "identity",
+            "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+          },
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "YyDgCaHUqK7spQXsxgAhCRf-7LYX2CfWm_9Rir5VfNVwV3MVkGjvOoPJdluVKFqiYqKZ9QZHU5xKSo-U3oHEBw"
+      },
+      "descriptor": {
+        "kind": "identity",
+        "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "origin": "https://approval.example.test",
+      "rp_id": "approval.example.test",
+      "now": 1100,
+      "observation": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "current_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "committed": false,
+        "observed_at": 1100
+      },
+      "accept": true,
+      "id": "pending-holder_finish",
+      "purpose": "holder_finish"
+    },
+    {
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:01:40Z"
+            },
+            "signature": "ooeeoQEBQ-OUn3tiZ8kgNB15iAWEE7I5d6t5Q2CbJ3dXxKc7FqDwih9jyJNf973tisrlv9jYPZ7eZSczFiDABw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "identity",
+            "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+          },
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "YyDgCaHUqK7spQXsxgAhCRf-7LYX2CfWm_9Rir5VfNVwV3MVkGjvOoPJdluVKFqiYqKZ9QZHU5xKSo-U3oHEBw"
+      },
+      "descriptor": {
+        "kind": "identity",
+        "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "origin": "https://approval.example.test",
+      "rp_id": "approval.example.test",
+      "now": 1100,
+      "observation": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "current_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "committed": false,
+        "observed_at": 1100
+      },
+      "accept": true,
+      "id": "pending-holder_activate",
+      "purpose": "holder_activate"
+    },
+    {
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:another-person",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:01:40Z"
+            },
+            "signature": "ooeeoQEBQ-OUn3tiZ8kgNB15iAWEE7I5d6t5Q2CbJ3dXxKc7FqDwih9jyJNf973tisrlv9jYPZ7eZSczFiDABw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "identity",
+            "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+          },
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "90aTetWtTx5m_YiFaT4aJJSVOgw6kWtZdkb28BSP-l8wgAdGvWUDWteUccrR4Li2QIGDA1mcdQJdTdk4zIlCAw"
+      },
+      "descriptor": {
+        "kind": "identity",
+        "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "origin": "https://approval.example.test",
+      "rp_id": "approval.example.test",
+      "now": 1100,
+      "observation": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "current_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "committed": false,
+        "observed_at": 1100
+      },
+      "accept": false,
+      "id": "pending-refuse-other_intent",
+      "purpose": "enrollment_start",
+      "expected_error": "requester_mismatch"
+    },
+    {
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:01:40Z"
+            },
+            "signature": "ooeeoQEBQ-OUn3tiZ8kgNB15iAWEE7I5d6t5Q2CbJ3dXxKc7FqDwih9jyJNf973tisrlv9jYPZ7eZSczFiDABw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "identity",
+            "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+          },
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "YyDgCaHUqK7spQXsxgAhCRf-7LYX2CfWm_9Rir5VfNVwV3MVkGjvOoPJdluVKFqiYqKZ9QZHU5xKSo-U3oHEBw"
+      },
+      "descriptor": {
+        "kind": "identity",
+        "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "origin": "https://approval.example.test",
+      "rp_id": "approval.example.test",
+      "now": 1100,
+      "observation": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "current_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "committed": false,
+        "observed_at": 1100
+      },
+      "accept": false,
+      "id": "pending-refuse-act_route",
+      "purpose": "submit",
+      "expected_error": "enrollment_scope_invalid"
+    },
+    {
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:01:40Z"
+            },
+            "signature": "ooeeoQEBQ-OUn3tiZ8kgNB15iAWEE7I5d6t5Q2CbJ3dXxKc7FqDwih9jyJNf973tisrlv9jYPZ7eZSczFiDABw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "identity",
+            "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+          },
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "YyDgCaHUqK7spQXsxgAhCRf-7LYX2CfWm_9Rir5VfNVwV3MVkGjvOoPJdluVKFqiYqKZ9QZHU5xKSo-U3oHEBw"
+      },
+      "descriptor": {
+        "kind": "identity",
+        "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "origin": "https://approval.example.test",
+      "rp_id": "approval.example.test",
+      "now": 1100,
+      "observation": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "current_key": "another-current-key",
+        "committed": false,
+        "observed_at": 1100
+      },
+      "accept": false,
+      "id": "pending-refuse-noncurrent_key",
+      "purpose": "enrollment_start",
+      "expected_error": "requester_mismatch"
+    },
+    {
+      "intent": {
+        "intent": {
+          "version": 1,
+          "purpose": "enroll_person",
+          "organisation": "customer.example",
+          "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+          "pending_certificate": {
+            "certificate": {
+              "v": 1,
+              "type": "aweb.id-certificate",
+              "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+              "domain": "customer.example",
+              "parent": {
+                "kind": "namespace",
+                "id": "customer.example"
+              },
+              "kind": "human",
+              "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+              "issued_at": "1970-01-01T00:01:40Z"
+            },
+            "signature": "ooeeoQEBQ-OUn3tiZ8kgNB15iAWEE7I5d6t5Q2CbJ3dXxKc7FqDwih9jyJNf973tisrlv9jYPZ7eZSczFiDABw"
+          },
+          "identity_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+          "requester": {
+            "kind": "identity",
+            "id": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+            "key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+          },
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "challenge": "ERERERERERERERERERERERERERERERERERERERERERE",
+          "not_before": 1000,
+          "deadline": 1300
+        },
+        "signature": "YyDgCaHUqK7spQXsxgAhCRf-7LYX2CfWm_9Rir5VfNVwV3MVkGjvOoPJdluVKFqiYqKZ9QZHU5xKSo-U3oHEBw"
+      },
+      "descriptor": {
+        "kind": "namespace_controller",
+        "namespace": "customer.example",
+        "key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX"
+      },
+      "issuer_key": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+      "origin": "https://approval.example.test",
+      "rp_id": "approval.example.test",
+      "now": 1100,
+      "observation": {
+        "person": "did:aw:2Uq51iFVLnqmgbVY3vLZtMD5PR87",
+        "current_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "committed": false,
+        "observed_at": 1100
+      },
+      "accept": false,
+      "id": "pending-refuse-admin_carrier",
+      "purpose": "enrollment_start",
+      "expected_error": "requester_mismatch"
+    }
+  ]
+}

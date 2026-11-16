@@ -179,3 +179,10 @@ also equal R's root_id; a different root_key refuses `root_key_mismatch` in the
 shared definition check. A did:key person remains `definition_invalid`.
 `unsorted-and-foreign-teams` pins whole-list sortedness before per-team domain
 checks in both languages; it refuses `definition_invalid`.
+
+`later-enrollment-v1.json` pins the distinct enrolled-later statement and
+activation v2; `later-lifecycle-v1.json` reuses replacement/recovery without
+inventing a creation claim. `pending-person-v1.json` pins mapping-only ownership
+for a pending person's own enrollment routes, including the four scope/key
+refusals. `enrollment-authority-v1.json` checks binding issuers from independently
+verified namespace and parent authority, never a supplied key.

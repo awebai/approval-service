@@ -153,3 +153,22 @@ as authenticated carrier after rotation. `carrier` names that identity in the
 activation body. It does not change I, C, the original requester, polling or
 assertion recovery, and grants no session. The shared seam checks the same
 rule as the HTTP handler; other members and non-current keys are refused.
+
+A person's ID can be created without awsign. Existing people enroll with an
+issuer-signed `enroll_existing_person` intent naming their committed certificate,
+carried by their own current identity key. The issuer and service independently
+check the registration, then reuse `enrollment.confirm`. Activation v2 carries
+`human_enrolled_later` under its distinct signature domain, never a creation
+claim. `VerifyEnrollmentEvidence` / `verify_enrollment_evidence` authenticate the
+issuer facts and optionally the original confirmation receipt without imposing
+a live ceremony deadline: “can approve since T (issuer's statement), grade G”.
+The time and grade remain issuer claims even with a checked proof.
+
+Later statements are signed by the checked current namespace controller. A
+receipt binding may select that controller or the person's actual-parent issuer;
+both come from independently verified public Trust, not the supplied artifact.
+Creation statements keep the actual-parent issuer. Live checks use current keys;
+a controller change requires affected bindings/statements to be re-signed by
+the new issuer. The holder has no automatic rotation/re-signing hook yet; this
+is not a requirement to repeat the person's registration ceremony. Historical
+verification uses explicit as-of authority inputs.

@@ -902,3 +902,37 @@ Historical verification uses the saved binding and explicit auditor as-of inputs
 
 The service's saved original binding is retrieval data, not a claim that a live
 enforcer must reject every later binding that retains the same credential.
+
+### Optional enrollment after identity creation
+
+Creating an ID, enrolling an approval key and approving an act are independent.
+An existing person authorizes enrollment with their own current identity key.
+The issuer-signed intent has purpose `enroll_existing_person` and names the
+already committed certificate in `pending_certificate`; start checks current
+committed Trust. A first creation intent cannot relabel an already committed
+person. Active enrollment generations continue to use replacement/recovery.
+
+The same registration and `enrollment.confirm` assertion produce B and a distinct
+`human_enrolled_later` statement, signed under `aweb.human-enrollment-evidence/1\n`.
+Its `enrollment` commits the actual credential, issuer-authenticated grade,
+issuer-clock `since` and `confirmation_receipt_commitment`. It has no creation
+claim. Activation v2 checks current Trust, B, the statement and that exact C.
+When transition evidence is present, both confirmation commitments name this
+same current ceremony; prior facts remain referenced by the previous evidence
+commitment. The closed definition is `human.enrolled_later@1` in the format.
+
+The later-statement signer is only the checked namespace controller. B may name
+either that controller or the person's actual certificate issuer; both candidates
+are derived from checked public authority, and B only selects between them.
+Creation statements retain the actual-parent signer. Historical statement/proof
+verification takes explicit as-of Trust, without live enrollment deadlines.
+Display: “can approve since T (issuer's statement), grade G”; supplied C adds
+“enrolment proof checked”, otherwise “proof not presented”. Neither wording
+claims how the ID was created or grants an application permission.
+
+New creation intents name the target person and their current identity key as
+requester. Before certificate commitment, only their own enrollment routes may
+admit that exact descriptor against a fresh registry key mapping; admission is
+`{team_certificate:null,id_chain:[]}`. It grants no act submission, poll or cancel.
+Old controller/admin intents retain their original requester. The activation
+carrier exception remains the original requester or the exact committed target.
