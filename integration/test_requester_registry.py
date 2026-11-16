@@ -40,11 +40,22 @@ async def listener(app, *, config=None):
         config
         or uvicorn.Config(app, log_level="warning", access_log=False, lifespan="on")
     )
-    task = asyncio.create_task(server.serve(sockets=[sock]))
+
+    async def serve():
+        try:
+            await server.serve(sockets=[sock])
+        except SystemExit as exc:
+            # A failed server must not stop pytest's event loop or prevent the
+            # following case from running. It remains a real fixture failure.
+            raise RuntimeError(f"Server startup exited with {exc.code}") from exc
+
+    task = asyncio.create_task(serve())
+    startup_failure_observed = False
     try:
         async with asyncio.timeout(10):
             while not server.started:
                 if task.done():
+                    startup_failure_observed = True
                     await task
                     raise AssertionError("registry did not start")
                 await asyncio.sleep(0.01)
@@ -54,7 +65,10 @@ async def listener(app, *, config=None):
     finally:
         server.should_exit = True
         try:
-            await asyncio.wait_for(task, 10)
+            if startup_failure_observed:
+                task.exception()  # Startup already propagated the real failure.
+            else:
+                await asyncio.wait_for(task, 10)
         finally:
             sock.close()
 

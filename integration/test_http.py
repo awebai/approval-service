@@ -17,14 +17,14 @@ async def test_browser_origin_and_closed_bodies_are_checked_before_login_or_requ
 ):
     app = create_app(
         store,
-        public=PublicReader(RegistryClient()),
+        public=PublicReader(RegistryClient(registry_url="http://127.0.0.1:1")),
         origin="https://approval.example.test",
         rp_id="approval.example.test",
         grading=EnrollmentGrading("passkey_only", None),
     )
     async with (
         listener(app) as (base, _server),
-        httpx.AsyncClient(base_url=base) as client,
+        httpx.AsyncClient(base_url=base, timeout=10.0) as client,
     ):
         for origin in (None, "https://foreign.example.test"):
             headers = {} if origin is None else {"Origin": origin}
@@ -136,14 +136,14 @@ async def test_registry_outage_and_malformed_evidence_keep_the_closed_http_contr
         bad = f"http://127.0.0.1:{unavailable.getsockname()[1]}"
         app = create_app(
             store,
-            public=PublicReader(RegistryClient(registry_url=bad)),
+            public=PublicReader(RegistryClient(registry_url=bad, timeout_seconds=1.0)),
             origin="https://approval.example.test",
             rp_id="approval.example.test",
             grading=EnrollmentGrading("passkey_only", None),
         )
         async with (
             listener(app) as (base, _server),
-            httpx.AsyncClient(base_url=base) as client,
+            httpx.AsyncClient(base_url=base, timeout=10.0) as client,
         ):
             for kind, chain, expected in [
                 ("team_member", None, 503),
@@ -181,14 +181,14 @@ async def test_database_liveness_remains_healthy_when_hardware_enrollment_pauses
     assert grading.status()["enrollment_ready"] is False
     app = create_app(
         store,
-        public=PublicReader(RegistryClient()),
+        public=PublicReader(RegistryClient(registry_url="http://127.0.0.1:1")),
         origin="https://approval.example.test",
         rp_id="approval.example.test",
         grading=grading,
     )
     async with (
         listener(app) as (base, _server),
-        httpx.AsyncClient(base_url=base) as client,
+        httpx.AsyncClient(base_url=base, timeout=10.0) as client,
     ):
         response = await client.get("/health")
         assert response.status_code == 200
@@ -202,7 +202,7 @@ async def test_trusted_proxy_keeps_separate_real_browser_rate_budgets(store):
 
     app = create_app(
         store,
-        public=PublicReader(RegistryClient()),
+        public=PublicReader(RegistryClient(registry_url="http://127.0.0.1:1")),
         origin="https://approval.example.test",
         rp_id="approval.example.test",
         grading=EnrollmentGrading("passkey_only", None),
@@ -217,7 +217,7 @@ async def test_trusted_proxy_keeps_separate_real_browser_rate_budgets(store):
     config = server_config(app, bind="127.0.0.1", port=0, trusted_proxy_ips="127.0.0.1")
     async with (
         listener(app, config=config) as (base, _server),
-        httpx.AsyncClient(base_url=base) as client,
+        httpx.AsyncClient(base_url=base, timeout=10.0) as client,
     ):
         for address in ("192.0.2.1", "192.0.2.2"):
             for _ in range(60):

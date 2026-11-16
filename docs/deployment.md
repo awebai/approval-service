@@ -108,6 +108,8 @@ with its import path asserted by the test. It does not substitute a status
 response or a new registry API.
 
 
+## Enrollment link handling
+
 The pending `/enroll#<locator>` link is a bearer capability: anyone holding it
 can add a pending registration and refresh the page window. Deliver it over an
 authenticated channel. The issuer's intent expires within 24 hours, cannot be

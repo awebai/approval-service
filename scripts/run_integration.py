@@ -37,7 +37,15 @@ def main():
                 raise RuntimeError("Missing disposable integration resource: " + name)
         if os.environ.get("AWID_SERVICE_TOKEN"):
             raise RuntimeError("Native quotas must not use a trusted-service token")
-    env = {**os.environ, "PYTHONPATH": str(source), "AWID_RATE_LIMIT_BACKEND": "redis"}
+    env = {
+        **os.environ,
+        "PYTHONPATH": str(source),
+        "AWID_RATE_LIMIT_BACKEND": "redis",
+        # Library-mode AWID also reads its normal process settings. They name
+        # the same disposable services as the explicitly supplied infrastructure.
+        "AWID_DATABASE_URL": os.environ.get("APPROVAL_TEST_DATABASE_URL", ""),
+        "AWID_REDIS_URL": os.environ.get("APPROVAL_TEST_REDIS_URL", ""),
+    }
     command = [sys.executable, "-m", "pytest", "-q", "integration"]
     if args.collect_only:
         command.append("--collect-only")
