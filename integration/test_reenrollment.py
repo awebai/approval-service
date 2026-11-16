@@ -32,10 +32,17 @@ def replacement_intent(trust, binding, *, purpose="replace_person_keys"):
     _seed, public = generate_keypair()
     i.update(
         purpose=purpose,
+        person=trust.person,
+        organisation=trust.organisation,
         identity_key=did_from_public_key(public),
         previous_binding_commitment=commitment("binding_commitment", binding),
     )
     c = i["pending_certificate"]["certificate"]
+    c.update(
+        id=trust.person,
+        domain=trust.organisation,
+        parent={"kind": "namespace", "id": trust.organisation},
+    )
     c["issued_at"] = "2026-11-16T00:00:00Z"
     i["pending_certificate"]["signature"] = encode(
         issuer.sign(id_certificate_signing_bytes(c))
@@ -251,6 +258,7 @@ async def approve_transition(store, actor, request, caller):
         ("assisted", False),
         ("recreated", False),
         ("recreated", True),
+        ("assisted-retired-helper", False),
     ],
     ids=["unbroken", "assisted", "recreated", "recreated-without-old-history"],
 )
@@ -265,6 +273,9 @@ async def test_real_replacement_activation_retires_only_the_old_generation(
 
     from approval_service.definitions import definition_ref
 
+    retired_helper = mode == "assisted-retired-helper"
+    if retired_helper:
+        mode = "assisted"
     old_w, trust, _bootstrap, old_b, old_c, old_start = await enroll_person(store)
     before = await store.db.fetch_one(
         "SELECT evidence FROM {{tables.approval_enrollments}} WHERE enrollment_locator=$1",
@@ -457,6 +468,53 @@ async def test_real_replacement_activation_retires_only_the_old_generation(
         "evidence": e,
         "signature": encode(issuer.sign(domain("identity_evidence") + canonical(e))),
     }
+    if retired_helper:
+        # Retire the helper via a complete real recovery, not a flag/SQL seed.
+        helper_after = await recover_actor(service, store, helper_t, hb, helper_w)
+        from receipts import assertion
+
+        from approval_service.verify import verify_for_effect, verify_historical
+
+        # The withdrawn authenticator can still make a genuine UV assertion
+        # outside the service. Its valid signature must not restore assistance.
+        receipt["assertion"] = assertion(
+            helper_w["private"], -7, r, hb["binding"]["credentials"][0]["id"]
+        )
+        assert (
+            verify_historical(receipt, expected_request=r, trust=helper_t).person
+            == helper_t.person
+        )
+        with pytest.raises(Refused, match="binding_mismatch"):
+            verify_for_effect(
+                receipt,
+                expected_request=r,
+                presenter=r["requester"],
+                now=int(time.time()),
+                trust=helper_after,
+                required_grade="passkey_uv",
+                nonce_keys={"issuer": b"native-transition-enforcer-secret"},
+            )
+        transition["approval_receipt_commitment"] = commitment(
+            "receipt_commitment", receipt
+        )
+        value["evidence"] = {
+            "evidence": e,
+            "signature": encode(
+                issuer.sign(domain("identity_evidence") + canonical(e))
+            ),
+        }
+        with pytest.raises(Refused, match="transition_receipt_unavailable"):
+            await service.activate(value, trust=after, requester=caller)
+        rows = await store.db.fetch_all(
+            "SELECT state,enrollment_locator FROM {{tables.approval_enrollments}} WHERE organisation=$1 AND person_id=$2",
+            trust.organisation,
+            trust.person,
+        )
+        assert {row["enrollment_locator"]: row["state"] for row in rows} == {
+            old_start["locator"]: "active",
+            started["locator"]: "pending",
+        }
+        return
     if mode == "unbroken":
         from approval_service.canonical import parse
         from approval_service.encoding import decode
@@ -504,3 +562,66 @@ async def test_real_replacement_activation_retires_only_the_old_generation(
             after,
         )
     )["session"]
+
+
+async def recover_actor(service, store, trust, binding, world):
+    """A real new generation makes the old helper credential withdrawn."""
+    import json
+
+    from receipts import fixture
+
+    old = await store.db.fetch_one(
+        "SELECT evidence FROM {{tables.approval_enrollments}} WHERE organisation=$1 AND person_id=$2 AND state='active'",
+        trust.organisation,
+        trust.person,
+    )
+    old_e = json.loads(old["evidence"])
+    intent, issuer, caller, after = replacement_intent(
+        trust, binding, purpose="enroll_person"
+    )
+    _started, b, c, entry = await pending_ceremony(
+        service, intent, issuer, caller, fixture(), current=after
+    )
+    e = copy.deepcopy(old_e["evidence"])
+    e.update(
+        subject={
+            "id": after.person,
+            "certificate": after.certificate,
+            "key": after.identity_key,
+        },
+        binding_commitment=commitment("binding_commitment", b),
+        creation={
+            "credential": entry["id"],
+            "grade": entry["grade"],
+            "receipt_commitment": commitment("receipt_commitment", c),
+        },
+        transition={
+            "mode": "recreated",
+            "before": {
+                "subject": old_e["evidence"]["subject"],
+                "binding_commitment": commitment("binding_commitment", binding),
+            },
+            "previous_evidence_commitment": commitment(
+                "identity_evidence_commitment", old_e
+            ),
+            "confirmation_receipt_commitment": commitment("receipt_commitment", c),
+            "approval_receipt_commitment": None,
+        },
+    )
+    value = {
+        "version": 1,
+        "intent": intent,
+        "binding": b,
+        "creation_receipt": c,
+        "id_chain": c["id_chain"],
+        "evidence": {
+            "evidence": e,
+            "signature": encode(
+                issuer.sign(domain("identity_evidence") + canonical(e))
+            ),
+        },
+    }
+    assert (await service.activate(value, trust=after, requester=caller))[
+        "state"
+    ] == "active"
+    return after
