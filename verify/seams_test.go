@@ -3,7 +3,9 @@ package verify
 import (
 	"bytes"
 	"crypto/ed25519"
+	"encoding/json"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -17,7 +19,16 @@ func seamCases(t *testing.T, name string) []any {
 	if e != nil {
 		t.Fatal(e)
 	}
-	return v["cases"].([]any)
+	cases := v["cases"].([]any)
+	for _, value := range cases {
+		c := value.(map[string]any)
+		if !c["accept"].(bool) {
+			if code, ok := c["expected_error"].(string); !ok || code == "" {
+				t.Fatalf("refusing vector has no pinned code: %v", c["id"])
+			}
+		}
+	}
+	return cases
 }
 func seamTrust(t *testing.T, v any) *Trust {
 	t.Helper()
@@ -34,6 +45,9 @@ func seamTrust(t *testing.T, v any) *Trust {
 func TestRequesterServiceSeam(t *testing.T) {
 	for _, v := range seamCases(t, "requester-service") {
 		c := v.(map[string]any)
+		if c["phase"] == "answer" || c["phase"] == "enrollment-request" {
+			continue
+		}
 		t.Run(text(c, "id"), func(t *testing.T) {
 			body, e := decode(text(c, "body"))
 			if e != nil {
@@ -63,6 +77,9 @@ func TestRequesterServiceSeam(t *testing.T) {
 func TestIssuerEnrollmentSeam(t *testing.T) {
 	for _, v := range seamCases(t, "issuer-service-enrollment") {
 		c := v.(map[string]any)
+		if c["phase"] == "answer" || c["phase"] == "enrollment-request" {
+			continue
+		}
 		t.Run(text(c, "id"), func(t *testing.T) {
 			in := EnrollmentInput{IssuerKey: text(c, "issuer_key"), Requester: object(c, "requester"), Origin: text(c, "origin"), RPID: text(c, "rp_id"), Now: number(c, "now"), Trust: seamTrust(t, c["trust"])}
 			checked, e := CheckEnrollmentIntent(object(c, "intent"), in)
@@ -100,6 +117,9 @@ func TestIssuerEnrollmentSeam(t *testing.T) {
 func TestEnforcerRequesterSeam(t *testing.T) {
 	for _, v := range seamCases(t, "enforcer-requester") {
 		c := v.(map[string]any)
+		if c["phase"] == "answer" || c["phase"] == "enrollment-request" {
+			continue
+		}
 		t.Run(text(c, "id"), func(t *testing.T) {
 			var digest string
 			var e error
@@ -130,6 +150,103 @@ func TestEnforcerRequesterSeam(t *testing.T) {
 			}
 			if e == nil && digest != text(c, "expected_digest") {
 				t.Fatal("wrong request digest")
+			}
+		})
+	}
+}
+
+func TestPublishedDefinitionHashPins(t *testing.T) {
+	raw, e := os.ReadFile("../vectors/definition-hashes-v1.json")
+	if e != nil {
+		t.Fatal(e)
+	}
+	pins, e := Parse(raw)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if len(pins) != len(wireSchema["x-act-definitions"].(map[string]any)) {
+		t.Fatal("definition lacks literal versioned hash pin")
+	}
+	for key, expected := range pins {
+		id, version, ok := strings.Cut(key, "@")
+		if !ok {
+			t.Fatal(key)
+		}
+		ref, e := DefinitionRef(id)
+		if e != nil || text(ref, "sha256") != expected || ref["version"].(json.Number).String() != version {
+			t.Fatalf("published definition changed: %s: %v", key, e)
+		}
+	}
+}
+
+func TestServiceAnswerVectors(t *testing.T) {
+	for _, name := range []string{"requester-service", "issuer-service-enrollment", "enforcer-requester"} {
+		for _, v := range seamCases(t, name) {
+			c := v.(map[string]any)
+			if c["phase"] != "answer" {
+				continue
+			}
+			t.Run(text(c, "id"), func(t *testing.T) {
+				raw, _ := decode(text(c, "answer"))
+				var request []byte
+				if c["request_bytes"] != nil {
+					request, _ = decode(text(c, "request_bytes"))
+				}
+				var intent map[string]any
+				if c["intent"] != nil {
+					intent = object(c, "intent")
+				}
+				locator := ""
+				if c["locator"] != nil {
+					locator = text(c, "locator")
+				}
+				in := AnswerInput{Status: int(number(c, "response_status")), RequestBytes: request, Intent: intent, Locator: locator}
+				answer, e := ReadAnswerJSON(text(c, "kind"), raw, in)
+				if e == nil && text(c, "mode") == "assemble" {
+					var receipt map[string]any
+					receipt, e = AssembleReceipt(request, answer, in)
+					if e == nil {
+						actual, _ := Canonical(receipt)
+						expected, _ := decode(text(c, "expected_receipt_bytes"))
+						if !bytes.Equal(actual, expected) {
+							t.Fatal("assembled receipt differs from frozen enforcer/issuer C")
+						}
+					}
+				}
+				if (e == nil) != c["accept"].(bool) {
+					t.Fatalf("accept=%v want=%v: %v", e == nil, c["accept"], e)
+				}
+				if _, ok := c["expected_http_status"]; ok {
+					serviceError, yes := e.(*ServiceError)
+					if !yes || serviceError.HTTPStatus != int(number(c, "expected_http_status")) {
+						t.Fatal("lost actual HTTP status")
+					}
+				}
+				if !c["accept"].(bool) {
+					if e == nil || e.Error() != text(c, "expected_error") {
+						t.Fatalf("wrong code: %v want %s", e, text(c, "expected_error"))
+					}
+				}
+			})
+		}
+	}
+}
+func TestEnrollmentRequestBodies(t *testing.T) {
+	for _, v := range seamCases(t, "issuer-service-enrollment") {
+		c := v.(map[string]any)
+		if c["phase"] != "enrollment-request" {
+			continue
+		}
+		t.Run(text(c, "id"), func(t *testing.T) {
+			checked, e := ReadEnrollmentRequest(text(c, "kind"), object(c, "body"), object(c, "intent"), EnrollmentInput{IssuerKey: text(c, "issuer_key"), Requester: object(c, "requester"), Origin: text(c, "origin"), RPID: text(c, "rp_id"), Now: number(c, "now")})
+			if (e == nil) != c["accept"].(bool) {
+				t.Fatalf("accept=%v want=%v: %v", e == nil, c["accept"], e)
+			}
+			if !c["accept"].(bool) && (e == nil || e.Error() != text(c, "expected_error")) {
+				t.Fatalf("wrong code: %v", e)
+			}
+			if e == nil && (checked.Person != text(c, "expected_person") || checked.State != "pending") {
+				t.Fatal("wrong enrollment state")
 			}
 		})
 	}

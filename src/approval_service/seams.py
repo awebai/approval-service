@@ -113,7 +113,12 @@ def check_http(authorization, body, *, requester, origin, method, path, purpose,
 
 
 def check_enrollment_intent(signed, *, issuer_key, requester, origin, rp_id, now):
-    """issuer_key is checked public issuer authority, never taken from signed."""
+    """issuer_key is checked public issuer authority, never taken from signed.
+
+    The proposed identity_key is not yet bound by public identity status: an ID
+    certificate contains no subject key. Only activation's independently read
+    committed Trust establishes that binding. Pending is not active authority.
+    """
     try:
         validate("enrollment_intent", signed)
         body = signed["intent"]

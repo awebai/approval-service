@@ -54,6 +54,10 @@ func validateNode(s map[string]any, v any) error {
 			if _, ok := v.(string); !ok {
 				return bad()
 			}
+		case "boolean":
+			if _, ok := v.(bool); !ok {
+				return bad()
+			}
 		case "integer":
 			if _, ok := v.(json.Number); !ok {
 				return bad()

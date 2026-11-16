@@ -420,11 +420,16 @@ for fault in [
     "evidence-receipt-mismatch",
     "confirmation-target-mismatch",
     "malformed-creation-request",
+    "unsupported-definition-version",
     "confirmation-requester-mismatch",
 ]:
     c = copy.deepcopy(activation_base)
     c.update(id=fault, accept=False)
-    if fault == "confirmation-requester-mismatch":
+    if fault == "unsupported-definition-version":
+        req = copy.deepcopy(confirmation)
+        req["definition"]["version"] = 2
+        c["activation"]["creation_receipt"]["request_bytes"] = b64(canon(req))
+    elif fault == "confirmation-requester-mismatch":
         req = copy.deepcopy(confirmation)
         req["requester"] = requester
         req["nonce"]["value"] = ""
@@ -635,6 +640,48 @@ for name, error in [
     ).hexdigest()
     enforcer_cases.append(c)
 
+EXPECTED_ERRORS = {
+    "unsupported-definition-version": "definition_invalid",
+    "wrong-key": "signature_invalid",
+    "wrong-body": "http_body_mismatch",
+    "wrong-origin": "origin_invalid",
+    "wrong-path": "http_binding_mismatch",
+    "wrong-method": "http_binding_mismatch",
+    "wrong-purpose": "http_binding_mismatch",
+    "changed-descriptor": "requester_mismatch",
+    "too-old": "http_expired",
+    "future": "http_expired",
+    "padded-token": "http_invalid",
+    "duplicate-header-packet": "http_invalid",
+    "unknown-field": "http_invalid",
+    "wrong-issuer": "enrollment_invalid",
+    "wrong-requester": "requester_mismatch",
+    "expired-intent": "enrollment_expired",
+    "missing-public-identity": "identity_unavailable",
+    "expired-status": "identity_unavailable",
+    "wrong-public-key": "enrollment_identity_mismatch",
+    "changed-binding": "issuer_signature_invalid",
+    "missing-evidence": "activation_invalid",
+    "evidence-subject-mismatch": "evidence_subject_mismatch",
+    "evidence-receipt-mismatch": "evidence_binding_mismatch",
+    "confirmation-target-mismatch": "creation_target_mismatch",
+    "malformed-creation-request": "definition_invalid",
+    "confirmation-requester-mismatch": "requester_mismatch",
+    "issuer-creation-wrong-nonce": "nonce_invalid",
+    "issuer-creation-wrong-presenter": "requester_mismatch",
+    "issuer-creation-expired": "enrollment_expired",
+    "changed-R": "request_mismatch",
+    "wrong-digest": "request_digest_mismatch",
+    "wrong-service": "origin_invalid",
+    "different-presenter": "requester_mismatch",
+    "expired": "request_expired",
+    "wrong-nonce-secret": "nonce_invalid",
+    "binding-origin-not-allowed": "origin_invalid",
+    "creation-is-not-effect": "purpose_invalid",
+    "wrong-http-status": "http_status_invalid",
+    "unknown-definition": "definition_unavailable",
+    "unexpected-act-field": "definition_invalid",
+}
 for case in http_cases:
     if case["accept"]:
         case.update(
@@ -654,6 +701,13 @@ for path, cases, scope in zip(
     ["requester-service", "issuer-service-enrollment", "enforcer-requester"],
     strict=True,
 ):
+    for case in cases:
+        if not case["accept"]:
+            case["expected_error"] = (
+                "http_binding_mismatch"
+                if scope == "requester-service" and case["id"] == "wrong-origin"
+                else EXPECTED_ERRORS[case["id"]]
+            )
     path.write_text(
         json.dumps(
             {

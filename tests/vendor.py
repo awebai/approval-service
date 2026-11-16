@@ -209,22 +209,35 @@ class Vendor:
             firmware=firmware,
         )
 
-    def registration(self, *, batch=None, be=False, backed_up=False):
+    def registration(
+        self,
+        *,
+        batch=None,
+        be=False,
+        backed_up=False,
+        challenge=None,
+        origin="https://approval.example.test",
+        rp_id="approval.example.test",
+    ):
         batch = batch or self.batch()
         w = fixture()
         entry = w["receipt"]["binding"]["binding"]["credentials"][0]
         cid = decode(entry["id"])
-        challenge = b"issuer-owned-test-enrollment-nonce"
+        challenge = (
+            challenge
+            if challenge is not None
+            else b"issuer-owned-test-enrollment-nonce"
+        )
         client = canonical(
             {
                 "type": "webauthn.create",
                 "challenge": encode(challenge),
-                "origin": "https://approval.example.test",
+                "origin": origin,
                 "crossOrigin": False,
             }
         )
         auth = (
-            hashlib.sha256(b"approval.example.test").digest()
+            hashlib.sha256(rp_id.encode("ascii")).digest()
             + bytes([0x45 | (8 if be else 0) | (16 if backed_up else 0)])
             + b"\0" * 4
             + uuid.UUID(AAGUID).bytes

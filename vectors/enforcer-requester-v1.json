@@ -370,7 +370,8 @@
       "now": 1100,
       "required_grade": "passkey_uv",
       "expected_digest": "f6c6c21a4e5c1f0801a622b57eaf5de3fd6c456039e4515ba5102617d8fddf5e",
-      "id": "changed-R"
+      "id": "changed-R",
+      "expected_error": "request_mismatch"
     },
     {
       "http_status": 428,
@@ -493,7 +494,8 @@
       "now": 1100,
       "required_grade": "passkey_uv",
       "expected_digest": "f6c6c21a4e5c1f0801a622b57eaf5de3fd6c456039e4515ba5102617d8fddf5e",
-      "id": "wrong-digest"
+      "id": "wrong-digest",
+      "expected_error": "request_digest_mismatch"
     },
     {
       "http_status": 428,
@@ -616,7 +618,8 @@
       "now": 1100,
       "required_grade": "passkey_uv",
       "expected_digest": "f6c6c21a4e5c1f0801a622b57eaf5de3fd6c456039e4515ba5102617d8fddf5e",
-      "id": "wrong-service"
+      "id": "wrong-service",
+      "expected_error": "origin_invalid"
     },
     {
       "http_status": 428,
@@ -739,7 +742,8 @@
       "now": 1100,
       "required_grade": "passkey_uv",
       "expected_digest": "f6c6c21a4e5c1f0801a622b57eaf5de3fd6c456039e4515ba5102617d8fddf5e",
-      "id": "different-presenter"
+      "id": "different-presenter",
+      "expected_error": "requester_mismatch"
     },
     {
       "http_status": 428,
@@ -862,7 +866,8 @@
       "now": 1300,
       "required_grade": "passkey_uv",
       "expected_digest": "f6c6c21a4e5c1f0801a622b57eaf5de3fd6c456039e4515ba5102617d8fddf5e",
-      "id": "expired"
+      "id": "expired",
+      "expected_error": "request_expired"
     },
     {
       "http_status": 428,
@@ -985,7 +990,8 @@
       "now": 1100,
       "required_grade": "passkey_uv",
       "expected_digest": "f6c6c21a4e5c1f0801a622b57eaf5de3fd6c456039e4515ba5102617d8fddf5e",
-      "id": "wrong-nonce-secret"
+      "id": "wrong-nonce-secret",
+      "expected_error": "nonce_invalid"
     },
     {
       "http_status": 428,
@@ -1108,7 +1114,8 @@
       "now": 1100,
       "required_grade": "passkey_uv",
       "expected_digest": "f6c6c21a4e5c1f0801a622b57eaf5de3fd6c456039e4515ba5102617d8fddf5e",
-      "id": "binding-origin-not-allowed"
+      "id": "binding-origin-not-allowed",
+      "expected_error": "origin_invalid"
     },
     {
       "http_status": 428,
@@ -1232,7 +1239,8 @@
       "now": 1100,
       "required_grade": "passkey_uv",
       "expected_digest": "f6c6c21a4e5c1f0801a622b57eaf5de3fd6c456039e4515ba5102617d8fddf5e",
-      "id": "creation-is-not-effect"
+      "id": "creation-is-not-effect",
+      "expected_error": "purpose_invalid"
     },
     {
       "http_status": 200,
@@ -1355,7 +1363,8 @@
       "now": 1100,
       "required_grade": "passkey_uv",
       "expected_digest": "f6c6c21a4e5c1f0801a622b57eaf5de3fd6c456039e4515ba5102617d8fddf5e",
-      "id": "wrong-http-status"
+      "id": "wrong-http-status",
+      "expected_error": "http_status_invalid"
     },
     {
       "http_status": 428,
