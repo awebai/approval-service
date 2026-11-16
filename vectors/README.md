@@ -53,3 +53,33 @@ text. `definition-hashes-v1.json` pins each published hash as a literal in both
 language tests. A content change adds a new version beside the old; it never
 replaces the old version. Multiple-version lookup is added when the first v2
 exists. Every refusing case pins its exact error code in both languages.
+
+The service answers are closed schemas too: submit pins the locator/state and
+original D/deadline; poll pins pending, approved with a raw assertion/B/chain,
+denied, cancelled, expired, and approved after assertion erasure. The latter
+keeps the decision and yields `receipt_unavailable` when assembly is requested.
+Cancel returns the actual terminal state, including an approval that won the
+race. The requester retains canonical R and assembles C from the bundle; one
+case pins those assembled bytes to the enforcer corpus's exact C. Assembly has
+no current-clock check: a saved proof remains historical evidence; an enforcer
+still enforces the live deadline before an effect.
+
+Enrollment start returns issuer-challenge-bound discoverable create options.
+Material returns pending raw registrations for the issuer's SAME shared
+registration verifier. The material-to-B case runs `check_registration` under
+explicit passkey-only policy and checks the complete returned entry against B;
+it does not claim hardware. Confirm carries the original intent, B and frozen
+confirmation R. Its idempotent submission/poll answer uses the decision bundle
+shape, and approval of this limited proof still leaves enrollment pending until
+committed identity and E are observed. Responses never contain an act archive
+or imply delivery to an enforcer. The HTTP handler must compare private stored
+registration grades as well as keys/IDs before accepting B.
+
+Poll and cancel selection bodies carry the requester's original R, so the HTTP
+handler derives the signing descriptor from R even after erasure at decision;
+it must not re-store or log the supplied act. Material/confirm bodies carry the
+original signed intent. These are transport inputs, not positive public status.
+`append_service_answer_vectors.py` appends the answer cases deliberately and
+refuses to overwrite them. The JSON readers check duplicate members before
+map decoding, preserve named refusal codes and preserve a server error's actual
+HTTP status. No service message text supplies authority.
