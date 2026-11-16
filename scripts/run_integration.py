@@ -10,7 +10,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-AWEB_REVISION = "c65f426e3c6fead4a2e1ed6a621712671b183cc9"
+AWEB_REVISION = "686abcfc971bebe5de34674e7a61bcf0b6d7bb6a"
 
 
 def main():
@@ -21,9 +21,12 @@ def main():
     source = Path(os.environ["APPROVAL_AWID_SOURCE"]).resolve()
     root = source.parent.parent
     selected = subprocess.check_output(
-        ["git", "rev-parse", "HEAD"], cwd=root, text=True
+        ["git", "rev-parse", "HEAD:awid/src"], cwd=root, text=True
     ).strip()
-    if selected != AWEB_REVISION or not (source / "awid_service").is_dir():
+    expected = subprocess.check_output(
+        ["git", "rev-parse", AWEB_REVISION + ":awid/src"], cwd=root, text=True
+    ).strip()
+    if selected != expected or not (source / "awid_service").is_dir():
         raise RuntimeError(
             "AWID source does not match the frozen post-deletion revision"
         )
