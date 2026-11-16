@@ -357,3 +357,26 @@ def test_explicit_passkey_only_enrollment_needs_no_metadata():
     vendor = Vendor()
     response, challenge = vendor.registration()
     assert check(response, challenge, None).grade == "passkey_uv"
+
+
+def test_loaded_snapshot_cannot_outlive_its_verified_revocation_inputs():
+    from datetime import timedelta
+
+    from vendor import signed_metadata
+
+    from approval_service.metadata import load_snapshot
+
+    vendor = Vendor()
+    snapshot = load_snapshot(
+        **signed_metadata([vendor.entry()], next_update=NOW + timedelta(days=14))
+    )
+    response, challenge = vendor.registration()
+    with pytest.raises(Refused, match="snapshot_validation_expired"):
+        check_registration(
+            response,
+            expected_challenge=challenge,
+            origin="https://approval.example.test",
+            rp_id="approval.example.test",
+            snapshot=snapshot,
+            now=NOW + timedelta(days=8),
+        )

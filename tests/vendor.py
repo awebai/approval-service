@@ -130,7 +130,7 @@ def metadata_signer():
     return root, signer, signer_key, crl
 
 
-def signed_metadata(entries, *, sequence=1):
+def signed_metadata(entries, *, sequence=1, next_update=None):
     root, signer, key, crl = metadata_signer()
     header = {
         "alg": "RS256",
@@ -138,7 +138,7 @@ def signed_metadata(entries, *, sequence=1):
     }
     body = {
         "no": sequence,
-        "nextUpdate": (NOW + timedelta(days=1)).strftime("%Y-%m-%d"),
+        "nextUpdate": (next_update or NOW + timedelta(days=1)).strftime("%Y-%m-%d"),
         "entries": entries,
     }
     preimage = (
