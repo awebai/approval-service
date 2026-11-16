@@ -9,9 +9,7 @@ import json
 import sys
 import time
 from pathlib import Path
-
 import pytest
-
 from approval_service.canonical import canonical
 from approval_service.ceremonies import Ceremonies
 from approval_service.encoding import decode
@@ -23,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).parents[1] / "tests"))
 from receipts import PREFIX, b64, fixture, resign, signed_client
 
 
-def active_port(store):
+async def active_port(store):
     w = fixture()
     now = int(time.time())
     w["status"]["observed_at"] = now
@@ -34,35 +32,33 @@ def active_port(store):
     w["receipt"]["binding"] = resign(w, b)
     ref = "sha256:" + hashlib.sha256(canonical(w["receipt"]["binding"])).hexdigest()
     credential = b["credentials"][0]
-    with store.connection() as conn, conn.transaction():
-        conn.execute(
-            "INSERT INTO approval_enrollments(person_id,organisation,identity_key,certificate,issuer,user_handle,deadline,state,binding_ref) VALUES(%s,%s,%s,%s,%s,%s,%s,'active',%s)",
-            (
-                b["person"],
-                b["organisation"],
-                b["identity_key"],
-                b["certificate"],
-                b["issuer"],
-                b"disposable-user-handle",
-                now + 120,
-                ref,
-            ),
+    async with store.transaction() as conn:
+        await conn.execute(
+            "INSERT INTO {{tables.approval_enrollments}}(person_id,organisation,identity_key,certificate,issuer,user_handle,deadline,state,binding_ref) VALUES($1,$2,$3,$4,$5,$6,$7,'active',$8)",
+            b["person"],
+            b["organisation"],
+            b["identity_key"],
+            b["certificate"],
+            b["issuer"],
+            b"disposable-user-handle",
+            now + 120,
+            ref,
         )
-        conn.execute(
-            "INSERT INTO approval_binding_versions(digest,person_id,binding,id_chain) VALUES(%s,%s,%s::jsonb,'[]'::jsonb)",
-            (ref, b["person"], json.dumps(w["receipt"]["binding"])),
+        await conn.execute(
+            "INSERT INTO {{tables.approval_binding_versions}}(digest,person_id,binding,id_chain) VALUES($1,$2,$3::jsonb,'[]'::jsonb)",
+            ref,
+            b["person"],
+            json.dumps(w["receipt"]["binding"]),
         )
-        conn.execute(
-            "INSERT INTO approval_credentials(person_id,credential_id,public_key,sign_count,grade,snapshot,attestation) VALUES(%s,%s,%s,0,'passkey_uv',NULL,%s)",
-            (
-                b["person"],
-                credential["id"],
-                decode(credential["key"]),
-                b"software-key-fixture-no-hardware-claim",
-            ),
+        await conn.execute(
+            "INSERT INTO {{tables.approval_credentials}}(person_id,credential_id,public_key,sign_count,grade,snapshot,attestation) VALUES($1,$2,$3,0,'passkey_uv',NULL,$4)",
+            b["person"],
+            credential["id"],
+            decode(credential["key"]),
+            b"software-key-fixture-no-hardware-claim",
         )
     requester = AdmittedRequester(canonical(r["requester"]), r["requester"]["key"], now)
-    store.prepare(
+    await store.prepare(
         "operation",
         hashlib.sha256(PREFIX + canonical(r)).hexdigest(),
         requester.commitment,
@@ -71,13 +67,11 @@ def active_port(store):
         now,
         r["deadline"],
     )
-    return w, Trust(**w["status"]), requester
+    return (w, Trust(**w["status"]), requester)
 
 
 def login_assertion(w, options, *, uv=True):
-    # This proof signs the actual issued LOGIN challenge, never an act digest.
     import copy
-
     from cryptography.hazmat.primitives import hashes
     from cryptography.hazmat.primitives.asymmetric import ec
 
@@ -93,7 +87,7 @@ def login_assertion(w, options, *, uv=True):
     auth = (
         hashlib.sha256(b"approval.example.test").digest()
         + bytes([5 if uv else 1])
-        + b"\0" * 4
+        + b"\x00" * 4
     )
     a.update(
         client_data_json=b64(client),
@@ -107,31 +101,33 @@ def login_assertion(w, options, *, uv=True):
     return a
 
 
-def test_login_never_approves_and_act_uv_is_single_consumed_and_recoverable(store):
-    w, trust, requester = active_port(store)
+@pytest.mark.asyncio
+async def test_login_never_approves_and_act_uv_is_single_consumed_and_recoverable(
+    store,
+):
+    w, trust, requester = await active_port(store)
     person = trust.person
     ceremonies = Ceremonies(
         store, origin="https://approval.example.test", rp_id="approval.example.test"
     )
-    login = ceremonies.login_options(person, trust)
+    login = await ceremonies.login_options(person, trust)
     proof = login_assertion(w, login)
-    session = ceremonies.finish_login(person, login["id"], proof, trust)
+    session = await ceremonies.finish_login(person, login["id"], proof, trust)
     assert (
-        store.poll(
+        await store.poll(
             "operation",
             hashlib.sha256(PREFIX + canonical(w["request"])).hexdigest(),
             requester.commitment,
             int(time.time()),
-        )["outcome"]
-        == "pending"
-    )
+        )
+    )["outcome"] == "pending"
     with pytest.raises(Refused):
-        ceremonies.finish_login(person, login["id"], proof, trust)
-    options = ceremonies.approval_options(
+        await ceremonies.finish_login(person, login["id"], proof, trust)
+    options = await ceremonies.approval_options(
         person, "operation", session["session"], session["csrf"], trust, requester
     )
     with pytest.raises(Refused):
-        ceremonies.finish_approval(
+        await ceremonies.finish_approval(
             person,
             "operation",
             options["id"],
@@ -142,7 +138,7 @@ def test_login_never_approves_and_act_uv_is_single_consumed_and_recoverable(stor
             requester,
         )
     signed_client(w, canonical)
-    result = ceremonies.finish_approval(
+    result = await ceremonies.finish_approval(
         person,
         "operation",
         options["id"],
@@ -157,7 +153,7 @@ def test_login_never_approves_and_act_uv_is_single_consumed_and_recoverable(stor
         "outcome": "approved",
     }
     with pytest.raises(Refused):
-        ceremonies.finish_approval(
+        await ceremonies.finish_approval(
             person,
             "operation",
             options["id"],
@@ -167,27 +163,26 @@ def test_login_never_approves_and_act_uv_is_single_consumed_and_recoverable(stor
             trust,
             requester,
         )
-    saved = store.poll(
+    saved = await store.poll(
         "operation", result["digest"], requester.commitment, int(time.time())
     )
     assert saved["request_bytes"] is None
     assert saved["assertion"] == w["receipt"]["assertion"]
     assert (
-        store.poll(
+        await store.poll(
             "operation", result["digest"], requester.commitment, int(time.time())
-        )["assertion"]
-        == saved["assertion"]
-    )
-    assert store.audit("operation")[0]["outcome"] == "approved"
-    assert store.pending(person) == []
+        )
+    )["assertion"] == saved["assertion"]
+    assert (await store.audit("operation"))[0]["outcome"] == "approved"
+    assert await store.pending(person) == []
     with pytest.raises(StoreRefused):
-        store.poll(
+        await store.poll(
             "operation",
             result["digest"],
             "not-the-original-requester",
             int(time.time()),
         )
-    expired = store.poll(
+    expired = await store.poll(
         "operation", result["digest"], requester.commitment, w["request"]["deadline"]
     )
     assert expired["outcome"] == "approved"
@@ -196,34 +191,35 @@ def test_login_never_approves_and_act_uv_is_single_consumed_and_recoverable(stor
     assert expired["receipt_available"] is False
 
 
-def test_no_uv_login_and_wrong_csrf_do_not_create_or_consume_authority(store):
-    w, trust, requester = active_port(store)
+@pytest.mark.asyncio
+async def test_no_uv_login_and_wrong_csrf_do_not_create_or_consume_authority(store):
+    w, trust, requester = await active_port(store)
     person = trust.person
     ceremonies = Ceremonies(
         store, origin="https://approval.example.test", rp_id="approval.example.test"
     )
-    login = ceremonies.login_options(person, trust)
+    login = await ceremonies.login_options(person, trust)
     with pytest.raises(Refused):
-        ceremonies.finish_login(
+        await ceremonies.finish_login(
             person, login["id"], login_assertion(w, login, uv=False), trust
         )
-    with store.connection() as conn:
+    async with store.transaction() as conn:
         assert (
-            conn.execute("SELECT count(*) AS n FROM approval_sessions").fetchone()["n"]
-            == 0
-        )
+            await conn.fetch_one(
+                "SELECT count(*) AS n FROM {{tables.approval_sessions}}"
+            )
+        )["n"] == 0
         assert (
-            conn.execute(
-                "SELECT consumed FROM approval_challenges WHERE challenge_id=%s",
-                (login["id"],),
-            ).fetchone()["consumed"]
-            is False
-        )
-    session = ceremonies.finish_login(
+            await conn.fetch_one(
+                "SELECT consumed FROM {{tables.approval_challenges}} WHERE challenge_id=$1",
+                login["id"],
+            )
+        )["consumed"] is False
+    session = await ceremonies.finish_login(
         person, login["id"], login_assertion(w, login), trust
     )
     with pytest.raises(Refused):
-        ceremonies.approval_options(
+        await ceremonies.approval_options(
             person, "operation", session["session"], "wrong-csrf", trust, requester
         )
-    assert len(store.pending(person)) == 1
+    assert len(await store.pending(person)) == 1
