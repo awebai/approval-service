@@ -6,11 +6,18 @@ membership/role decision uses the team key it has admitted independently.
 
 from __future__ import annotations
 
+import base64
+import binascii
 import hashlib
 import time
 from dataclasses import dataclass
 
-from awid.team_certificate import TeamCertificateError, check_team_certificate
+from awid.team_certificate import (
+    TeamCertificateError,
+    check_team_certificate,
+    decode_team_certificate,
+    verify_team_certificate_signature,
+)
 from awid.team_ids import build_team_id, parse_team_id
 from jsonschema import ValidationError
 
@@ -26,6 +33,10 @@ class CertificateObservation:
     certificate_id: str
     status: dict | None
     acquired_at: int
+
+    @property
+    def observed_at(self):
+        return self.acquired_at
 
 
 @dataclass(frozen=True)
@@ -165,12 +176,12 @@ def admit_team_member(
         raise Refused("requester_certificate_invalid") from exc
 
 
-async def read_team_member(registry, descriptor, *, organisation, certificate_header):
-    """One public exact status read. Requires the post-adcl.2 AWID SDK method.
+def prepare_team_member(descriptor, *, organisation, certificate_header, team_key=None):
+    """Validate selectors before discovery; use an already-known key locally.
 
-    No GET team, private team credential, protection field or registry override.
-    SDK 0.5.40rc1 remains pinned until the recorded next release supplies this
-    public method; tests use the actual main SDK source, never a fake response.
+    A certificate carries no team key. First use needs one guarded public read;
+    a cached key can reject a bad signature before any further registry work.
+    This preflight never establishes membership or effect authority.
     """
     try:
         validate("requester", descriptor)
@@ -182,6 +193,58 @@ async def read_team_member(registry, descriptor, *, organisation, certificate_he
             or build_team_id(domain, name) != descriptor["team_id"]
         ):
             raise Refused("requester_namespace_mismatch")
+        certificate = decode_team_certificate(certificate_header)
+        if type(certificate.get("version")) is not int or certificate["version"] != 1:
+            raise Refused("requester_certificate_invalid")
+        for field in (
+            "certificate_id",
+            "team_id",
+            "member_did_key",
+            "alias",
+            "signature",
+        ):
+            if (
+                not isinstance(certificate.get(field), str)
+                or not certificate[field].strip()
+            ):
+                raise Refused("requester_certificate_invalid")
+        if (
+            certificate["team_id"],
+            certificate["certificate_id"],
+            certificate["member_did_key"],
+        ) != (descriptor["team_id"], descriptor["certificate_id"], descriptor["key"]):
+            raise Refused("requester_certificate_mismatch")
+        signature = certificate["signature"]
+        raw = base64.b64decode(signature + "=" * (-len(signature) % 4), validate=True)
+        if len(raw) != 64 or base64.b64encode(raw).decode().rstrip("=") != signature:
+            raise Refused("requester_certificate_invalid")
+        if team_key is not None:
+            verify_team_certificate_signature(certificate, team_key)
+        return domain, name
+    except Refused:
+        raise
+    except (
+        ValueError,
+        TypeError,
+        KeyError,
+        binascii.Error,
+        ValidationError,
+        TeamCertificateError,
+    ) as exc:
+        raise Refused("requester_certificate_invalid") from exc
+
+
+async def read_team_member(registry, descriptor, *, organisation, certificate_header):
+    """One public exact status read. Requires the post-adcl.2 AWID SDK method.
+
+    No GET team, private team credential, protection field or registry override.
+    The service's installed SDK must supply this method. The service reader
+    caches its observations (including misses) and the discovered team key.
+    """
+    try:
+        domain, name = prepare_team_member(
+            descriptor, organisation=organisation, certificate_header=certificate_header
+        )
         # Stamp before the awaited read so its time cannot renew observation age.
         acquired = int(time.time())
         status = await registry.get_team_certificate_status_fresh(

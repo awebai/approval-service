@@ -12,12 +12,9 @@ from datetime import UTC, datetime
 from importlib.resources import files
 from pathlib import Path
 
-import httpx
-
 from .metadata import Snapshot, metadata_health
 from .metadata_cache import CacheRefused, fetch_and_pin
 from .registration import check_registration
-from .verify import Refused
 
 
 @dataclass
@@ -32,8 +29,6 @@ class EnrollmentGrading:
     def __post_init__(self):
         if self.mode not in ("hardware", "passkey_only"):
             raise ValueError("grading_mode_invalid")
-        if self.mode == "hardware" and self._snapshot is None:
-            raise Refused("snapshot_unavailable")
         if self.mode == "passkey_only" and self._snapshot is not None:
             raise ValueError("passkey_only_has_snapshot")
 
@@ -42,8 +37,9 @@ class EnrollmentGrading:
         """Verify the operator's installed pin before starting hardware enrollment.
 
         Mode and manifest are trusted operator configuration, never HTTP input.
-        Runtime omits now and uses the host clock. A replacement is installed
-        only by constructing a successfully verified new policy instance.
+        Runtime uses the host clock. Unavailable metadata leaves attested
+        enrollment paused; ordinary passkeys remain available. The watcher can
+        install a verified replacement without changing that grading policy.
         """
         if mode not in ("hardware", "passkey_only"):
             raise ValueError("grading_mode_invalid")
@@ -53,19 +49,29 @@ class EnrollmentGrading:
             raise ValueError("hardware_cache_required")
         if manifest is not None and manifest_path is not None:
             raise ValueError("manifest_selection_invalid")
-        if manifest is not None:
-            return cls(mode, fetch_and_pin(cache_dir, manifest=manifest, now=now))
         path = (
-            Path(manifest_path)
-            if manifest_path is not None
-            else Path(str(files("approval_service").joinpath("data/mds-pin-v1.json")))
+            None
+            if manifest is not None
+            else (
+                Path(manifest_path)
+                if manifest_path is not None
+                else Path(
+                    str(files("approval_service").joinpath("data/mds-pin-v1.json"))
+                )
+            )
         )
-        raw = cls._manifest_bytes(path)
-        manifest = json.loads(raw)
-        if not isinstance(manifest, dict):
-            raise CacheRefused("manifest_invalid")
-        snapshot = fetch_and_pin(cache_dir, manifest=manifest, now=now)
-        return cls(mode, snapshot, Path(cache_dir), path, hashlib.sha256(raw).digest())
+        grading = cls(mode, None, Path(cache_dir), path)
+        try:
+            if manifest is not None:
+                grading._snapshot = fetch_and_pin(cache_dir, manifest=manifest, now=now)
+            else:
+                grading.refresh(now=now)
+        except Exception as error:  # noqa: BLE001 — unavailable metadata pauses attested enrollment, not ordinary passkeys.
+            grading._reload_error = "metadata_reload_failed"
+            logging.getLogger(__name__).warning(
+                "metadata load failed (%s)", type(error).__name__
+            )
+        return grading
 
     @staticmethod
     def _manifest_bytes(path):
@@ -103,17 +109,16 @@ class EnrollmentGrading:
 
     def check(self, response, *, expected_challenge, origin, rp_id, now=None):
         now = datetime.now(UTC) if now is None else now
-        # Check the invariant again at the enrollment boundary; no caller may
-        # turn unavailable hardware metadata into a software-only ceremony.
+        # Hardware metadata controls attested grading; an ordinary passkey is
+        # independent of that list. The shared verifier distinguishes the two.
         snapshot = self._snapshot
-        if self.mode == "hardware" and snapshot is None:
-            raise Refused("snapshot_unavailable")
         return check_registration(
             response,
             expected_challenge=expected_challenge,
             origin=origin,
             rp_id=rp_id,
             snapshot=snapshot,
+            hardware_grading=self.mode == "hardware",
             now=now,
         )
 
@@ -126,7 +131,10 @@ class EnrollmentGrading:
             return {
                 "mode": self.mode,
                 "enrollment_ready": False,
-                "metadata": {"warning": "snapshot_unavailable"},
+                "metadata": {
+                    "warning": "snapshot_unavailable",
+                    "reload_error": self._reload_error,
+                },
             }
         health = metadata_health(snapshot, now=now)
         if self._reload_error is not None:
@@ -152,17 +160,10 @@ async def watch_metadata(grading, *, interval=60):
             await asyncio.sleep(interval)
             try:
                 await asyncio.to_thread(grading.refresh)
-            except (
-                ValueError,
-                TypeError,
-                KeyError,
-                OSError,
-                httpx.HTTPError,
-                Refused,
-            ) as error:
+            except Exception as error:  # noqa: BLE001 — a bad operator replacement must not stop future reloads.
                 logger.warning("metadata reload failed (%s)", type(error).__name__)
             health = grading.status()["metadata"]
-            warning = (health["warning"], health["valid_until"])
+            warning = (health["warning"], health.get("valid_until"))
             if health["warning"] is not None and warning != last_warning:
                 logger.warning("metadata validity warning=%s valid_until=%s", *warning)
             last_warning = warning

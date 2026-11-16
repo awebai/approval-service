@@ -199,7 +199,16 @@ def _hardware(snapshot, entry, chain, aaguid, firmware, has_aaguid, fmt, now):
         return False
 
 
-def check_registration(response, *, expected_challenge, origin, rp_id, snapshot, now):
+def check_registration(
+    response,
+    *,
+    expected_challenge,
+    origin,
+    rp_id,
+    snapshot,
+    now,
+    hardware_grading=False,
+):
     """Validate raw create bytes and assess only the actual registered key.
 
     `snapshot` is the caller's independently loaded, pinned MDS input, NEVER
@@ -208,10 +217,6 @@ def check_registration(response, *, expected_challenge, origin, rp_id, snapshot,
     attestation remains passkey grade. Invalid UP/UV/signature/binding refuses.
     """
     try:
-        if snapshot is not None and now >= snapshot.next_update:
-            raise Refused("snapshot_expired")
-        if snapshot is not None and now >= snapshot.valid_until:
-            raise Refused("snapshot_validation_expired")
         validate_site(origin, rp_id)
         validate("registration", response)
         client = decode(response["client_data_json"])
@@ -244,6 +249,13 @@ def check_registration(response, *, expected_challenge, origin, rp_id, snapshot,
             or any(not isinstance(c, bytes) or len(c) > 65536 for c in chain)
         ):
             raise Refused("attestation_chain_invalid")
+        if chain and (snapshot is not None or hardware_grading):
+            if snapshot is None:
+                raise Refused("snapshot_unavailable")
+            if now >= snapshot.next_update:
+                raise Refused("snapshot_expired")
+            if now >= snapshot.valid_until:
+                raise Refused("snapshot_validation_expired")
         certificates = [x509.load_der_x509_certificate(c) for c in chain]
         has_aaguid = False
         firmware = None

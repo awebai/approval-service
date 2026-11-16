@@ -271,7 +271,7 @@ def create_app(store, *, public, origin, rp_id, grading, requests_per_ip=600):
                 raise
             raise Refused("body_invalid") from exc
         rates.take(
-            ("requester", hashlib.sha256(canonical(descriptor)).hexdigest()),
+            ("requester", descriptor["key"]),
             120
             if purpose in ("poll", "enrollment_material", "enrollment_confirm")
             else 32,
@@ -590,7 +590,9 @@ def create_app(store, *, public, origin, rp_id, grading, requests_per_ip=600):
     async def health():
         await store.db.fetch_one("SELECT 1 AS ok")
         status = grading.status()
-        return JSONResponse(status, status_code=200)
+        return JSONResponse(
+            status, status_code=200 if status["enrollment_ready"] else 503
+        )
 
     @app.get("/assets/app.mjs")
     async def script():

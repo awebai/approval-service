@@ -174,7 +174,8 @@ is not a requirement to repeat the person's registration ceremony. Historical
 verification uses explicit as-of authority inputs.
 
 The development lock pins the reviewed post-deletion AWID source so the service
-starts with its required exact-certificate status reader. At the server release,
+starts with its required exact-certificate status reader. This root-only UV
+override does not propagate to library consumers. At the server release,
 replace that Git pin with the released `awid-service` version. Requester routes
 also apply an operator-configured per-IP budget before processing input.
 For metadata renewal without restarting, install reviewed pins in

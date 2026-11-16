@@ -186,3 +186,18 @@ async def test_service_lifespan_owns_the_shared_metadata_worker(transport, tmp_p
         assert len(workers) == 1
         assert not next(iter(workers)).done()
     assert all(worker.done() for worker in workers)
+
+
+def test_missing_initial_manifest_can_be_installed_without_changing_policy(
+    transport, tmp_path
+):
+    config = manifest(transport)
+    path = tmp_path / "not-installed.json"
+    grading = EnrollmentGrading.load(
+        mode="hardware", cache_dir=tmp_path / "cache", manifest_path=path, now=NOW
+    )
+    assert grading.mode == "hardware"
+    assert grading.status(now=NOW)["enrollment_ready"] is False
+    path.write_text(json.dumps(config))
+    assert grading.refresh(now=NOW)
+    assert grading.status(now=NOW)["enrollment_ready"] is True

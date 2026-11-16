@@ -99,7 +99,7 @@ bytes and expired assertion slots; unactivated pending enrollments expire too.
 
 Receipt-only enforcers and self-hosted key holders need no Redis. This service
 uses a bounded 60-second in-process public observation cache which preserves
-original age. No unavailable read renews an observation. The development service lock selects the public post-deletion AWID SDK source
+original age. No unavailable read renews an observation. The standalone development lock selects the public post-deletion AWID SDK source
 at `9bbdd365d85ad6d476663a1484fe3060bb2b9679` (`awid` subdirectory). It supplies
 `get_team_certificate_status_fresh` in the normal installed environment.
 **Before the server release, replace this source pin with the released
@@ -136,10 +136,15 @@ client IP (default 600 per process), before body parsing, signature processing
 or public reads. The existing per-requester budget still applies. Raw forwarded
 headers are not used here; only the configured trusted-proxy handling can set
 the observed peer. An absent peer uses one shared bounded bucket.
-This changes rate accounting, never authentication or approval authority.
-`/health` uses the database check for liveness and reports hardware-enrollment
-readiness separately; expired metadata pauses new hardware enrollment while
-sign-in and approvals remain available.
+The authenticated requester budget is keyed by the signing key, so changing
+identity or certificate selectors cannot renew it. Team-certificate selectors
+are checked against the certificate before discovery. Exact-status misses and
+discovered team keys are cached for at most 60 seconds; a bad signature under
+a cached key causes no further registry read. These are admission limits, not
+effect authority.
+`/health` returns 503 when the database is unavailable or hardware grading is
+not ready. Its body identifies metadata readiness; sign-in and approvals remain
+available during metadata expiry, as does registration of unattested passkeys.
 
 Re-enrollment uses a separate pending generation, so run `awsign migrate` before
 starting the service with its initial generation-scoped schema.
@@ -163,8 +168,11 @@ watcher with `--mds-manifest FILE --mds-cache DIR`.
 A bad replacement leaves the previously verified snapshot usable only until
 its original earliest expiry. The health metadata reports `reload_error`, and
 the process logs reload failures and the seven-day validity warning. Once the
-old snapshot expires, hardware-mode enrollment refuses; sign-in and approvals
-continue. Passkey-only enrollment remains an explicit operator setting.
+old snapshot expires or is missing, hardware-attested registrations refuse with
+`snapshot_expired`, `snapshot_validation_expired` or `snapshot_unavailable`.
+Unattested registrations still receive passkey grade; an attested key is never
+silently downgraded. Sign-in and approvals continue. Metadata failures cannot
+stop the watcher from installing a later verified replacement.
 
 The bundled initial pin expires on 2026-12-01 (an input CRL may expire earlier).
 The maintainer's daily metadata-pin workflow verifies upstream changes under

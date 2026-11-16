@@ -27,9 +27,11 @@ from .canonical import canonical
 from .enrollment import PublicIssuer
 from .requester import (
     AdmittedRequester,
+    CertificateObservation,
     KeyObservation,
     admit_enrollment_target,
-    read_team_member,
+    admit_team_member,
+    prepare_team_member,
 )
 from .trust import read_trust
 from .verify import Refused
@@ -192,6 +194,55 @@ class PublicReader:
             raise Refused("status_unavailable")
         return int(time.time()) - math.ceil(age)
 
+    async def _team_member(self, descriptor, *, organisation, certificate_header):
+        key_id = ("team-key", organisation, descriptor["team_id"])
+        known = self._cache.get(key_id)
+        current = int(time.time())
+        key = (
+            known.key
+            if known is not None and 0 <= current - known.observed_at <= 60
+            else None
+        )
+        domain, name = prepare_team_member(
+            descriptor,
+            organisation=organisation,
+            certificate_header=certificate_header,
+            team_key=key,
+        )
+
+        async def read():
+            acquired = int(time.time())
+            status = await self.registry.get_team_certificate_status_fresh(
+                domain, name, descriptor["certificate_id"]
+            )
+            return CertificateObservation(
+                descriptor["team_id"], descriptor["certificate_id"], status, acquired
+            )
+
+        observation = await self._cached(
+            ("team-certificate", descriptor["team_id"], descriptor["certificate_id"]),
+            read,
+        )
+        status = observation.status
+        if (
+            isinstance(status, dict)
+            and status.get("team_id") == descriptor["team_id"]
+            and isinstance(status.get("team_did_key"), str)
+        ):
+            self._cache[key_id] = PublicIssuer(
+                status["team_did_key"], observation.acquired_at
+            )
+            self._cache.move_to_end(key_id)
+            while len(self._cache) > self._cache_size:
+                self._cache.popitem(last=False)
+        return admit_team_member(
+            descriptor,
+            organisation=organisation,
+            certificate_header=certificate_header,
+            observation=observation,
+            now=int(time.time()),
+        )
+
     @public_errors
     async def requester(
         self,
@@ -229,8 +280,7 @@ class PublicReader:
 
         async def read():
             if descriptor["kind"] == "team_member":
-                return await read_team_member(
-                    self.registry,
+                return await self._team_member(
                     descriptor,
                     organisation=organisation,
                     certificate_header=admission["team_certificate"],
