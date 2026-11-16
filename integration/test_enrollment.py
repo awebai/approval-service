@@ -154,6 +154,11 @@ async def enroll_person(store):
     }
     pending = await service.confirm(confirm, issuer=public, requester=caller)
     assert pending["state"] == "pending"
+    # A newly opened page has no original token. Refresh from the bearer locator
+    # after the issuer has done its independent work; never repeat registration.
+    previous_csrf = browser["csrf"]
+    browser = await service.browser_options(started["locator"])
+    assert browser["csrf"] != previous_csrf
     options = await service.confirmation_options(started["locator"], browser["csrf"])
     assert options["challenge"] == encode(
         hashlib.sha256(domain("request") + canonical(r)).digest()
@@ -296,3 +301,89 @@ async def test_issuer_cannot_upgrade_the_services_private_registration_grade(sto
     assert await store.db.fetch_one(
         "SELECT count(*) AS n FROM {{tables.approval_requests}}"
     ) == {"n": 0}
+
+
+def intent_for_organisation(intent, issuer, organisation):
+    from awid.id_certificates import id_certificate_signing_bytes
+
+    changed = copy.deepcopy(intent)
+    i = changed["intent"]
+    i["organisation"] = organisation
+    i["requester"] = {**i["requester"], "namespace": organisation}
+    certificate = i["pending_certificate"]["certificate"]
+    certificate["domain"] = organisation
+    certificate["parent"]["id"] = organisation
+    i["pending_certificate"]["signature"] = encode(
+        issuer.sign(id_certificate_signing_bytes(certificate))
+    )
+    changed["signature"] = encode(
+        issuer.sign(domain("enrollment_intent") + canonical(i))
+    )
+    return changed
+
+
+@pytest.mark.asyncio
+async def test_foreign_organisation_cannot_reserve_another_organisations_person_id(
+    store,
+):
+    intent, issuer, trust, caller, _w = enrollment_world()
+    service = Enrollments(
+        store, origin=ORIGIN, rp_id=RP, grading=EnrollmentGrading("passkey_only", None)
+    )
+    foreign = intent_for_organisation(intent, issuer, "other.example")
+    foreign_caller = AdmittedRequester(
+        canonical(foreign["intent"]["requester"]), caller.key, caller.observed_at
+    )
+    first = await service.start(
+        foreign,
+        issuer=PublicIssuer(trust.issuer, trust.observed_at),
+        requester=foreign_caller,
+    )
+    second = await service.start(
+        intent, issuer=PublicIssuer(trust.issuer, trust.observed_at), requester=caller
+    )
+    assert first["locator"] != second["locator"]
+    rows = await store.db.fetch_all(
+        "SELECT organisation,person_id FROM {{tables.approval_enrollments}} ORDER BY organisation"
+    )
+    assert rows == [
+        {"organisation": trust.organisation, "person_id": trust.person},
+        {"organisation": "other.example", "person_id": trust.person},
+    ]
+
+
+@pytest.mark.asyncio
+async def test_pending_enrollment_refuses_more_than_24_hours_and_expired_attempt_retries(
+    store,
+):
+    import asyncio
+
+    intent, issuer, trust, caller, _w = enrollment_world()
+    service = Enrollments(
+        store, origin=ORIGIN, rp_id=RP, grading=EnrollmentGrading("passkey_only", None)
+    )
+    public = PublicIssuer(trust.issuer, trust.observed_at)
+    long = copy.deepcopy(intent)
+    long["intent"]["deadline"] = long["intent"]["not_before"] + 86401
+    long["signature"] = encode(
+        issuer.sign(domain("enrollment_intent") + canonical(long["intent"]))
+    )
+    with pytest.raises(Refused, match="enrollment_lifetime_invalid"):
+        await service.start(long, issuer=public, requester=caller)
+    assert await store.db.fetch_one(
+        "SELECT count(*) AS n FROM {{tables.approval_enrollments}}"
+    ) == {"n": 0}
+    short = copy.deepcopy(intent)
+    short["intent"]["deadline"] = int(time.time()) + 3
+    short["signature"] = encode(
+        issuer.sign(domain("enrollment_intent") + canonical(short["intent"]))
+    )
+    old = await service.start(short, issuer=public, requester=caller)
+    await asyncio.sleep(max(0, short["intent"]["deadline"] - time.time()) + 0.05)
+    retry = await service.start(intent, issuer=public, requester=caller)
+    assert retry["locator"] != old["locator"]
+    assert (
+        await store.db.fetch_one(
+            "SELECT count(*) AS n FROM {{tables.approval_enrollments}}"
+        )
+    )["n"] == 1
