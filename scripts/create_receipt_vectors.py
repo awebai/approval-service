@@ -14,7 +14,9 @@ append_review = "--append-review" in sys.argv
 append_hostnames = "--append-hostnames" in sys.argv
 if out.exists() and not (append_review or append_hostnames):
     raise SystemExit("refuse to overwrite frozen vectors")
-cases = json.loads(out.read_text())["cases"] if (append_review or append_hostnames) else []
+cases = (
+    json.loads(out.read_text())["cases"] if (append_review or append_hostnames) else []
+)
 
 
 def add(name, w, accept, now=1100, required_grade="passkey_uv"):
@@ -118,6 +120,7 @@ if not append_hostnames:
     add("unselected-off-curve-key", w, False)
 if append_hostnames:
     import hashlib
+
     from cryptography.hazmat.primitives import hashes
     from cryptography.hazmat.primitives.asymmetric import ec
 
@@ -136,9 +139,17 @@ if append_hostnames:
         signed_client(w, canon)
         a = w["receipt"]["assertion"]
         from approval_service.encoding import decode
-        auth = hashlib.sha256(rp.encode()).digest() + decode(a["authenticator_data"])[32:]
+
+        auth = (
+            hashlib.sha256(rp.encode()).digest() + decode(a["authenticator_data"])[32:]
+        )
         a["authenticator_data"] = b64(auth)
-        a["signature"] = b64(w["private"].sign(auth + hashlib.sha256(decode(a["client_data_json"])).digest(), ec.ECDSA(hashes.SHA256())))
+        a["signature"] = b64(
+            w["private"].sign(
+                auth + hashlib.sha256(decode(a["client_data_json"])).digest(),
+                ec.ECDSA(hashes.SHA256()),
+            )
+        )
         add(name, w, False)
 out.write_text(
     json.dumps(
