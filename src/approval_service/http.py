@@ -24,7 +24,8 @@ from .ceremonies import commitment as token_commitment
 from .definitions import check_definition
 from .encoding import decode
 from .enrollment import Enrollments
-from .seams import check_http, commitment
+from .requester import AdmittedRequester
+from .seams import check_activation_carrier, check_http, commitment
 from .store import StoreRefused
 from .verify import Refused
 from .wire import SCHEMA, domain, validate, validate_site
@@ -158,7 +159,7 @@ def create_app(store, *, public, origin, rp_id, grading):
         token = request.cookies.get(SESSION_COOKIE, "")
         row = await store.db.fetch_one(
             """SELECT s.*,e.organisation,e.state,e.certificate,v.id_chain
-            FROM {{tables.approval_sessions}} s JOIN {{tables.approval_enrollments}} e ON e.person_id=s.person_id AND e.organisation=s.organisation
+            FROM {{tables.approval_sessions}} s JOIN {{tables.approval_enrollments}} e ON e.person_id=s.person_id AND e.organisation=s.organisation AND e.enrollment_locator=s.enrollment_locator
             JOIN {{tables.approval_binding_versions}} v ON v.digest=e.binding_ref AND v.organisation=e.organisation AND v.person_id=e.person_id
             WHERE s.token_hash=$1""",
             token_commitment(token),
@@ -173,8 +174,8 @@ def create_app(store, *, public, origin, rp_id, grading):
         )
         row = await store.db.fetch_one(
             """SELECT s.*,e.state FROM {{tables.approval_sessions}} s
-            JOIN {{tables.approval_enrollments}} e ON e.person_id=s.person_id AND e.organisation=s.organisation
-            JOIN {{tables.approval_credentials}} c ON c.person_id=s.person_id AND c.organisation=s.organisation AND c.credential_id=s.credential_id
+            JOIN {{tables.approval_enrollments}} e ON e.person_id=s.person_id AND e.organisation=s.organisation AND e.enrollment_locator=s.enrollment_locator
+            JOIN {{tables.approval_credentials}} c ON c.person_id=s.person_id AND c.organisation=s.organisation AND c.credential_id=s.credential_id AND c.enrollment_locator=s.enrollment_locator
             WHERE s.token_hash=$1 AND e.state='active' AND e.identity_key=s.identity_key AND NOT c.retired""",
             token_commitment(token),
         )
@@ -232,7 +233,11 @@ def create_app(store, *, public, origin, rp_id, grading):
                 admission = value["admission"]
             else:
                 i = intent["intent"]
-                descriptor = i["requester"]
+                descriptor = (
+                    value.get("carrier", i["requester"])
+                    if purpose == "enrollment_activate"
+                    else i["requester"]
+                )
                 organisation = i["organisation"]
                 admission = value.get("admission")
             headers = request.headers.getlist("authorization")
@@ -258,6 +263,24 @@ def create_app(store, *, public, origin, rp_id, grading):
             if purpose in ("poll", "enrollment_material", "enrollment_confirm")
             else 32,
         )
+        if purpose == "enrollment_activate":
+            i = intent["intent"]
+            trust = await public.person(
+                value["id_chain"],
+                person=i["person"],
+                identity_key=i["identity_key"],
+                organisation=i["organisation"],
+            )
+            original = check_activation_carrier(
+                value, requester=descriptor, trust=trust
+            )
+            if canonical(descriptor) != canonical(original):
+                # The exact target/current key is established by the same shared
+                # Trust read used for activation, not a supplied binding key.
+                caller = AdmittedRequester(
+                    canonical(descriptor), descriptor["key"], trust.observed_at
+                )
+                return await enrollments.activate(value, trust=trust, requester=caller)
         if admission is None:
             locator = commitment("enrollment_locator", intent)
             row = await store.db.fetch_one(
@@ -272,18 +295,40 @@ def create_app(store, *, public, origin, rp_id, grading):
         )
         if intent is not None:
             if purpose == "enrollment_activate":
-                b = value["binding"]["binding"]
-                trust = await public.person(
-                    value["id_chain"],
-                    person=b["person"],
-                    identity_key=b["identity_key"],
-                    organisation=b["organisation"],
-                )
                 return await enrollments.activate(value, trust=trust, requester=caller)
             issuer = await public.issuer(intent)
             if purpose == "enrollment_start":
+                current = None
+                i = intent["intent"]
+                if "previous_binding_commitment" in i:
+                    if i["purpose"] == "replace_person_keys":
+                        previous = await store.db.fetch_one(
+                            """SELECT e.identity_key,v.id_chain FROM {{tables.approval_enrollments}} e
+                            JOIN {{tables.approval_binding_versions}} v ON v.digest=e.binding_ref AND v.enrollment_locator=e.enrollment_locator
+                            WHERE e.person_id=$1 AND e.organisation=$2 AND e.state='active' AND e.binding_ref=$3""",
+                            i["person"],
+                            i["organisation"],
+                            i["previous_binding_commitment"],
+                        )
+                        if previous is None:
+                            raise Refused("enrollment_previous_unavailable")
+                        chain = json.loads(previous["id_chain"])
+                        key = previous["identity_key"]
+                    else:
+                        chain = [i["pending_certificate"]]
+                        key = i["identity_key"]
+                    current = await public.person(
+                        chain,
+                        person=i["person"],
+                        identity_key=key,
+                        organisation=i["organisation"],
+                    )
                 return await enrollments.start(
-                    intent, issuer=issuer, requester=caller, admission=admission
+                    intent,
+                    issuer=issuer,
+                    requester=caller,
+                    admission=admission,
+                    current=current,
                 )
             if purpose == "enrollment_material":
                 return await enrollments.material(

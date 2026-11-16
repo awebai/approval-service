@@ -45,7 +45,7 @@ class Ceremonies:
 
     async def _enrollment(self, conn, person, *, organisation):
         row = await conn.fetch_one(
-            "SELECT * FROM {{tables.approval_enrollments}} WHERE person_id=$1 AND organisation=$2 FOR UPDATE",
+            "SELECT * FROM {{tables.approval_enrollments}} WHERE person_id=$1 AND organisation=$2 AND state='active' FOR UPDATE",
             person,
             organisation,
         )
@@ -70,12 +70,15 @@ class Ceremonies:
         return {**row, "_binding_version": version}
 
     @staticmethod
-    async def _credential(conn, person, credential_id, *, organisation):
+    async def _credential(
+        conn, person, credential_id, *, organisation, enrollment_locator
+    ):
         row = await conn.fetch_one(
-            "SELECT * FROM {{tables.approval_credentials}} WHERE person_id=$1 AND credential_id=$2 AND NOT retired AND organisation=$3 FOR UPDATE",
+            "SELECT * FROM {{tables.approval_credentials}} WHERE person_id=$1 AND credential_id=$2 AND NOT retired AND organisation=$3 AND enrollment_locator=$4 FOR UPDATE",
             person,
             credential_id,
             organisation,
+            enrollment_locator,
         )
         if row is None:
             raise Refused("credential_not_enrolled")
@@ -129,7 +132,11 @@ class Ceremonies:
             person,
             enrollment["organisation"],
         )
-        if session is None or session["identity_key"] != enrollment["identity_key"]:
+        if (
+            session is None
+            or session["identity_key"] != enrollment["identity_key"]
+            or session["enrollment_locator"] != enrollment["enrollment_locator"]
+        ):
             raise Refused("session_invalid")
         if not hmac.compare_digest(commitment(csrf), session["csrf_hash"]):
             raise Refused("csrf_invalid")
@@ -147,10 +154,11 @@ class Ceremonies:
         session_hash=None,
         operation_id=None,
         organisation=None,
+        enrollment_locator=None,
     ):
         identifier = secrets.token_urlsafe(32)
         await conn.execute(
-            "INSERT INTO {{tables.approval_challenges}}(challenge_id,person_id,purpose,operation_id,session_hash,challenge,issued_at,deadline,organisation) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+            "INSERT INTO {{tables.approval_challenges}}(challenge_id,person_id,purpose,operation_id,session_hash,challenge,issued_at,deadline,organisation,enrollment_locator) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
             identifier,
             person,
             purpose,
@@ -160,6 +168,7 @@ class Ceremonies:
             now,
             deadline,
             organisation,
+            enrollment_locator,
         )
         return {
             "id": identifier,
@@ -206,7 +215,7 @@ class Ceremonies:
         row = await self.store.db.fetch_one(
             """SELECT e.person_id,e.organisation,e.identity_key,v.id_chain
             FROM {{tables.approval_enrollments}} e
-            JOIN {{tables.approval_credentials}} c ON c.person_id=e.person_id AND c.organisation=e.organisation
+            JOIN {{tables.approval_credentials}} c ON c.person_id=e.person_id AND c.organisation=e.organisation AND c.enrollment_locator=e.enrollment_locator
             JOIN {{tables.approval_binding_versions}} v ON v.digest=e.binding_ref AND v.organisation=e.organisation AND v.person_id=e.person_id
             WHERE e.user_handle=$1 AND e.state='active'
             AND c.credential_id=$2 AND NOT c.retired""",
@@ -280,7 +289,11 @@ class Ceremonies:
                     conn, identifier, None, "login", organisation=None
                 )
                 credential = await self._credential(
-                    conn, person, assertion["id"], organisation=trust.organisation
+                    conn,
+                    person,
+                    assertion["id"],
+                    organisation=trust.organisation,
+                    enrollment_locator=enrollment["enrollment_locator"],
                 )
                 self._bounds(int(time.time()), trust=trust, challenge=challenge)
                 counter = self._assertion(assertion, credential, challenge["challenge"])
@@ -289,18 +302,19 @@ class Ceremonies:
                 now = int(time.time())
                 deadline = now + self.session_seconds
                 await conn.execute(
-                    "UPDATE {{tables.approval_credentials}} SET sign_count=$1 WHERE person_id=$2 AND credential_id=$3 AND organisation=$4",
+                    "UPDATE {{tables.approval_credentials}} SET sign_count=$1 WHERE person_id=$2 AND credential_id=$3 AND organisation=$4 AND enrollment_locator=$5",
                     counter,
                     person,
                     credential["credential_id"],
                     trust.organisation,
+                    enrollment["enrollment_locator"],
                 )
                 await conn.execute(
                     "UPDATE {{tables.approval_challenges}} SET consumed=true WHERE challenge_id=$1",
                     identifier,
                 )
                 await conn.execute(
-                    "INSERT INTO {{tables.approval_sessions}}(token_hash,person_id,identity_key,credential_id,csrf_hash,deadline,organisation) VALUES($1,$2,$3,$4,$5,$6,$7)",
+                    "INSERT INTO {{tables.approval_sessions}}(token_hash,person_id,identity_key,credential_id,csrf_hash,deadline,organisation,enrollment_locator) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
                     commitment(token),
                     person,
                     enrollment["identity_key"],
@@ -308,6 +322,7 @@ class Ceremonies:
                     commitment(csrf),
                     deadline,
                     trust.organisation,
+                    enrollment["enrollment_locator"],
                 )
                 self._bounds(int(time.time()), trust=trust, challenge=challenge)
                 return {"session": token, "csrf": csrf, "deadline": deadline}
@@ -332,7 +347,11 @@ class Ceremonies:
             self._bind_enrollment(enrollment, trust)
             session = await self._session(conn, session_token, csrf, person, enrollment)
             await self._credential(
-                conn, person, session["credential_id"], organisation=trust.organisation
+                conn,
+                person,
+                session["credential_id"],
+                organisation=trust.organisation,
+                enrollment_locator=enrollment["enrollment_locator"],
             )
             request = await conn.fetch_one(
                 "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND person_id=$2 AND organisation=$3 FOR UPDATE",
@@ -375,6 +394,7 @@ class Ceremonies:
                 session_hash=commitment(session_token),
                 operation_id=operation_id,
                 organisation=trust.organisation,
+                enrollment_locator=enrollment["enrollment_locator"],
             )
             self._bounds(
                 int(time.time()),
@@ -426,13 +446,18 @@ class Ceremonies:
                 ] != commitment(session_token):
                     raise Refused("challenge_binding_mismatch")
                 credential = await self._credential(
-                    conn, person, assertion["id"], organisation=trust.organisation
+                    conn,
+                    person,
+                    assertion["id"],
+                    organisation=trust.organisation,
+                    enrollment_locator=enrollment["enrollment_locator"],
                 )
                 await self._credential(
                     conn,
                     person,
                     session["credential_id"],
                     organisation=trust.organisation,
+                    enrollment_locator=enrollment["enrollment_locator"],
                 )
                 self._bounds(
                     int(time.time()),
@@ -485,11 +510,12 @@ class Ceremonies:
                     covered=r,
                 )
                 await conn.execute(
-                    "UPDATE {{tables.approval_credentials}} SET sign_count=$1 WHERE person_id=$2 AND credential_id=$3 AND organisation=$4",
+                    "UPDATE {{tables.approval_credentials}} SET sign_count=$1 WHERE person_id=$2 AND credential_id=$3 AND organisation=$4 AND enrollment_locator=$5",
                     counter,
                     person,
                     credential["credential_id"],
                     trust.organisation,
+                    enrollment["enrollment_locator"],
                 )
                 await conn.execute(
                     "UPDATE {{tables.approval_challenges}} SET consumed=true WHERE challenge_id=$1",
@@ -532,7 +558,11 @@ class Ceremonies:
             self._bind_enrollment(enrollment, trust)
             session = await self._session(conn, session_token, csrf, person, enrollment)
             await self._credential(
-                conn, person, session["credential_id"], organisation=trust.organisation
+                conn,
+                person,
+                session["credential_id"],
+                organisation=trust.organisation,
+                enrollment_locator=enrollment["enrollment_locator"],
             )
             row = await conn.fetch_one(
                 "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND person_id=$2 AND organisation=$3 FOR UPDATE",

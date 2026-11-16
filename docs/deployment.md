@@ -128,3 +128,13 @@ This changes rate accounting, never authentication or approval authority.
 `/health` uses the database check for liveness and reports hardware-enrollment
 readiness separately; expired metadata pauses new hardware enrollment while
 sign-in and approvals remain available.
+
+Re-enrollment uses a separate pending generation, so run `awsign migrate` before
+starting a service that requires migration `002_enrollment_generations.sql`.
+The migration preserves active enrollment and historical receipt bindings;
+startup refuses an older schema. Recovery requires the person's previous
+identity key to sign the normal registry rotation first. No operator reset,
+mail account or organisation signature substitutes for that key. When it too
+is lost, revoke the old person ID and issue a new ID. Recovery evidence starts
+a new creation event after an explicit break, rather than inheriting the old
+evidence grade.

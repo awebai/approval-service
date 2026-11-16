@@ -83,3 +83,40 @@ original signed intent. These are transport inputs, not positive public status.
 refuses to overwrite them. The JSON readers check duplicate members before
 map decoding, preserve named refusal codes and preserve a server error's actual
 HTTP status. No service message text supplies authority.
+
+`enrollment-lifecycle-v1.json` pins ordinary, assisted and recovery replacements.
+The signed intent names `previous_binding_commitment`; `replace_person_keys`
+prepares a pending ordinary/assisted replacement, while active-person
+`enroll_person` is recovery and requires the AFTER identity key already current
+at start. Both remain pending until committed activation. E's closed
+`transition` names the BEFORE subject/binding, previous E commitment, AFTER
+confirmation receipt and ordinary transition receipt. Its mode is `unbroken`,
+`assisted` or `recreated`. A missing previous E is explicit null only for a
+recovery break; normal replacement must preserve authenticated original
+creation facts. Recovery's creation field describes the NEW recovery ceremony.
+It never carries the former grade forward.
+
+Activation's `transition_receipt` is a complete public identity-act proof. The
+new bundled `human.enrollment.replace@1` definition commits exact BEFORE/AFTER
+certificate, identity key and B digest, person and continuity mode. The raw
+assertion is checked under independently trusted historical input; the helper
+is not relabelled as the target. The enforcer still checks current permission,
+its own nonce/deadline and atomic application of the effect. Activation is not
+that effect. `previous_evidence` optionally carries the requester's saved public
+statement when an older service did not retain it; it is verified under the
+known prior issuer and binding, never a supplied trust root.
+
+The `previous.trust` and `transition_trust` entries in these vectors represent
+checked historical inputs, not public wire fields. Service implementations use
+committed binding generations and independently read current AFTER Trust.
+The corpus also supplies the prior confirmation receipt so its construction
+can be checked independently. No private attestation or application resource
+is published in these identity proofs.
+
+The three `activation-carrier-*` cases in `issuer-service-enrollment-v1.json`
+keep I/C byte-for-byte unchanged and pin a valid signed HTTP envelope for each
+carrier. Only the exact person/current-key descriptor, or the original
+requester with current admission, can carry activation. The same person with
+a non-current key and a different person's key both refuse with
+`requester_mismatch`. No carrier exception applies to other enrollment routes,
+polling, receipt recovery or LOGIN.

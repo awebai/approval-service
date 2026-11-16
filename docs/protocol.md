@@ -75,6 +75,12 @@ evidence naming those credentials, presented by the issuer or person. Pending
 enrollment proof-of-possession ceremonies are not ordinary signed-in sessions.
 Unactivated pending enrollments expire. This is one-directional observation:
 no issuer/service prepare/commit protocol or mutual commit acknowledgment.
+For activation only, the authenticated carrier may be the intent's original
+requester or an identity descriptor naming that exact person and Trust's current
+identity key, signed by that key. Another member, a non-current key, or a
+controller other than the original requester cannot carry activation. The
+intent, confirmation request, polling and assertion recovery keep the original
+requester unchanged. The carrier grants neither sign-in nor approval authority.
 Section8 specifies an acyclic binding/proof construction, including bootstrap.
 
 The identity key and the enrolled approval keys are different keys. Replacing
@@ -84,7 +90,13 @@ Another person's approved assistance is visible assisted continuity.
 Complete loss by a sole human requires organisation-authorised recreation,
 visible as recreation. Neither flow authenticates as the lost enrollment, and
 email recovery supplies no approval. Later enrollment cannot improve an ID's
-creation grade. Details of who may assist remain the issuer/enforcer's rule.
+original creation grade. Sole-human recovery keeps the same stable person ID
+only when the previous identity key can sign the ordinary log rotation. Before
+recovery enrollment starts, the new identity key must already be current in
+the registry. The new evidence records a recovery break and a new creation by
+recovery; it carries no old creation grade into that event. The original event
+is not rewritten. If the identity key is also lost, the organisation revokes
+the old ID and issues a new person ID: its authority cannot rotate the old ID. Details of who may assist remain the issuer/enforcer's rule.
 
 An origin or RP migration cannot preserve a binding by redirecting, changing
 configuration, accepting a related suffix, or relabelling signed evidence.

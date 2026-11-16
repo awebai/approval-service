@@ -115,9 +115,10 @@ def check_http(authorization, body, *, requester, origin, method, path, purpose,
 def check_enrollment_intent(signed, *, issuer_key, requester, origin, rp_id, now):
     """issuer_key is checked public issuer authority, never taken from signed.
 
-    The proposed identity_key is not yet bound by public identity status: an ID
-    certificate contains no subject key. Only activation's independently read
-    committed Trust establishes that binding. Pending is not active authority.
+    A proposed identity_key is not yet bound by public identity status: an ID
+    certificate contains no subject key. Ordinary pending enrollment needs
+    committed Trust at activation. Active-person recovery additionally requires
+    that new key already current when the service starts the recovery. Pending is not active authority.
     """
     try:
         validate("enrollment_intent", signed)
@@ -158,7 +159,52 @@ def check_enrollment_intent(signed, *, issuer_key, requester, origin, rp_id, now
         raise Refused("enrollment_invalid") from exc
 
 
-def check_activation(value, *, issuer_key, requester, origin, rp_id, now, trust):
+def check_activation_carrier(value, *, requester, trust):
+    """Only the original requester or the exact current target person carries activation.
+
+    This checked carrier never replaces the original requester in I or C and
+    grants no session, receipt recovery or effect permission.
+    """
+    i = value["intent"]["intent"]
+    if (trust.person, trust.organisation, trust.identity_key) != (
+        i["person"],
+        i["organisation"],
+        i["identity_key"],
+    ):
+        raise Refused("enrollment_identity_mismatch")
+    original = i["requester"]
+    carrier = value.get("carrier", original)
+    if canonical(requester) != canonical(carrier):
+        raise Refused("requester_mismatch")
+    if (
+        carrier.get("kind") == "identity"
+        and carrier.get("id") == i["person"]
+        and carrier.get("key") != trust.identity_key
+    ):
+        raise Refused("requester_mismatch")
+    if canonical(carrier) != canonical(original):
+        expected = {
+            "kind": "identity",
+            "id": value["intent"]["intent"]["person"],
+            "key": trust.identity_key,
+        }
+        if canonical(carrier) != canonical(expected) or trust.person != expected["id"]:
+            raise Refused("requester_mismatch")
+    return original
+
+
+def check_activation(
+    value,
+    *,
+    issuer_key,
+    requester,
+    origin,
+    rp_id,
+    now,
+    trust,
+    previous=None,
+    transition_trust=None,
+):
     """Activation requires independently checked COMMITTED public identity.
 
     A valid pending intent/B/creation proof alone remains pending. The public
@@ -167,10 +213,11 @@ def check_activation(value, *, issuer_key, requester, origin, rp_id, now, trust)
     """
     try:
         validate("enrollment_activation", value)
+        original = value["intent"]["intent"]["requester"]
         pending = check_enrollment_intent(
             value["intent"],
             issuer_key=issuer_key,
-            requester=requester,
+            requester=original,
             origin=origin,
             rp_id=rp_id,
             now=now,
@@ -184,11 +231,12 @@ def check_activation(value, *, issuer_key, requester, origin, rp_id, now, trust)
             issuer_key,
         ):
             raise Refused("enrollment_identity_mismatch")
+        check_activation_carrier(value, requester=requester, trust=trust)
         c = value["creation_receipt"]
         if canonical(c["binding"]) != canonical(value["binding"]):
             raise Refused("binding_mismatch")
         checked, bh, _r = _creation_assertion(
-            c, requester=requester, origin=origin, now=now, trust=trust
+            c, requester=original, origin=origin, now=now, trust=trust
         )
         b = value["binding"]["binding"]
         if canonical(value["id_chain"]) != canonical(c["id_chain"]):
@@ -218,11 +266,29 @@ def check_activation(value, *, issuer_key, requester, origin, rp_id, now, trust)
             or e["issuer"] != issuer_key
         ):
             raise Refused("evidence_subject_mismatch")
-        if e["binding_commitment"] != bh or e["creation"] != {
+        new_creation = {
             "credential": checked.credential,
             "grade": checked.grade,
             "receipt_commitment": commitment("receipt_commitment", c),
-        }:
+        }
+        if e["binding_commitment"] != bh:
+            raise Refused("evidence_binding_mismatch")
+        if (
+            "previous_binding_commitment" in value["intent"]["intent"]
+            or "transition" in e
+        ):
+            from .lifecycle import check_lifecycle
+
+            check_lifecycle(
+                value,
+                previous=previous,
+                transition_trust=transition_trust,
+                new_creation=new_creation,
+            )
+        elif (
+            e["creation"] != new_creation
+            or value["intent"]["intent"]["purpose"] != "enroll_person"
+        ):
             raise Refused("evidence_binding_mismatch")
         if (b["origin"], b["rp_id"]) != (origin, rp_id):
             raise Refused("origin_invalid")

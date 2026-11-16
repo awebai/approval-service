@@ -24,6 +24,7 @@ from .encoding import decode, encode
 from .seams import (
     _creation_assertion,
     check_activation,
+    check_activation_carrier,
     check_enrollment_intent,
     commitment,
 )
@@ -111,7 +112,7 @@ class Enrollments:
             "extensions": {"credProps": True},
         }
 
-    async def start(self, intent, *, issuer, requester, admission=None):
+    async def start(self, intent, *, issuer, requester, admission=None, current=None):
         checked = self._check(intent, issuer, requester)
         i = intent["intent"]
         if i["deadline"] - i["not_before"] > 86400:
@@ -126,17 +127,53 @@ class Enrollments:
                 hashlib.sha256(canonical([i["organisation"], i["person"]])).hexdigest(),
             )
             old = await tx.fetch_one(
-                "SELECT * FROM {{tables.approval_enrollments}} WHERE person_id=$1 AND organisation=$2 FOR UPDATE",
+                "SELECT * FROM {{tables.approval_enrollments}} WHERE person_id=$1 AND organisation=$2 AND state='pending' FOR UPDATE",
                 i["person"],
                 i["organisation"],
             )
-            if (
-                old is not None
-                and old["state"] == "pending"
-                and int(time.time()) >= old["deadline"]
-            ):
+            if old is not None and int(time.time()) >= old["deadline"]:
                 await self._delete_pending(tx, old, int(time.time()))
                 old = None
+            active = await tx.fetch_one(
+                "SELECT * FROM {{tables.approval_enrollments}} WHERE person_id=$1 AND organisation=$2 AND state='active' FOR UPDATE",
+                i["person"],
+                i["organisation"],
+            )
+            previous = i.get("previous_binding_commitment")
+            if active is not None:
+                if previous != active["binding_ref"]:
+                    raise Refused("enrollment_previous_mismatch")
+                if i["identity_key"] == active["identity_key"]:
+                    raise Refused("enrollment_identity_unchanged")
+                if current is None:
+                    raise Refused("identity_unavailable")
+                Ceremonies._bounds(int(time.time()), trust=current)
+                # Recovery follows an ordinary previous-key-signed ID rotation;
+                # an organisation signature cannot move an existing stable ID.
+                expected = (
+                    (
+                        i["person"],
+                        i["organisation"],
+                        i["identity_key"],
+                        checked["certificate"],
+                    )
+                    if i["purpose"] == "enroll_person"
+                    else (
+                        active["person_id"],
+                        active["organisation"],
+                        active["identity_key"],
+                        active["certificate"],
+                    )
+                )
+                if (
+                    current.person,
+                    current.organisation,
+                    current.identity_key,
+                    current.certificate,
+                ) != expected:
+                    raise Refused("enrollment_identity_mismatch")
+            elif previous is not None or i["purpose"] != "enroll_person":
+                raise Refused("enrollment_previous_unavailable")
             if old is None:
                 count = await tx.fetch_one(
                     "SELECT count(*) AS n FROM {{tables.approval_enrollments}} WHERE requester_hash=$1 AND state='pending' AND deadline>$2",
@@ -147,8 +184,8 @@ class Enrollments:
                     raise Refused("pending_limit")
                 old = await tx.fetch_one(
                     """INSERT INTO {{tables.approval_enrollments}}
-                    (person_id,organisation,identity_key,certificate,issuer,user_handle,deadline,state,enrollment_locator,intent,requester_hash)
-                    VALUES($1,$2,$3,$4,$5,$6,$7,'pending',$8,$9::jsonb,$10) RETURNING *""",
+                    (person_id,organisation,identity_key,certificate,issuer,user_handle,deadline,state,enrollment_locator,intent,requester_hash,previous_locator)
+                    VALUES($1,$2,$3,$4,$5,$6,$7,'pending',$8,$9::jsonb,$10,$11) RETURNING *""",
                     i["person"],
                     i["organisation"],
                     checked["identity_key"],
@@ -159,21 +196,22 @@ class Enrollments:
                     checked["locator"],
                     json.dumps(intent),
                     requester.commitment,
+                    None if active is None else active["enrollment_locator"],
                 )
             elif (
-                old["state"] != "pending"
-                or old["enrollment_locator"] != checked["locator"]
+                old["enrollment_locator"] != checked["locator"]
                 or old["requester_hash"] != requester.commitment
             ):
                 raise Refused("enrollment_conflict")
             if admission is not None and old["admission"] is None:
                 await tx.execute(
-                    "UPDATE {{tables.approval_enrollments}} SET admission=$1::jsonb WHERE person_id=$2 AND organisation=$3",
+                    "UPDATE {{tables.approval_enrollments}} SET admission=$1::jsonb WHERE enrollment_locator=$2",
                     json.dumps(admission),
-                    i["person"],
-                    i["organisation"],
+                    old["enrollment_locator"],
                 )
             self._bounds(old, issuer=issuer, requester=requester)
+            if current is not None:
+                Ceremonies._bounds(int(time.time()), trust=current)
             return {
                 "version": 1,
                 "locator": checked["locator"],
@@ -188,11 +226,10 @@ class Enrollments:
             csrf = secrets.token_urlsafe(32)
             deadline = min(row["deadline"], int(time.time()) + 120)
             await tx.execute(
-                "UPDATE {{tables.approval_enrollments}} SET browser_hash=$1,browser_deadline=$2 WHERE person_id=$3 AND organisation=$4",
+                "UPDATE {{tables.approval_enrollments}} SET browser_hash=$1,browser_deadline=$2 WHERE enrollment_locator=$3",
                 token_commitment(csrf),
                 deadline,
-                row["person_id"],
-                row["organisation"],
+                row["enrollment_locator"],
             )
             self._bounds({**row, "browser_deadline": deadline}, browser=True)
             return {
@@ -218,10 +255,11 @@ class Enrollments:
                 rp_id=self.rp_id,
             )
             existing = await tx.fetch_one(
-                "SELECT registration FROM {{tables.approval_credentials}} WHERE credential_id=$1 AND person_id=$2 AND organisation=$3",
+                "SELECT registration FROM {{tables.approval_credentials}} WHERE credential_id=$1 AND person_id=$2 AND organisation=$3 AND enrollment_locator=$4",
                 checked.credential_id,
                 row["person_id"],
                 row["organisation"],
+                row["enrollment_locator"],
             )
             if existing is not None:
                 if canonical(json.loads(existing["registration"])) != canonical(
@@ -230,16 +268,17 @@ class Enrollments:
                     raise Refused("credential_conflict")
             else:
                 count = await tx.fetch_one(
-                    "SELECT count(*) AS n FROM {{tables.approval_credentials}} WHERE person_id=$1 AND NOT retired AND organisation=$2",
+                    "SELECT count(*) AS n FROM {{tables.approval_credentials}} WHERE person_id=$1 AND NOT retired AND organisation=$2 AND enrollment_locator=$3",
                     row["person_id"],
                     row["organisation"],
+                    row["enrollment_locator"],
                 )
                 if count["n"] >= 8:
                     raise Refused("credential_limit")
                 await tx.execute(
                     """INSERT INTO {{tables.approval_credentials}}
-                    (person_id,credential_id,public_key,sign_count,grade,snapshot,attestation,registration,client_extension_results,binding_entry,organisation)
-                    VALUES($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10::jsonb,$11)""",
+                    (person_id,credential_id,public_key,sign_count,grade,snapshot,attestation,registration,client_extension_results,binding_entry,organisation,enrollment_locator)
+                    VALUES($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10::jsonb,$11,$12)""",
                     row["person_id"],
                     checked.credential_id,
                     checked.public_key,
@@ -251,6 +290,7 @@ class Enrollments:
                     json.dumps(extensions),
                     json.dumps(checked.binding_entry()),
                     row["organisation"],
+                    row["enrollment_locator"],
                 )
             self._bounds(row, browser=True)
             return {
@@ -266,9 +306,10 @@ class Enrollments:
             if row["requester_hash"] != requester.commitment:
                 raise Refused("requester_mismatch")
             credentials = await tx.fetch_all(
-                "SELECT registration,client_extension_results FROM {{tables.approval_credentials}} WHERE person_id=$1 AND NOT retired AND organisation=$2 ORDER BY credential_id",
+                "SELECT registration,client_extension_results FROM {{tables.approval_credentials}} WHERE person_id=$1 AND NOT retired AND organisation=$2 AND enrollment_locator=$3 ORDER BY credential_id",
                 row["person_id"],
                 row["organisation"],
+                row["enrollment_locator"],
             )
             self._bounds(row, issuer=issuer, requester=requester)
             return {
@@ -289,9 +330,10 @@ class Enrollments:
 
     async def _private_binding(self, tx, row, binding):
         credentials = await tx.fetch_all(
-            "SELECT * FROM {{tables.approval_credentials}} WHERE person_id=$1 AND NOT retired AND organisation=$2 ORDER BY credential_id FOR UPDATE",
+            "SELECT * FROM {{tables.approval_credentials}} WHERE person_id=$1 AND NOT retired AND organisation=$2 AND enrollment_locator=$3 ORDER BY credential_id FOR UPDATE",
             row["person_id"],
             row["organisation"],
+            row["enrollment_locator"],
         )
         entries = sorted(binding["binding"]["credentials"], key=lambda c: c["id"])
         credentials = sorted(credentials, key=lambda c: c["credential_id"])
@@ -368,12 +410,13 @@ class Enrollments:
                 raise Refused("binding_mismatch")
             chain = [body["intent"]["intent"]["pending_certificate"]]
             await tx.execute(
-                "INSERT INTO {{tables.approval_binding_versions}}(digest,person_id,binding,id_chain,organisation) VALUES($1,$2,$3::jsonb,$4::jsonb,$5) ON CONFLICT DO NOTHING",
+                "INSERT INTO {{tables.approval_binding_versions}}(digest,person_id,binding,id_chain,organisation,enrollment_locator) VALUES($1,$2,$3::jsonb,$4::jsonb,$5,$6) ON CONFLICT DO NOTHING",
                 ref,
                 row["person_id"],
                 json.dumps(body["binding"]),
                 json.dumps(chain),
                 row["organisation"],
+                row["enrollment_locator"],
             )
             await tx.execute(
                 """INSERT INTO {{tables.approval_requests}}(operation_id,digest,requester_hash,person_id,request_bytes,created_at,deadline,organisation)
@@ -399,11 +442,10 @@ class Enrollments:
             ):
                 raise Refused("selection_conflict")
             await tx.execute(
-                "UPDATE {{tables.approval_enrollments}} SET binding_ref=$1,confirmation_id=$2 WHERE person_id=$3 AND organisation=$4",
+                "UPDATE {{tables.approval_enrollments}} SET binding_ref=$1,confirmation_id=$2 WHERE enrollment_locator=$3",
                 ref,
                 locator,
-                row["person_id"],
-                row["organisation"],
+                row["enrollment_locator"],
             )
             answer = await self.store.decision_answer(request, locator, db=tx)
             self._bounds(row, issuer=issuer, requester=requester)
@@ -431,6 +473,7 @@ class Enrollments:
                 session_hash=token_commitment(csrf),
                 operation_id=row["confirmation_id"],
                 organisation=row["organisation"],
+                enrollment_locator=row["enrollment_locator"],
             )
             result["request"] = parse(bytes(request["request_bytes"]))
             result["display"] = check_definition(result["request"])["display"]
@@ -468,7 +511,11 @@ class Enrollments:
             ):
                 raise Refused("challenge_binding_mismatch")
             credential = await self.ceremonies._credential(
-                tx, row["person_id"], assertion["id"], organisation=row["organisation"]
+                tx,
+                row["person_id"],
+                assertion["id"],
+                organisation=row["organisation"],
+                enrollment_locator=row["enrollment_locator"],
             )
             version = await tx.fetch_one(
                 "SELECT binding,id_chain FROM {{tables.approval_binding_versions}} WHERE digest=$1 AND organisation=$2 AND person_id=$3",
@@ -508,11 +555,12 @@ class Enrollments:
                 assertion, credential, challenge["challenge"]
             )
             await tx.execute(
-                "UPDATE {{tables.approval_credentials}} SET sign_count=$1 WHERE person_id=$2 AND credential_id=$3 AND organisation=$4",
+                "UPDATE {{tables.approval_credentials}} SET sign_count=$1 WHERE person_id=$2 AND credential_id=$3 AND organisation=$4 AND enrollment_locator=$5",
                 counter,
                 row["person_id"],
                 assertion["id"],
                 row["organisation"],
+                row["enrollment_locator"],
             )
             await tx.execute(
                 "UPDATE {{tables.approval_challenges}} SET consumed=true WHERE challenge_id=$1",
@@ -527,36 +575,143 @@ class Enrollments:
             self._bounds(row, issuer=issuer, browser=True)
             return {"digest": checked.digest, "state": "approved"}
 
+    @staticmethod
+    def _historical_state(version, enrollment):
+        binding = json.loads(version["binding"])
+        b = binding["binding"]
+        if enrollment["state"] not in (
+            "active",
+            "retired",
+        ):
+            raise Refused("enrollment_previous_unavailable")
+        return {
+            "binding": binding,
+            "evidence": None
+            if enrollment["evidence"] is None
+            else json.loads(enrollment["evidence"]),
+            "trust": Trust(
+                b["person"],
+                b["organisation"],
+                b["identity_key"],
+                b["certificate"],
+                b["issuer"],
+                public_key_from_did(b["issuer"]),
+                0,
+            ),
+        }
+
     async def activate(self, value, *, trust, requester):
-        checked = check_activation(
-            value,
-            issuer_key=trust.issuer,
-            requester=parse(requester.descriptor_bytes),
-            origin=self.origin,
-            rp_id=self.rp_id,
-            now=int(time.time()),
-            trust=trust,
+        check_activation_carrier(
+            value, requester=parse(requester.descriptor_bytes), trust=trust
         )
         locator = commitment("enrollment_locator", value["intent"])
         async with self.store.transaction() as tx:
+            await tx.execute(
+                "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+                hashlib.sha256(
+                    canonical([trust.organisation, trust.person])
+                ).hexdigest(),
+            )
             row = await self._row(tx, locator, pending=False)
             if (
                 row["state"] not in ("pending", "active")
-                or row["requester_hash"] != requester.commitment
+                or row["requester_hash"]
+                != hashlib.sha256(
+                    canonical(value["intent"]["intent"]["requester"])
+                ).hexdigest()
             ):
                 raise Refused("enrollment_conflict")
+            current = await tx.fetch_one(
+                "SELECT * FROM {{tables.approval_enrollments}} WHERE organisation=$1 AND person_id=$2 AND state='active' FOR UPDATE",
+                trust.organisation,
+                trust.person,
+            )
+            previous = None
+            transition_trust = None
+            if row["previous_locator"] is not None:
+                before = await tx.fetch_one(
+                    "SELECT * FROM {{tables.approval_enrollments}} WHERE enrollment_locator=$1 FOR UPDATE",
+                    row["previous_locator"],
+                )
+                if (
+                    before is None
+                    or current is None
+                    or current["enrollment_locator"]
+                    not in (before["enrollment_locator"], row["enrollment_locator"])
+                ):
+                    raise Refused("enrollment_previous_mismatch")
+                version = await tx.fetch_one(
+                    "SELECT * FROM {{tables.approval_binding_versions}} WHERE digest=$1 AND enrollment_locator=$2",
+                    before["binding_ref"],
+                    before["enrollment_locator"],
+                )
+                if version is None:
+                    raise Refused("enrollment_previous_unavailable")
+                previous = self._historical_state(version, before)
+                receipt = value.get("transition_receipt")
+                if receipt is not None:
+                    # A helper must have a previously committed enrollment at
+                    # this service. Pending signed B is not a trust anchor.
+                    proof_version = await tx.fetch_one(
+                        """SELECT v.*,e.state,e.evidence FROM {{tables.approval_binding_versions}} v
+                        JOIN {{tables.approval_enrollments}} e ON e.enrollment_locator=v.enrollment_locator
+                        WHERE v.digest=$1 AND v.organisation=$2 AND e.state IN ('active','retired')""",
+                        commitment("binding_commitment", receipt["binding"]),
+                        trust.organisation,
+                    )
+                    if proof_version is None:
+                        raise Refused("transition_receipt_unavailable")
+                    transition_trust = self._historical_state(
+                        proof_version, proof_version
+                    )["trust"]
+            elif (
+                current is not None
+                and current["enrollment_locator"] != row["enrollment_locator"]
+            ):
+                raise Refused("enrollment_conflict")
+            checked = check_activation(
+                value,
+                issuer_key=trust.issuer,
+                requester=parse(requester.descriptor_bytes),
+                origin=self.origin,
+                rp_id=self.rp_id,
+                now=int(time.time()),
+                trust=trust,
+                previous=previous,
+                transition_trust=transition_trust,
+            )
             await self._private_binding(tx, row, value["binding"])
             if row["binding_ref"] != checked["binding_commitment"]:
                 raise Refused("binding_mismatch")
+            if (
+                current is not None
+                and current["enrollment_locator"] != row["enrollment_locator"]
+            ):
+                old_locator = current["enrollment_locator"]
+                await tx.execute(
+                    "UPDATE {{tables.approval_enrollments}} SET state='retired' WHERE enrollment_locator=$1",
+                    old_locator,
+                )
+                await tx.execute(
+                    "UPDATE {{tables.approval_sessions}} SET retired=true WHERE enrollment_locator=$1",
+                    old_locator,
+                )
+                await tx.execute(
+                    "UPDATE {{tables.approval_credentials}} SET retired=true WHERE enrollment_locator=$1",
+                    old_locator,
+                )
+                await tx.execute(
+                    "UPDATE {{tables.approval_challenges}} SET consumed=true WHERE enrollment_locator=$1",
+                    old_locator,
+                )
             await tx.execute(
-                "UPDATE {{tables.approval_enrollments}} SET state='active',intent=NULL,browser_hash=NULL,browser_deadline=NULL WHERE person_id=$1 AND organisation=$2",
-                trust.person,
-                row["organisation"],
+                "UPDATE {{tables.approval_enrollments}} SET state='active',intent=NULL,browser_hash=NULL,browser_deadline=NULL,evidence=$1::jsonb WHERE enrollment_locator=$2",
+                json.dumps(value["evidence"]),
+                locator,
             )
             await tx.execute(
-                "UPDATE {{tables.approval_credentials}} SET registration=NULL,client_extension_results=NULL WHERE person_id=$1 AND organisation=$2",
-                trust.person,
-                row["organisation"],
+                "UPDATE {{tables.approval_credentials}} SET registration=NULL,client_extension_results=NULL WHERE enrollment_locator=$1",
+                locator,
             )
             self._bounds(row, issuer=trust, requester=requester)
             return {
@@ -569,7 +724,7 @@ class Enrollments:
     async def cleanup(self, now):
         async with self.store.transaction() as tx:
             rows = await tx.fetch_all(
-                "SELECT organisation,person_id,confirmation_id FROM {{tables.approval_enrollments}} WHERE state='pending' AND deadline<=$1 ORDER BY deadline LIMIT 128 FOR UPDATE SKIP LOCKED",
+                "SELECT organisation,person_id,confirmation_id,enrollment_locator FROM {{tables.approval_enrollments}} WHERE state='pending' AND deadline<=$1 ORDER BY deadline LIMIT 128 FOR UPDATE SKIP LOCKED",
                 now,
             )
             for row in rows:
@@ -604,9 +759,6 @@ class Enrollments:
             "approval_enrollments",
         ):
             await tx.execute(
-                "DELETE FROM {{tables."
-                + table
-                + "}} WHERE organisation=$1 AND person_id=$2",
-                row["organisation"],
-                row["person_id"],
+                "DELETE FROM {{tables." + table + "}} WHERE enrollment_locator=$1",
+                row["enrollment_locator"],
             )

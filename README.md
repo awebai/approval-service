@@ -118,3 +118,36 @@ certificate-status SDK dependency.
 
 Pending enrollment links are bearer capabilities; follow the issuer's
 [delivery and registration-count checks](docs/deployment.md#enrollment-link-handling).
+
+## Re-enrollment and lost approval keys
+
+A pending replacement has a fresh user handle, browser window and credential
+set beside the active enrollment. It cannot sign in or approve ordinary acts.
+The issuer prepares the AFTER binding, obtains the normal prior-key or helper
+approval over the exact BEFORE/AFTER target, applies its own rule and nonce,
+then commits the new identity key and signed evidence. Activation observes that
+committed identity, checks both proofs and the service's own credential grades,
+and atomically retires the old generation and its sessions. Expiring an
+unfinished attempt leaves the old generation usable. Historical receipt recovery
+still returns the binding originally selected at decision.
+
+When every approval key is lost, the identity key can still sign its ordinary
+rotation. Recovery enrollment requires that new key to be current for the SAME
+stable person ID. Its evidence says `recreated` and records a new recovery
+creation event, never an unbroken continuation or an inherited old grade. An
+organisation key alone cannot move an existing ID. Losing the identity key too
+requires revoking that ID and creating a new one.
+
+The `enrollment-lifecycle-v1` vectors cover the shared Python/Go activation
+checks. Previous enrollment state and historical transition Trust are checked
+inputs, not receipt-supplied authority. The service takes them from previously
+committed binding versions. An older installation that did not store E can
+receive the issuer-authenticated saved public E from its requester; it does not
+reconstruct it from an act archive. Recovery can explicitly record unavailable
+prior history while starting a new evidence history after the break.
+
+Activation alone also accepts the exact target person's current identity key
+as authenticated carrier after rotation. `carrier` names that identity in the
+activation body. It does not change I, C, the original requester, polling or
+assertion recovery, and grants no session. The shared seam checks the same
+rule as the HTTP handler; other members and non-current keys are refused.

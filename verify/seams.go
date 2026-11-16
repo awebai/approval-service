@@ -153,11 +153,13 @@ func CheckHTTP(authorization string, body []byte, in HTTPInput) (CheckedHTTP, er
 }
 
 type EnrollmentInput struct {
-	IssuerKey    string
-	Requester    map[string]any
-	Origin, RPID string
-	Now          int64
-	Trust        *Trust
+	IssuerKey       string
+	Requester       map[string]any
+	Origin, RPID    string
+	Now             int64
+	Trust           *Trust
+	Previous        *EnrollmentHistory
+	TransitionTrust *Trust
 }
 type CheckedEnrollment struct {
 	Credential, Grade, Digest                                           string
@@ -219,7 +221,10 @@ func CheckActivation(value map[string]any, in EnrollmentInput) (CheckedEnrollmen
 	if validate("enrollment_activation", value) != nil {
 		return bad("activation_invalid")
 	}
-	pending, e := CheckEnrollmentIntent(object(value, "intent"), in)
+	original := object(object(value, "intent"), "intent")["requester"].(map[string]any)
+	proofIn := in
+	proofIn.Requester = original
+	pending, e := CheckEnrollmentIntent(object(value, "intent"), proofIn)
 	if e != nil {
 		return out, e
 	}
@@ -230,11 +235,14 @@ func CheckActivation(value map[string]any, in EnrollmentInput) (CheckedEnrollmen
 	if trust.Person != pending.Person || trust.Certificate != pending.Certificate || trust.IdentityKey != pending.IdentityKey || trust.Issuer != in.IssuerKey {
 		return bad("enrollment_identity_mismatch")
 	}
+	if e = checkActivationCarrier(value, in); e != nil {
+		return out, e
+	}
 	receipt := object(value, "creation_receipt")
 	if !equalValue(receipt["binding"], value["binding"]) {
 		return bad("binding_mismatch")
 	}
-	checked, bh, _r, e := creationAssertion(receipt, in)
+	checked, bh, _r, e := creationAssertion(receipt, proofIn)
 	_ = _r
 	if e != nil {
 		return out, e
@@ -269,9 +277,19 @@ func CheckActivation(value map[string]any, in EnrollmentInput) (CheckedEnrollmen
 		return bad("activation_invalid")
 	}
 	creation := map[string]any{"credential": checked.Credential, "grade": checked.Grade, "receipt_commitment": ch}
-	if text(eb, "binding_commitment") != bh || !equalValue(eb["creation"], creation) {
+	if text(eb, "binding_commitment") != bh {
 		return bad("evidence_binding_mismatch")
 	}
+	_, hasPrevious := intent["previous_binding_commitment"]
+	_, hasTransition := eb["transition"]
+	if hasPrevious || hasTransition {
+		if e = checkLifecycle(value, in, creation); e != nil {
+			return out, e
+		}
+	} else if !equalValue(eb["creation"], creation) || text(intent, "purpose") != "enroll_person" {
+		return bad("evidence_binding_mismatch")
+	}
+
 	binding := object(object(value, "binding"), "binding")
 	if text(binding, "origin") != in.Origin || text(binding, "rp_id") != in.RPID {
 		return bad("origin_invalid")
@@ -417,4 +435,31 @@ func CheckCreationProof(receipt, intent map[string]any, in EnrollmentInput, nonc
 		return out, e
 	}
 	return CheckedEnrollment{Person: t.Person, State: "pending", BindingCommitment: bh, Credential: checked.Credential, Grade: checked.Grade, Digest: checked.Digest}, nil
+}
+
+// The transport has independently checked the signature/current admission. Only
+// activation permits a carrier differing from the frozen requester in I and C.
+func checkActivationCarrier(value map[string]any, in EnrollmentInput) error {
+	i := object(object(value, "intent"), "intent")
+	if in.Trust.Person != text(i, "person") || in.Trust.Organisation != text(i, "organisation") || in.Trust.IdentityKey != text(i, "identity_key") {
+		return refuse("enrollment_identity_mismatch")
+	}
+	original := object(i, "requester")
+	carrier := original
+	if supplied, ok := value["carrier"].(map[string]any); ok {
+		carrier = supplied
+	}
+	if !equalValue(carrier, in.Requester) {
+		return refuse("requester_mismatch")
+	}
+	if text(carrier, "kind") == "identity" && text(carrier, "id") == text(i, "person") && text(carrier, "key") != in.Trust.IdentityKey {
+		return refuse("requester_mismatch")
+	}
+	if !equalValue(carrier, original) {
+		expected := map[string]any{"kind": "identity", "id": text(object(object(value, "intent"), "intent"), "person"), "key": in.Trust.IdentityKey}
+		if !equalValue(carrier, expected) || in.Trust.Person != expected["id"] {
+			return refuse("requester_mismatch")
+		}
+	}
+	return nil
 }
