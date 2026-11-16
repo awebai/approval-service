@@ -46,6 +46,9 @@ func ReadAnswer(kind string, body map[string]any, in AnswerInput) (map[string]an
 	}
 	var r map[string]any
 	if kind == "submit" || kind == "poll" || kind == "cancel" || kind == "enrollment_confirm" {
+		if in.RequestBytes == nil {
+			return bad("request_mismatch")
+		}
 		var e error
 		r, e = Parse(in.RequestBytes)
 		if e != nil || validate("request", r) != nil {
