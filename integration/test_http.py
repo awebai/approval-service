@@ -77,7 +77,7 @@ def signed_submit_body(*, kind="team_member", chain=None):
 
     private, public = generate_keypair()
     key = did_from_public_key(public)
-    team_private, team_public = generate_keypair()
+    team_private, _team_public = generate_keypair()
     descriptor = {
         "kind": "team_member",
         "team_id": "private:customer.example",

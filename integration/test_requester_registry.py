@@ -48,7 +48,9 @@ async def listener(app, *, config=None):
                     await task
                     raise AssertionError("registry did not start")
                 await asyncio.sleep(0.01)
-        yield f"http://127.0.0.1:{sock.getsockname()[1]}", server
+        host = "localhost" if server.config.is_ssl else "127.0.0.1"
+        scheme = "https" if server.config.is_ssl else "http"
+        yield f"{scheme}://{host}:{sock.getsockname()[1]}", server
     finally:
         server.should_exit = True
         try:

@@ -50,8 +50,9 @@ async def active_port(store):
         canonical(r),
         now,
         r["deadline"],
+        organisation=trust.organisation,
     )
-    return w, trust, requester
+    return (w, trust, requester)
 
 
 def login_assertion(w, options, *, uv=True):
@@ -109,6 +110,8 @@ async def test_login_never_approves_and_act_uv_is_single_consumed_and_recoverabl
             hashlib.sha256(PREFIX + canonical(w["request"])).hexdigest(),
             requester.commitment,
             int(time.time()),
+            organisation=trust.organisation,
+            person_id=trust.person,
         )
     )["outcome"] == "pending"
     with pytest.raises(Refused):
@@ -154,26 +157,47 @@ async def test_login_never_approves_and_act_uv_is_single_consumed_and_recoverabl
             requester,
         )
     saved = await store.poll(
-        "operation", result["digest"], requester.commitment, int(time.time())
+        "operation",
+        result["digest"],
+        requester.commitment,
+        int(time.time()),
+        organisation=trust.organisation,
+        person_id=trust.person,
     )
     assert saved["request_bytes"] is None
     assert saved["assertion"] == w["receipt"]["assertion"]
     assert (
         await store.poll(
-            "operation", result["digest"], requester.commitment, int(time.time())
+            "operation",
+            result["digest"],
+            requester.commitment,
+            int(time.time()),
+            organisation=trust.organisation,
+            person_id=trust.person,
         )
     )["assertion"] == saved["assertion"]
-    assert (await store.audit("operation"))[0]["outcome"] == "approved"
-    assert await store.pending(person) == []
+    assert (
+        await store.audit(
+            "operation", organisation=trust.organisation, person_id=trust.person
+        )
+    )[0]["outcome"] == "approved"
+    assert await store.pending(person, organisation=trust.organisation) == []
     with pytest.raises(StoreRefused):
         await store.poll(
             "operation",
             result["digest"],
             "not-the-original-requester",
             int(time.time()),
+            organisation=trust.organisation,
+            person_id=trust.person,
         )
     expired = await store.poll(
-        "operation", result["digest"], requester.commitment, w["request"]["deadline"]
+        "operation",
+        result["digest"],
+        requester.commitment,
+        w["request"]["deadline"],
+        organisation=trust.organisation,
+        person_id=trust.person,
     )
     assert expired["outcome"] == "approved"
     assert expired["assertion"] is None
@@ -196,10 +220,7 @@ async def test_no_uv_login_and_wrong_csrf_do_not_create_or_consume_authority(sto
     assert subject["person"] == person
     with pytest.raises(Refused):
         await ceremonies.finish_login(
-            login["id"],
-            login_assertion(w, login, uv=False),
-            w["user_handle"],
-            trust,
+            login["id"], login_assertion(w, login, uv=False), w["user_handle"], trust
         )
     async with store.transaction() as conn:
         assert (
@@ -220,7 +241,7 @@ async def test_no_uv_login_and_wrong_csrf_do_not_create_or_consume_authority(sto
         await ceremonies.approval_options(
             person, "operation", session["session"], "wrong-csrf", trust, requester
         )
-    assert len(await store.pending(person)) == 1
+    assert len(await store.pending(person, organisation=trust.organisation)) == 1
 
 
 @pytest.mark.asyncio
