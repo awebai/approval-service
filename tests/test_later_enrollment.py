@@ -9,11 +9,16 @@ from approval_service.encoding import decode
 from approval_service.seams import check_activation
 from approval_service.verify import Refused, Trust
 
-CASES = json.loads(
-    (Path(__file__).parents[1] / "vectors/later-enrollment-v1.json").read_text()
-)["cases"] + json.loads(
-    (Path(__file__).parents[1] / "vectors/enrollment-boundaries-v1.json").read_text()
-)["cases"]
+CASES = (
+    json.loads(
+        (Path(__file__).parents[1] / "vectors/later-enrollment-v1.json").read_text()
+    )["cases"]
+    + json.loads(
+        (
+            Path(__file__).parents[1] / "vectors/enrollment-boundaries-v1.json"
+        ).read_text()
+    )["cases"]
+)
 
 
 @pytest.mark.parametrize("case", CASES, ids=lambda c: c["id"])
@@ -27,9 +32,18 @@ def test_later_enrollment_shared(case):
 
     if "expected_intent_error" in case:
         from approval_service.seams import check_enrollment_intent
+
         with pytest.raises(Refused) as error:
-            check_enrollment_intent(case["activation"]["intent"],issuer_key=case["issuer_key"],requester=case["requester"],origin=case["origin"],rp_id=case["rp_id"],now=case["now"],trust=trust)
-        assert error.value.code==case["expected_intent_error"]
+            check_enrollment_intent(
+                case["activation"]["intent"],
+                issuer_key=case["issuer_key"],
+                requester=case["requester"],
+                origin=case["origin"],
+                rp_id=case["rp_id"],
+                now=case["now"],
+                trust=trust,
+            )
+        assert error.value.code == case["expected_intent_error"]
 
     def run():
         return check_activation(

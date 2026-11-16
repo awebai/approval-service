@@ -224,15 +224,25 @@ func checkEnrollmentIntent(signed map[string]any, in EnrollmentInput, live bool)
 		return bad("enrollment_expired")
 	}
 	challenge, e := decode(text(b, "challenge"))
-	if e != nil || len(challenge) != 32 {
+	if e != nil {
+		return bad("enrollment_invalid")
+	}
+	if len(challenge) != 32 {
 		return bad("enrollment_challenge_invalid")
 	}
 	certificate := object(b, "pending_certificate")
-	c := object(certificate, "certificate")
+	c, ok := certificate["certificate"].(map[string]any)
+	if !ok {
+		return bad("enrollment_invalid")
+	}
+	key, ok := c["issuer_key"].(string)
+	if !ok {
+		return bad("enrollment_invalid")
+	}
 	later := text(b, "purpose") == "enroll_existing_person"
 	certificateKey := in.IssuerKey
 	if later {
-		certificateKey = text(c, "issuer_key")
+		certificateKey = key
 	}
 	if e = awid.VerifyIDCertificate(certificate, certificateKey); e != nil {
 		return bad("enrollment_invalid")
@@ -320,6 +330,9 @@ func CheckActivation(value map[string]any, in EnrollmentInput) (CheckedEnrollmen
 	checked, bh, _r, e := creationAssertion(receipt, proofIn, false)
 	_ = _r
 	if e != nil {
+		if e.Error() == "creation_invalid" {
+			return bad("activation_invalid")
+		}
 		return out, e
 	}
 	if !equalValue(value["id_chain"], receipt["id_chain"]) {

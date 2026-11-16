@@ -696,7 +696,20 @@
           "maxLength": 4096
         },
         "pending_certificate": {
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "certificate",
+            "signature"
+          ],
+          "properties": {
+            "certificate": {
+              "type": "object"
+            },
+            "signature": {
+              "type": "string"
+            }
+          }
         },
         "identity_key": {
           "type": "string",
@@ -2072,7 +2085,7 @@
       },
       "display": {
         "heading": "Replace approval keys",
-        "consequence": "Change this person’s identity key and approval-key binding.",
+        "consequence": "Change this person\u2019s identity key and approval-key binding.",
         "technical_fields": [
           "organisation",
           "target.person",
@@ -2173,7 +2186,7 @@
       },
       "display": {
         "heading": "Approve a root agent",
-        "consequence": "Approve this person’s root. Adoption keeps the root’s ID, key and agents. At a team-key enforcer, replace its admission grant with exactly the listed teams; an empty list withdraws the grant. A team added later needs a new approval of the full list. Agent descendants are attributed through the ID chain.",
+        "consequence": "Approve this person\u2019s root. Adoption keeps the root\u2019s ID, key and agents. At a team-key enforcer, replace its admission grant with exactly the listed teams; an empty list withdraws the grant. A team added later needs a new approval of the full list. Agent descendants are attributed through the ID chain.",
         "technical_fields": [
           "organisation",
           "target.person",
@@ -2184,7 +2197,7 @@
           "expected_revision"
         ]
       },
-      "description": "Team IDs are canonical lowercase name:domain, sorted and unique. Each act replaces the full team list; a later mapped team is outside the grant until a new act lists the full set. expected_revision is the revision of this enforcer’s grant record for (organisation, person, root_id): 0 when absent, then incremented once per committed grant replacement, including empty-list withdrawal. An idempotent retry does not increment it. The enforcer reads its own record and returns the current revision inside the canonical R carried by its 428 needs_human prepare answer. The caller carries that R unchanged; no registry or separate public revision lookup is needed. An aw enforcer has no team grant record, accepts only empty teams and uses revision 0."
+      "description": "Team IDs are canonical lowercase name:domain, sorted and unique. Each act replaces the full team list; a later mapped team is outside the grant until a new act lists the full set. expected_revision is the revision of this enforcer\u2019s grant record for (organisation, person, root_id): 0 when absent, then incremented once per committed grant replacement, including empty-list withdrawal. An idempotent retry does not increment it. The enforcer reads its own record and returns the current revision inside the canonical R carried by its 428 needs_human prepare answer. The caller carries that R unchanged; no registry or separate public revision lookup is needed. An aw enforcer has no team grant record, accepts only empty teams and uses revision 0."
     }
   },
   "x-answer-status": {

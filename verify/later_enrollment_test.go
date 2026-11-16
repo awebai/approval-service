@@ -8,15 +8,17 @@ import (
 )
 
 func TestLaterEnrollment(t *testing.T) {
-	for _, item := range append(seamCases(t, "later-enrollment"),seamCases(t,"enrollment-boundaries")...) {
+	for _, item := range append(seamCases(t, "later-enrollment"), seamCases(t, "enrollment-boundaries")...) {
 		c := item.(map[string]any)
 		t.Run(text(c, "id"), func(t *testing.T) {
 			in := EnrollmentInput{IssuerKey: text(c, "issuer_key"), Requester: object(c, "requester"), Origin: text(c, "origin"), RPID: text(c, "rp_id"), Now: number(c, "now"), Trust: seamTrust(t, c["trust"])}
-            if want,ok:=c["expected_intent_error"].(string);ok {
-                _,err:=CheckEnrollmentIntent(object(object(c,"activation"),"intent"),in)
-                if err==nil || err.Error()!=want { t.Fatalf("intent: %v want %s",err,want) }
-            }
-            got, err := CheckActivation(object(c, "activation"), in)
+			if want, ok := c["expected_intent_error"].(string); ok {
+				_, err := CheckEnrollmentIntent(object(object(c, "activation"), "intent"), in)
+				if err == nil || err.Error() != want {
+					t.Fatalf("intent: %v want %s", err, want)
+				}
+			}
+			got, err := CheckActivation(object(c, "activation"), in)
 			if (err == nil) != c["accept"].(bool) {
 				t.Fatalf("accepted=%v want=%v: %v", err == nil, c["accept"], err)
 			}

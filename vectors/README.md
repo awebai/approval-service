@@ -186,3 +186,9 @@ inventing a creation claim. `pending-person-v1.json` pins mapping-only ownership
 for a pending person's own enrollment routes, including the four scope/key
 refusals. `enrollment-authority-v1.json` checks binding issuers from independently
 verified namespace and parent authority, never a supplied key.
+
+`enrollment-boundaries-v1.json` covers the malformed intent-certificate boundary
+for both creation and later enrollment, at both intent and activation entry
+points, and the challenge/confirmation-byte refusal codes. An activation body's
+schema error is `activation_invalid`; a malformed certificate inside an otherwise
+valid intent is `enrollment_invalid`. No caller may rely on a panic as refusal.
