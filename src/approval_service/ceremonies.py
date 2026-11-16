@@ -163,34 +163,59 @@ class Ceremonies:
             "deadline": deadline,
         }
 
-    async def login_options(self, person, trust):
+    async def login_options(self):
+        # A discoverable ceremony does not accept a person ID and exposes no
+        # credential IDs. Only a verified response can create a session.
         async with self.store.transaction() as conn:
-            enrollment = await self._enrollment(conn, person)
-            self._bind_enrollment(enrollment, trust)
             now = int(time.time())
-            self._bounds(now, trust=trust)
             challenge = hashlib.sha256(
                 b"aweb.human-approval-login/1\n" + secrets.token_bytes(32)
             ).digest()
             result = await self._issue(
-                conn, person, "login", challenge, now, now + self.challenge_seconds
+                conn, None, "login", challenge, now, now + self.challenge_seconds
             )
-            credentials = await conn.fetch_all(
-                "SELECT credential_id FROM {{tables.approval_credentials}} WHERE person_id=$1 AND NOT retired ORDER BY credential_id LIMIT 8",
-                person,
+            self._bounds(
+                int(time.time()),
+                challenge={
+                    "consumed": False,
+                    "issued_at": now,
+                    "deadline": result["deadline"],
+                },
             )
-            if not credentials:
-                raise Refused("credential_not_enrolled")
-            result["allowCredentials"] = [
-                {"type": "public-key", "id": r["credential_id"]} for r in credentials
-            ]
-            self._bounds(int(time.time()), trust=trust)
+            result["allowCredentials"] = []
             return result
+
+    async def login_subject(self, assertion, user_handle):
+        """Internal candidate read for public Trust acquisition, never an endpoint.
+
+        The caller must still run finish_login with this same handle/assertion;
+        this read alone establishes no authenticated person or session.
+        """
+        validate("assertion", assertion)
+        handle = decode(user_handle)
+        row = await self.store.db.fetch_one(
+            """SELECT e.person_id,e.organisation,e.identity_key,v.id_chain
+            FROM {{tables.approval_enrollments}} e
+            JOIN {{tables.approval_credentials}} c ON c.person_id=e.person_id
+            JOIN {{tables.approval_binding_versions}} v ON v.digest=e.binding_ref
+            WHERE e.user_handle=$1 AND e.state='active'
+            AND c.credential_id=$2 AND NOT c.retired""",
+            handle,
+            assertion["id"],
+        )
+        if row is None:
+            raise Refused("credential_not_enrolled")
+        return {
+            "person": row["person_id"],
+            "organisation": row["organisation"],
+            "identity_key": row["identity_key"],
+            "id_chain": json.loads(row["id_chain"]),
+        }
 
     @staticmethod
     async def _challenge(conn, identifier, person, purpose):
         row = await conn.fetch_one(
-            "SELECT * FROM {{tables.approval_challenges}} WHERE challenge_id=$1 AND person_id=$2 AND purpose=$3 FOR UPDATE",
+            "SELECT * FROM {{tables.approval_challenges}} WHERE challenge_id=$1 AND person_id IS NOT DISTINCT FROM $2 AND purpose=$3 FOR UPDATE",
             identifier,
             person,
             purpose,
@@ -229,12 +254,16 @@ class Ceremonies:
             raise Refused("credential_not_enrolled")
         return result.new_sign_count
 
-    async def finish_login(self, person, identifier, assertion, trust):
+    async def finish_login(self, identifier, assertion, user_handle, trust):
         try:
+            person = trust.person
+            handle = decode(user_handle)
             async with self.store.transaction() as conn:
                 enrollment = await self._enrollment(conn, person)
                 self._bind_enrollment(enrollment, trust)
-                challenge = await self._challenge(conn, identifier, person, "login")
+                if not hmac.compare_digest(bytes(enrollment["user_handle"]), handle):
+                    raise Refused("credential_not_enrolled")
+                challenge = await self._challenge(conn, identifier, None, "login")
                 credential = await self._credential(conn, person, assertion["id"])
                 self._bounds(int(time.time()), trust=trust, challenge=challenge)
                 counter = self._assertion(assertion, credential, challenge["challenge"])
