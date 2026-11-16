@@ -5,3 +5,8 @@ __pycache__/
 *.egg-info/
 .coverage
 .DS_Store
+
+# Metadata is fetched into private storage outside the repository.
+*.jwt
+*.jwt.gz
+mds-cache/

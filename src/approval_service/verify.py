@@ -9,9 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import hmac
-import io
 from dataclasses import dataclass
-from urllib.parse import urlsplit
 
 import cbor2
 from cryptography.exceptions import InvalidSignature
@@ -23,9 +21,10 @@ from webauthn import verify_authentication_response
 from webauthn.helpers.exceptions import WebAuthnException
 
 from .canonical import InvalidJSON, canonical, parse
+from .cbor import CBORProfileError, decode_map
 from .client_data import ClientDataInvalid, verify_client_data
 from .encoding import EncodingError, decode
-from .wire import domain, validate
+from .wire import domain, validate, validate_site
 
 REQUEST_PREFIX = domain("request")
 BINDING_PREFIX = domain("binding")
@@ -71,17 +70,15 @@ def _integer(value):
 
 
 def _key(raw, algorithm):
-    stream = io.BytesIO(raw)
     try:
-        key = cbor2.CBORDecoder(
-            stream, allow_duplicate_keys=False, max_depth=8
-        ).decode()
+        key = decode_map(raw)
     except (cbor2.CBORDecodeError, ValueError) as exc:
         raise Refused("credential_key_invalid") from exc
     if (
         not isinstance(key, dict)
-        or stream.tell() != len(raw)
         or any(type(k) is not int for k in key)
+        or type(key.get(1)) is not int
+        or (algorithm in (-7, -8) and type(key.get(-1)) is not int)
         or type(key.get(3)) is not int
         or key.get(3) != algorithm
     ):
@@ -185,24 +182,8 @@ def _verify(receipt, expected_request, trust):
     except (InvalidSignature, ValueError) as exc:
         raise Refused("issuer_signature_invalid") from exc
     try:
-        origin = urlsplit(b["origin"])
-        port = origin.port
-        suffix = "" if port is None else ":" + str(port)
-        if (
-            origin.scheme != "https"
-            or origin.hostname != b["rp_id"]
-            or b["origin"] != "https://" + b["rp_id"] + suffix
-            or origin.username
-            or origin.password
-            or origin.path
-            or origin.query
-            or origin.fragment
-            or (port is not None and not 1 <= port <= 65535)
-        ):
-            raise Refused("origin_invalid")
-    except ValueError as exc:
-        if isinstance(exc, Refused):
-            raise
+        validate_site(b["origin"], b["rp_id"])
+    except ValidationError as exc:
         raise Refused("origin_invalid") from exc
     a = receipt["assertion"]
     _closed(a, "id client_data_json authenticator_data signature")
@@ -240,6 +221,23 @@ def _verify(receipt, expected_request, trust):
         )
     except ClientDataInvalid as exc:
         raise Refused("assertion_invalid") from exc
+    auth = decode(a["authenticator_data"])
+    if (
+        len(auth) < 37
+        or auth[32] & 5 != 5
+        or auth[32] & 64
+        or (auth[32] & 16 and not auth[32] & 8)
+    ):
+        raise Refused("assertion_invalid")
+    if auth[32] & 128:
+        try:
+            extensions = decode_map(auth[37:])
+            if any(type(k) is not str for k in extensions):
+                raise CBORProfileError("extension_key_invalid")
+        except (ValueError, cbor2.CBORDecodeError) as exc:
+            raise Refused("assertion_invalid") from exc
+    elif len(auth) != 37:
+        raise Refused("assertion_invalid")
     proof = {
         "id": a["id"],
         "rawId": a["id"],

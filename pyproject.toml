@@ -8,14 +8,19 @@ dependencies = [
     "cryptography>=46,<51",
     "cbor2>=6.1.2,<7",
     "webauthn>=3.0.1,<4",
+    "httpx>=0.28,<1",
     "fastapi>=0.116,<1",
     "uvicorn>=0.35,<1",
     "psycopg[binary]>=3.2,<4",
-    "awid-service==0.5.39",
+    "awid-service==0.5.40rc1",
 ]
 
 [dependency-groups]
-dev = ["ruff>=0.12,<1", "pytest>=8,<10", "httpx>=0.28,<1"]
+dev = [
+    "ruff>=0.12,<1",
+    "pytest>=8,<10",
+    "pytest-asyncio>=1.2,<2",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -26,3 +31,4 @@ packages = ["src/approval_service"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+asyncio_default_fixture_loop_scope = "function"
