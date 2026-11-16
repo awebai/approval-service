@@ -3,7 +3,9 @@ package verify
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -148,6 +150,31 @@ func validateNode(s map[string]any, v any) error {
 		if max, ok := s["maximum"].(float64); ok && n > int64(max) {
 			return bad()
 		}
+	}
+	return nil
+}
+
+// One exact site check for receipts, enrollment and service bindings.
+func checkSite(origin, rp string) error {
+	props := wireSchema["$defs"].(map[string]any)["binding_body"].(map[string]any)["properties"].(map[string]any)
+	if validateNode(props["rp_id"].(map[string]any), rp) != nil || validateNode(props["origin"].(map[string]any), origin) != nil {
+		return refuse("origin_invalid")
+	}
+	u, e := url.Parse(origin)
+	if e != nil {
+		return refuse("origin_invalid")
+	}
+	port := u.Port()
+	suffix := ""
+	if port != "" {
+		n, e := strconv.Atoi(port)
+		if e != nil || n < 1 || n > 65535 || strconv.Itoa(n) != port {
+			return refuse("origin_invalid")
+		}
+		suffix = ":" + port
+	}
+	if u.Scheme != "https" || u.Hostname() != rp || origin != "https://"+rp+suffix || u.User != nil || u.Path != "" || u.RawQuery != "" || u.Fragment != "" {
+		return refuse("origin_invalid")
 	}
 	return nil
 }
