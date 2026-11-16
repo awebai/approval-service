@@ -457,6 +457,12 @@ assertion over B in §8.1 remains unchanged (coordinator5ec332a2/6c92d227).
 
 Snapshot input must pin the signed BLOB bytes/hash, signing trust roots,
 sequence, issue/retrieval dates, `nextUpdate`, model entries and policy version.
+Metadata bytes are fetched from the published URL into an external cache,
+checked against the pinned hash/root, and never committed or redistributed here.
+An expired supplied snapshot refuses enrollment (`snapshot_expired`), rather than
+silently assigning a permanent lower grade. Effective unscoped withdrawals end
+model eligibility regardless of firmware; certificate scope remains specific.
+
 Verify before installation; reject rollback, untrusted replacement and expired
 eligibility data. Do not fetch MDS during each approval. Preserve earlier
 snapshots for historical verification without letting them restore current

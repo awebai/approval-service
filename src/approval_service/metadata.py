@@ -101,13 +101,8 @@ class Snapshot:
                         return None
                     if scope not in attestation_chain:
                         continue
-                minimum = report.get("authenticatorVersion")
-                if (
-                    minimum is not None
-                    and authenticator_version is not None
-                    and authenticator_version < minimum
-                ):
-                    continue
+                # An incident against N does not establish safety of older
+                # firmware. Without a certificate scope this withdraws the model.
                 return None
             elif status not in POLICY["other_known"]:
                 # Unsupported eligibility information cannot establish this grade.

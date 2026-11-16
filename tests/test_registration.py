@@ -1,4 +1,7 @@
-"""Real software-key registrations prove passkey grade only, never hardware."""
+"""Actual signed software registrations and a synthetic vendor hardware branch.
+
+Synthetic attestation proves the classification logic, not physical hardware.
+"""
 
 import hashlib
 import uuid
@@ -8,18 +11,17 @@ import pytest
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec, padding
 from receipts import fixture
-from test_metadata import NOW, inputs
+from vendor import AAGUID, NOW, OTHER_AAGUID, Vendor
 
 from approval_service.canonical import canonical
 from approval_service.encoding import decode, encode
-from approval_service.metadata import load_snapshot
 from approval_service.registration import check_registration
 from approval_service.verify import Refused
 
 
 @pytest.fixture(scope="module")
 def snapshot():
-    return load_snapshot(**inputs())
+    return Vendor().snapshot()
 
 
 def registration(algorithm=-7, fmt="packed", *, uv=True, be=False):
@@ -36,8 +38,8 @@ def registration(algorithm=-7, fmt="packed", *, uv=True, be=False):
             "crossOrigin": False,
         }
     )
-    # A real listed model's AAGUID cannot make this software key hardware.
-    aaguid = uuid.UUID("9eb7eabc-9db5-49a1-b6c3-555a802093f4").bytes
+    # A listed model's AAGUID cannot make this software key hardware.
+    aaguid = uuid.UUID(AAGUID).bytes
     auth = (
         hashlib.sha256(b"approval.example.test").digest()
         + bytes([0x41 | (4 if uv else 0) | (8 if be else 0)])
@@ -215,3 +217,143 @@ def test_real_x509_enterprise_marker_refuses_while_untrusted_batch_is_only_passk
     else:
         result = check(response, challenge, snapshot)
         assert result.grade == "passkey_uv" and result.snapshot is None
+
+
+@pytest.mark.parametrize("attestation_type", ["basic_full", "attca"])
+def test_synthetic_vendor_exercises_the_complete_hardware_classification(
+    attestation_type,
+):
+    vendor = Vendor()
+    response, challenge = vendor.registration()
+    entry = vendor.entry()
+    entry["metadataStatement"]["attestationTypes"] = [attestation_type]
+    result = check(response, challenge, vendor.snapshot([entry]))
+    assert result.grade == "certified_hardware"
+    assert result.snapshot is not None
+    assert result.binding_entry()["snapshot"] == result.snapshot
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [
+        "other-model-extension",
+        "other-entry-root",
+        "shared-root-no-aaguid",
+        "firmware-below",
+        "withdrawal",
+        "withdrawal-newer-firmware",
+        "this-batch-withdrawal",
+        "backup-eligible",
+        "backed-up",
+        "attestation-type",
+    ],
+)
+def test_synthetic_vendor_hardware_near_misses(fault):
+    import base64
+
+    from cryptography.hazmat.primitives.serialization import Encoding
+
+    vendor = Vendor()
+    entry = vendor.entry()
+    entries = [entry]
+    kwargs = {}
+    batch = None
+    if fault == "other-model-extension":
+        batch = vendor.batch(aaguid=OTHER_AAGUID)
+    elif fault == "other-entry-root":
+        other = Vendor()
+        entries.append(other.entry(OTHER_AAGUID))
+        batch = vendor.batch(root_vendor=other)
+    elif fault == "shared-root-no-aaguid":
+        entries.append(vendor.entry(OTHER_AAGUID))
+        batch = vendor.batch(aaguid=None)
+    elif fault == "firmware-below":
+        entry["statusReports"][0]["authenticatorVersion"] = 11
+    elif fault.startswith("withdrawal"):
+        report = {"status": "USER_VERIFICATION_BYPASS", "effectiveDate": "2026-01-02"}
+        if fault == "withdrawal-newer-firmware":
+            report["authenticatorVersion"] = 20
+        entry["statusReports"].append(report)
+    elif fault == "this-batch-withdrawal":
+        batch = vendor.batch()
+        entry["statusReports"].append(
+            {
+                "status": "ATTESTATION_KEY_COMPROMISE",
+                "batchCertificate": base64.b64encode(
+                    batch.public_bytes(Encoding.DER)
+                ).decode(),
+            }
+        )
+    elif fault == "backup-eligible":
+        kwargs["be"] = True
+    elif fault == "backed-up":
+        kwargs.update(be=True, backed_up=True)
+    elif fault == "attestation-type":
+        entry["metadataStatement"]["attestationTypes"] = ["basic_surrogate"]
+    response, challenge = vendor.registration(batch=batch, **kwargs)
+    if fault == "other-model-extension":
+        with pytest.raises(Refused, match="attestation_aaguid_mismatch"):
+            check(response, challenge, vendor.snapshot(entries))
+    else:
+        result = check(response, challenge, vendor.snapshot(entries))
+        assert result.grade == "passkey_uv" and result.snapshot is None
+
+
+def test_model_specific_root_accepts_a_batch_without_aaguid_extension():
+    vendor = Vendor()
+    response, challenge = vendor.registration(batch=vendor.batch(aaguid=None))
+    assert check(response, challenge, vendor.snapshot()).grade == "certified_hardware"
+
+
+def test_withdrawal_for_another_batch_does_not_revoke_this_batch():
+    import base64
+
+    from cryptography.hazmat.primitives.asymmetric import ec
+    from cryptography.hazmat.primitives.serialization import Encoding
+    from vendor import certificate
+
+    vendor = Vendor()
+    other = certificate(
+        vendor.subject,
+        ec.generate_private_key(ec.SECP256R1()),
+        issuer=vendor.root.subject,
+        issuer_key=vendor.root_key,
+        aaguid=AAGUID,
+        firmware=10,
+    )
+    entry = vendor.entry()
+    entry["statusReports"].append(
+        {
+            "status": "ATTESTATION_KEY_COMPROMISE",
+            "batchCertificate": base64.b64encode(
+                other.public_bytes(Encoding.DER)
+            ).decode(),
+        }
+    )
+    response, challenge = vendor.registration()
+    assert (
+        check(response, challenge, vendor.snapshot([entry])).grade
+        == "certified_hardware"
+    )
+
+
+def test_expired_snapshot_refuses_instead_of_permanently_downgrading_creation():
+    from datetime import timedelta
+
+    vendor = Vendor()
+    response, challenge = vendor.registration()
+    with pytest.raises(Refused, match="snapshot_expired"):
+        check_registration(
+            response,
+            expected_challenge=challenge,
+            origin="https://approval.example.test",
+            rp_id="approval.example.test",
+            snapshot=vendor.snapshot(),
+            now=NOW + timedelta(days=2),
+        )
+
+
+def test_explicit_passkey_only_enrollment_needs_no_metadata():
+    vendor = Vendor()
+    response, challenge = vendor.registration()
+    assert check(response, challenge, None).grade == "passkey_uv"

@@ -113,6 +113,7 @@ dependencies = [
     { name = "cbor2" },
     { name = "cryptography" },
     { name = "fastapi" },
+    { name = "httpx" },
     { name = "jsonschema" },
     { name = "psycopg", extra = ["binary"] },
     { name = "pynacl" },
@@ -122,7 +123,6 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "httpx" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "ruff" },
@@ -134,6 +134,7 @@ requires-dist = [
     { name = "cbor2", specifier = ">=6.1.2,<7" },
     { name = "cryptography", specifier = ">=46,<51" },
     { name = "fastapi", specifier = ">=0.116,<1" },
+    { name = "httpx", specifier = ">=0.28,<1" },
     { name = "jsonschema", specifier = ">=4.23,<5" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2,<4" },
     { name = "pynacl", specifier = ">=1.6.2,<2" },
@@ -143,7 +144,6 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "httpx", specifier = ">=0.28,<1" },
     { name = "pytest", specifier = ">=8,<10" },
     { name = "pytest-asyncio", specifier = ">=1.2,<2" },
     { name = "ruff", specifier = ">=0.12,<1" },

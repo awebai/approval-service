@@ -1,37 +1,22 @@
-"""A real signed public FIDO snapshot, not a mocked metadata response."""
+"""Real cryptography under a synthetic metadata trust anchor; no FIDO blob."""
 
-import gzip
 import hashlib
-import json
-from datetime import UTC, datetime
-from pathlib import Path
+from datetime import timedelta
 
 import pytest
+from vendor import AAGUID, NOW, Vendor, signed_metadata
 
 from approval_service.metadata import MetadataRefused, load_snapshot
 
-DATA = Path(__file__).parent / "data/mds"
-NOW = datetime(2026, 11, 15, 21, tzinfo=UTC)
-
 
 def inputs():
-    manifest = json.loads((DATA / "manifest.json").read_text())
-    return {
-        "blob": gzip.decompress((DATA / "blob.jwt.gz").read_bytes()),
-        "root_der": (DATA / "root-r46.der").read_bytes(),
-        "crls": [(DATA / n).read_bytes() for n in manifest["crls"]],
-        "blob_sha256": manifest["blob_sha256"],
-        "root_sha256": manifest["root_sha256"],
-        "minimum_sequence": 301,
-        "now": NOW,
-    }
+    return signed_metadata([Vendor().entry()])
 
 
-def test_actual_fido_blob_chain_signature_crls_and_dated_sequence():
+def test_signed_metadata_chain_signature_crl_and_sequence():
     snapshot = load_snapshot(**inputs())
-    assert snapshot.sequence == 301
-    assert snapshot.next_update == datetime(2026, 12, 1, tzinfo=UTC)
-    assert len(snapshot.entries) == 537
+    assert snapshot.sequence == 1
+    assert len(snapshot.entries) == 1
 
 
 @pytest.mark.parametrize(
@@ -49,9 +34,9 @@ def test_untrusted_or_stale_snapshot_never_grades_hardware(fault):
         kwargs["blob"] = bytes(raw)
         kwargs["blob_sha256"] = hashlib.sha256(raw).hexdigest()
     elif fault == "rollback":
-        kwargs["minimum_sequence"] = 302
+        kwargs["minimum_sequence"] = 2
     elif fault == "expired":
-        kwargs["now"] = datetime(2026, 12, 2, tzinfo=UTC)
+        kwargs["now"] = NOW + timedelta(days=2)
     else:
         kwargs["crls"] = []
     with pytest.raises(MetadataRefused):
@@ -59,9 +44,10 @@ def test_untrusted_or_stale_snapshot_never_grades_hardware(fault):
 
 
 def test_model_certification_requires_its_attested_firmware_scope():
-    snapshot = load_snapshot(**inputs())
-    model = "9eb7eabc-9db5-49a1-b6c3-555a802093f4"
-    # This actual snapshot's L2 certificate starts at firmware 329476.
-    assert snapshot.model(model, now=NOW, authenticator_version=329476) is not None
-    assert snapshot.model(model, now=NOW, authenticator_version=329475) is None
-    assert snapshot.model(model, now=NOW, authenticator_version=None) is None
+    vendor = Vendor()
+    entry = vendor.entry()
+    entry["statusReports"][0]["authenticatorVersion"] = 10
+    snapshot = vendor.snapshot([entry])
+    assert snapshot.model(AAGUID, now=NOW, authenticator_version=10) is not None
+    assert snapshot.model(AAGUID, now=NOW, authenticator_version=9) is None
+    assert snapshot.model(AAGUID, now=NOW, authenticator_version=None) is None

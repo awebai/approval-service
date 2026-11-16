@@ -54,3 +54,37 @@ privacy has not been established are refused rather than silently importing
 enterprise identifiers. A software authenticator or a claimed model identifier
 alone earns passkey grade only; genuine hardware qualification still requires
 a real device ceremony.
+
+Metadata is fetched and pinned, never distributed in this repository. The hosted
+process and issuer install a snapshot through the same loader:
+
+```sh
+uv run python -m approval_service.metadata_cache --cache-dir /private/path/mds-cache
+```
+
+`data/mds-pin-v1.json` pins the published blob, root and required CRLs by SHA256.
+The cache must be outside the repository with mode 0700; artifact files are 0600.
+Every installation checks the pins, root, signer, signature, CRLs, original
+next-update date and the highest previously installed sequence. Network errors
+and changed/expired inputs refuse installation. Updating the operator manifest
+is deliberate; the loader never trusts a newly fetched root or silently follows
+a changing upstream blob. Loading occurs at process startup or explicit refresh,
+not per approval. `check_registration` also refuses `snapshot_expired` if an
+installed snapshot expires while the process runs. Passkey-only enrollment
+explicitly supplies `snapshot=None`. An effective unscoped withdrawal disqualifies
+the model regardless of firmware version; a certificate-scoped withdrawal
+affects only that batch.
+
+The default pins record snapshot 301 (retrieved 2026-11-15, next update 2026-12-01);
+its CRLs have their own earlier deadlines. Operators must replace the reviewed
+pins and refresh before any input expires; there is no automatic downgrade.
+Ordinary tests use real signatures under a synthetic vendor trust anchor and
+exercise an actual HTTPS fetch. They distribute no FIDO data. To check the real
+downloaded pinned artifact as of its recorded date:
+
+```sh
+APPROVAL_MDS_CACHE=/private/path/mds-cache uv run pytest -q artifact_tests
+```
+
+That historical artifact check is not a current enrollment or physical-device
+qualification. Raw cached data stays private and outside the repository.
