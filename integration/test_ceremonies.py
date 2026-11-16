@@ -113,9 +113,16 @@ async def test_login_never_approves_and_act_uv_is_single_consumed_and_recoverabl
     ceremonies = Ceremonies(
         store, origin="https://approval.example.test", rp_id="approval.example.test"
     )
-    login = await ceremonies.login_options(person, trust)
+    login = await ceremonies.login_options()
+    assert login["allowCredentials"] == []
+    subject = await ceremonies.login_subject(
+        w["receipt"]["assertion"], b64(b"disposable-user-handle")
+    )
+    assert subject["person"] == person
     proof = login_assertion(w, login)
-    session = await ceremonies.finish_login(person, login["id"], proof, trust)
+    session = await ceremonies.finish_login(
+        login["id"], proof, b64(b"disposable-user-handle"), trust
+    )
     assert (
         await store.poll(
             "operation",
@@ -125,7 +132,9 @@ async def test_login_never_approves_and_act_uv_is_single_consumed_and_recoverabl
         )
     )["outcome"] == "pending"
     with pytest.raises(Refused):
-        await ceremonies.finish_login(person, login["id"], proof, trust)
+        await ceremonies.finish_login(
+            login["id"], proof, b64(b"disposable-user-handle"), trust
+        )
     options = await ceremonies.approval_options(
         person, "operation", session["session"], session["csrf"], trust, requester
     )
@@ -201,10 +210,18 @@ async def test_no_uv_login_and_wrong_csrf_do_not_create_or_consume_authority(sto
     ceremonies = Ceremonies(
         store, origin="https://approval.example.test", rp_id="approval.example.test"
     )
-    login = await ceremonies.login_options(person, trust)
+    login = await ceremonies.login_options()
+    assert login["allowCredentials"] == []
+    subject = await ceremonies.login_subject(
+        w["receipt"]["assertion"], b64(b"disposable-user-handle")
+    )
+    assert subject["person"] == person
     with pytest.raises(Refused):
         await ceremonies.finish_login(
-            person, login["id"], login_assertion(w, login, uv=False), trust
+            login["id"],
+            login_assertion(w, login, uv=False),
+            b64(b"disposable-user-handle"),
+            trust,
         )
     async with store.transaction() as conn:
         assert (
@@ -219,10 +236,35 @@ async def test_no_uv_login_and_wrong_csrf_do_not_create_or_consume_authority(sto
             )
         )["consumed"] is False
     session = await ceremonies.finish_login(
-        person, login["id"], login_assertion(w, login), trust
+        login["id"], login_assertion(w, login), b64(b"disposable-user-handle"), trust
     )
     with pytest.raises(Refused):
         await ceremonies.approval_options(
             person, "operation", session["session"], "wrong-csrf", trust, requester
         )
     assert len(await store.pending(person)) == 1
+
+
+@pytest.mark.asyncio
+async def test_anonymous_login_does_not_enumerate_people_or_accept_another_handle(
+    store,
+):
+    w, trust, _requester = await active_port(store)
+    ceremonies = Ceremonies(
+        store, origin="https://approval.example.test", rp_id="approval.example.test"
+    )
+    options = await ceremonies.login_options()
+    assert options["allowCredentials"] == []
+    assert not {"person", "user", "credentials"}.intersection(options)
+    assertion = login_assertion(w, options)
+    with pytest.raises(Refused, match="credential_not_enrolled"):
+        await ceremonies.finish_login(
+            options["id"], assertion, b64(b"another-handle"), trust
+        )
+    assert await store.db.fetch_one(
+        "SELECT count(*) AS n FROM {{tables.approval_sessions}}"
+    ) == {"n": 0}
+    session = await ceremonies.finish_login(
+        options["id"], assertion, b64(b"disposable-user-handle"), trust
+    )
+    assert session["deadline"] > int(time.time())
