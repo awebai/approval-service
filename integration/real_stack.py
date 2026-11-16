@@ -109,7 +109,7 @@ async def registry_stack(directory, controllers):
         app = create_app(db_infra=infra, redis=redis)
         async with (
             dns_zone(directory / "dns", controllers),
-            listener(app) as (origin, _server),
+            listener(app, registry_public_origin=True) as (origin, _server),
         ):
             registry = RegistryClient(registry_url=origin)
             assert registry._domain_verifier is None

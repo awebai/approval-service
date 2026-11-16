@@ -12,6 +12,7 @@ import base64
 import os
 import socket
 from contextlib import asynccontextmanager
+from datetime import UTC, datetime
 from pathlib import Path
 from uuid import uuid4
 
@@ -32,7 +33,7 @@ from approval_service.verify import Refused
 
 
 @asynccontextmanager
-async def listener(app, *, config=None):
+async def listener(app, *, config=None, registry_public_origin=False):
     sock = socket.socket()
     sock.bind(("127.0.0.1", 0))
     sock.listen()
@@ -40,6 +41,13 @@ async def listener(app, *, config=None):
         config
         or uvicorn.Config(app, log_level="warning", access_log=False, lifespan="on")
     )
+    host = "localhost" if server.config.is_ssl else "127.0.0.1"
+    scheme = "https" if server.config.is_ssl else "http"
+    origin = f"{scheme}://{host}:{sock.getsockname()[1]}"
+    if registry_public_origin:
+        # The stock library embedding requires an explicit audience allowlist.
+        # Configure it from our already-owned socket, never a request header.
+        app.state.awid_public_origins = (origin,)
 
     async def serve():
         try:
@@ -59,9 +67,7 @@ async def listener(app, *, config=None):
                     await task
                     raise AssertionError("registry did not start")
                 await asyncio.sleep(0.01)
-        host = "localhost" if server.config.is_ssl else "127.0.0.1"
-        scheme = "https" if server.config.is_ssl else "http"
-        yield f"{scheme}://{host}:{sock.getsockname()[1]}", server
+        yield origin, server
     finally:
         server.should_exit = True
         try:
@@ -111,7 +117,7 @@ async def test_main_public_exact_status_admits_private_local_and_global_members_
             team_key,
         )
         app = create_app(db_infra=infra, redis=redis)
-        async with listener(app) as (origin, _server):
+        async with listener(app, registry_public_origin=True) as (origin, _server):
             assert "Redis" in type(app.state.rate_limiter).__name__
             registry = RegistryClient(registry_url=origin)
             async with httpx.AsyncClient() as observer:
@@ -135,6 +141,7 @@ async def test_main_public_exact_status_admits_private_local_and_global_members_
                     "member_did_key": did,
                     "alias": scope,
                     "identity_scope": scope,
+                    "issued_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 }
                 if stable:
                     cert["member_did_aw"] = stable
