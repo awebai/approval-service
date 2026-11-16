@@ -11,15 +11,16 @@ import hmac
 import json
 import sys
 import time
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
-from approval_service.enrollment import Enrollments, PublicIssuer
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 from approval_service.canonical import canonical
 from approval_service.definitions import definition_ref
 from approval_service.encoding import decode, encode
+from approval_service.enrollment import Enrollments, PublicIssuer
 from approval_service.grading import EnrollmentGrading
 from approval_service.registration import check_registration
 from approval_service.requester import AdmittedRequester
@@ -89,12 +90,14 @@ def confirmation_request(intent, binding):
         "enforcer": {"audience": "https://holder.example.test"},
         "definition": definition_ref("enrollment.confirm"),
         "act": {
+            "operation": "enrollment.confirm",
+            "expected_revision": 0,
             "target": {
                 "person": i["person"],
                 "certificate": binding["binding"]["certificate"],
                 "identity_key": i["identity_key"],
                 "binding_commitment": commitment("binding_commitment", binding),
-            }
+            },
         },
         "not_before": i["not_before"],
         "deadline": i["deadline"],
@@ -120,9 +123,7 @@ async def enroll_person(store):
     browser = await service.browser_options(started["locator"])
     assert browser["public_key"]["authenticatorSelection"]["residentKey"] == "required"
     assert (
-        browser["public_key"]["userVerification"]
-        if "userVerification" in browser["public_key"]
-        else browser["public_key"]["authenticatorSelection"]["userVerification"]
+        browser["public_key"]["authenticatorSelection"]["userVerification"]
         == "required"
     )
     registered, _ = Vendor().registration(
@@ -140,6 +141,7 @@ async def enroll_person(store):
         origin=ORIGIN,
         rp_id=RP,
         snapshot=None,
+        now=datetime.now(UTC),
     )
     binding = sign_binding(intent, issuer, [checked.binding_entry()])
     r = confirmation_request(intent, binding)
@@ -158,7 +160,7 @@ async def enroll_person(store):
     )
     proof = assertion(w["private"], -7, r, checked.credential_id)
     await service.finish_confirmation(
-        started["locator"], browser["csrf"], proof, issuer=public
+        started["locator"], browser["csrf"], options["id"], proof, issuer=public
     )
     approved = await service.confirm(confirm, issuer=public, requester=caller)
     assert approved["state"] == "approved"
@@ -169,7 +171,6 @@ async def enroll_person(store):
     )
     e = {
         "version": 1,
-        "purpose": "human_identity_evidence",
         "organisation": trust.organisation,
         "subject": {
             "id": trust.person,
@@ -211,7 +212,7 @@ async def enroll_person(store):
 async def test_pending_registration_confirmation_and_committed_activation_are_distinct(
     store,
 ):
-    w, trust, caller, binding, c, started = await enroll_person(store)
+    _w, trust, _caller, binding, c, _started = await enroll_person(store)
     row = await store.db.fetch_one(
         "SELECT state,identity_key FROM {{tables.approval_enrollments}} WHERE person_id=$1",
         trust.person,
@@ -224,7 +225,7 @@ async def test_pending_registration_confirmation_and_committed_activation_are_di
 
 @pytest.mark.asyncio
 async def test_registration_requires_original_browser_token_and_discoverability(store):
-    intent, issuer, trust, caller, w = enrollment_world()
+    intent, _issuer, trust, caller, _w = enrollment_world()
     service = Enrollments(
         store, origin=ORIGIN, rp_id=RP, grading=EnrollmentGrading("passkey_only", None)
     )
@@ -251,3 +252,47 @@ async def test_registration_requires_original_browser_token_and_discoverability(
     assert (
         await store.db.fetch_one("SELECT state FROM {{tables.approval_enrollments}}")
     )["state"] == "pending"
+
+
+@pytest.mark.asyncio
+async def test_issuer_cannot_upgrade_the_services_private_registration_grade(store):
+    intent, issuer, trust, caller, _w = enrollment_world()
+    service = Enrollments(
+        store, origin=ORIGIN, rp_id=RP, grading=EnrollmentGrading("passkey_only", None)
+    )
+    public = PublicIssuer(trust.issuer, trust.observed_at)
+    started = await service.start(intent, issuer=public, requester=caller)
+    browser = await service.browser_options(started["locator"])
+    registered, _ = Vendor().registration(
+        challenge=decode(intent["intent"]["challenge"])
+    )
+    await service.register(
+        started["locator"], browser["csrf"], registered, {"credProps": {"rk": True}}
+    )
+    checked = check_registration(
+        registered,
+        expected_challenge=decode(intent["intent"]["challenge"]),
+        origin=ORIGIN,
+        rp_id=RP,
+        snapshot=None,
+        now=datetime.now(UTC),
+    )
+    entry = {
+        **checked.binding_entry(),
+        "grade": "certified_hardware",
+        "snapshot": "sha256:" + "a" * 64,
+    }
+    binding = sign_binding(intent, issuer, [entry])
+    r = confirmation_request(intent, binding)
+    body = {
+        "version": 1,
+        "intent": intent,
+        "binding": binding,
+        "request_bytes": encode(canonical(r)),
+        "admission": {"team_certificate": None, "id_chain": []},
+    }
+    with pytest.raises(Refused, match="binding_credential_mismatch"):
+        await service.confirm(body, issuer=public, requester=caller)
+    assert await store.db.fetch_one(
+        "SELECT count(*) AS n FROM {{tables.approval_requests}}"
+    ) == {"n": 0}

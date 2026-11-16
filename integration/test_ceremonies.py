@@ -1,11 +1,10 @@
-"""Real SQL and software-key UV controls, not enrollment/registry qualification.
+"""Real SQL/registration/UV controls; public Trust is an explicit checked port.
 
-SQL prepares the already-active private credential/binding port. No verifier,
-challenge, clock, session, counter, transaction or transport is substituted.
+People are created through registration, confirmation and committed activation;
+no credential or active enrollment is inserted by the tests with SQL.
 """
 
 import hashlib
-import json
 import sys
 import time
 from pathlib import Path
@@ -14,62 +13,45 @@ import pytest
 
 from approval_service.canonical import canonical
 from approval_service.ceremonies import Ceremonies
-from approval_service.encoding import decode
 from approval_service.requester import AdmittedRequester
 from approval_service.store import StoreRefused
-from approval_service.verify import Refused, Trust
+from approval_service.verify import Refused
 
 sys.path.insert(0, str(Path(__file__).parents[1] / "tests"))
-from receipts import PREFIX, b64, fixture, resign, signed_client
+from receipts import PREFIX, b64, signed_client
 
 
 async def active_port(store):
-    w = fixture()
+    from dataclasses import replace
+
+    from test_enrollment import enroll_person
+
+    w, trust, _bootstrap, binding, creation, started = await enroll_person(store)
     now = int(time.time())
-    w["status"]["observed_at"] = now
+    trust = replace(trust, observed_at=now)
     r = w["request"]
-    r.update(not_before=now - 1, deadline=now + 120)
-    w["receipt"]["request_bytes"] = b64(canonical(r))
-    b = w["receipt"]["binding"]["binding"]
-    w["receipt"]["binding"] = resign(w, b)
-    ref = "sha256:" + hashlib.sha256(canonical(w["receipt"]["binding"])).hexdigest()
-    credential = b["credentials"][0]
-    async with store.transaction() as conn:
-        await conn.execute(
-            "INSERT INTO {{tables.approval_enrollments}}(person_id,organisation,identity_key,certificate,issuer,user_handle,deadline,state,binding_ref) VALUES($1,$2,$3,$4,$5,$6,$7,'active',$8)",
-            b["person"],
-            b["organisation"],
-            b["identity_key"],
-            b["certificate"],
-            b["issuer"],
-            b"disposable-user-handle",
-            now + 120,
-            ref,
-        )
-        await conn.execute(
-            "INSERT INTO {{tables.approval_binding_versions}}(digest,person_id,binding,id_chain) VALUES($1,$2,$3::jsonb,'[]'::jsonb)",
-            ref,
-            b["person"],
-            json.dumps(w["receipt"]["binding"]),
-        )
-        await conn.execute(
-            "INSERT INTO {{tables.approval_credentials}}(person_id,credential_id,public_key,sign_count,grade,snapshot,attestation) VALUES($1,$2,$3,0,'passkey_uv',NULL,$4)",
-            b["person"],
-            credential["id"],
-            decode(credential["key"]),
-            b"software-key-fixture-no-hardware-claim",
-        )
+    r.update(
+        organisation=trust.organisation,
+        approver=trust.person,
+        not_before=now - 1,
+        deadline=now + 120,
+        requester={"kind": "identity", "id": trust.person, "key": trust.identity_key},
+    )
+    w["receipt"].update(
+        binding=binding, id_chain=creation["id_chain"], request_bytes=b64(canonical(r))
+    )
+    w["user_handle"] = started["public_key"]["user"]["id"]
     requester = AdmittedRequester(canonical(r["requester"]), r["requester"]["key"], now)
     await store.prepare(
         "operation",
         hashlib.sha256(PREFIX + canonical(r)).hexdigest(),
         requester.commitment,
-        b["person"],
+        trust.person,
         canonical(r),
         now,
         r["deadline"],
     )
-    return (w, Trust(**w["status"]), requester)
+    return w, trust, requester
 
 
 def login_assertion(w, options, *, uv=True):
@@ -116,13 +98,11 @@ async def test_login_never_approves_and_act_uv_is_single_consumed_and_recoverabl
     login = await ceremonies.login_options()
     assert login["allowCredentials"] == []
     subject = await ceremonies.login_subject(
-        w["receipt"]["assertion"], b64(b"disposable-user-handle")
+        w["receipt"]["assertion"], w["user_handle"]
     )
     assert subject["person"] == person
     proof = login_assertion(w, login)
-    session = await ceremonies.finish_login(
-        login["id"], proof, b64(b"disposable-user-handle"), trust
-    )
+    session = await ceremonies.finish_login(login["id"], proof, w["user_handle"], trust)
     assert (
         await store.poll(
             "operation",
@@ -132,9 +112,7 @@ async def test_login_never_approves_and_act_uv_is_single_consumed_and_recoverabl
         )
     )["outcome"] == "pending"
     with pytest.raises(Refused):
-        await ceremonies.finish_login(
-            login["id"], proof, b64(b"disposable-user-handle"), trust
-        )
+        await ceremonies.finish_login(login["id"], proof, w["user_handle"], trust)
     options = await ceremonies.approval_options(
         person, "operation", session["session"], session["csrf"], trust, requester
     )
@@ -213,14 +191,14 @@ async def test_no_uv_login_and_wrong_csrf_do_not_create_or_consume_authority(sto
     login = await ceremonies.login_options()
     assert login["allowCredentials"] == []
     subject = await ceremonies.login_subject(
-        w["receipt"]["assertion"], b64(b"disposable-user-handle")
+        w["receipt"]["assertion"], w["user_handle"]
     )
     assert subject["person"] == person
     with pytest.raises(Refused):
         await ceremonies.finish_login(
             login["id"],
             login_assertion(w, login, uv=False),
-            b64(b"disposable-user-handle"),
+            w["user_handle"],
             trust,
         )
     async with store.transaction() as conn:
@@ -236,7 +214,7 @@ async def test_no_uv_login_and_wrong_csrf_do_not_create_or_consume_authority(sto
             )
         )["consumed"] is False
     session = await ceremonies.finish_login(
-        login["id"], login_assertion(w, login), b64(b"disposable-user-handle"), trust
+        login["id"], login_assertion(w, login), w["user_handle"], trust
     )
     with pytest.raises(Refused):
         await ceremonies.approval_options(
@@ -265,6 +243,6 @@ async def test_anonymous_login_does_not_enumerate_people_or_accept_another_handl
         "SELECT count(*) AS n FROM {{tables.approval_sessions}}"
     ) == {"n": 0}
     session = await ceremonies.finish_login(
-        options["id"], assertion, b64(b"disposable-user-handle"), trust
+        options["id"], assertion, w["user_handle"], trust
     )
     assert session["deadline"] > int(time.time())
