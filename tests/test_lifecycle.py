@@ -16,6 +16,8 @@ from approval_service.verify import Refused, Trust
 
 CASES = json.loads(
     (Path(__file__).parents[1] / "vectors/enrollment-lifecycle-v1.json").read_text()
+)["cases"] + json.loads(
+    (Path(__file__).parents[1] / "vectors/later-lifecycle-v1.json").read_text()
 )["cases"]
 
 

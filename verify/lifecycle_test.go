@@ -3,7 +3,7 @@ package verify
 import "testing"
 
 func TestLifecycleSeam(t *testing.T) {
-	for _, v := range seamCases(t, "enrollment-lifecycle") {
+	for _, v := range append(seamCases(t, "enrollment-lifecycle"), seamCases(t, "later-lifecycle")...) {
 		c := v.(map[string]any)
 		t.Run(text(c, "id"), func(t *testing.T) {
 			p := object(c, "previous")
