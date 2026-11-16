@@ -47,3 +47,9 @@ consumption remain the enforcer's. The service never contacts an enforcer.
 pin both producers and readers. The fixtures supply explicit trust acquisition
 ports, not live registry results, and do not qualify browser, custody or effect
 execution. A locator or supplied key is never its own authority.
+
+Published definitions are immutable by **id and version**, including display
+text. `definition-hashes-v1.json` pins each published hash as a literal in both
+language tests. A content change adds a new version beside the old; it never
+replaces the old version. Multiple-version lookup is added when the first v2
+exists. Every refusing case pins its exact error code in both languages.

@@ -364,7 +364,7 @@ func creationAssertion(receipt map[string]any, in EnrollmentInput) (CheckedAppro
 		return bad("creation_invalid")
 	}
 	r, e := Parse(raw)
-	if e != nil || validate("request", r) != nil {
+	if e != nil {
 		return bad("creation_invalid")
 	}
 	if e = CheckDefinition(r); e != nil {

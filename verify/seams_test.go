@@ -3,7 +3,9 @@ package verify
 import (
 	"bytes"
 	"crypto/ed25519"
+	"encoding/json"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -132,5 +134,29 @@ func TestEnforcerRequesterSeam(t *testing.T) {
 				t.Fatal("wrong request digest")
 			}
 		})
+	}
+}
+
+func TestPublishedDefinitionHashPins(t *testing.T) {
+	raw, e := os.ReadFile("../vectors/definition-hashes-v1.json")
+	if e != nil {
+		t.Fatal(e)
+	}
+	pins, e := Parse(raw)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if len(pins) != len(wireSchema["x-act-definitions"].(map[string]any)) {
+		t.Fatal("definition lacks literal versioned hash pin")
+	}
+	for key, expected := range pins {
+		id, version, ok := strings.Cut(key, "@")
+		if !ok {
+			t.Fatal(key)
+		}
+		ref, e := DefinitionRef(id)
+		if e != nil || text(ref, "sha256") != expected || ref["version"].(json.Number).String() != version {
+			t.Fatalf("published definition changed: %s: %v", key, e)
+		}
 	}
 }

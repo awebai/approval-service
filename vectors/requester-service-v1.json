@@ -79,7 +79,8 @@
       "purpose": "submit",
       "now": 1100,
       "expected_preimage": "YXdlYi5hd3NpZ24taHR0cC1yZXF1ZXN0LzEKeyJib2R5X3NoYTI1NiI6IjBlYmRiMWE0ZTgyOGNlZWNiMjE5ODViYWZjNjhlMTU2Y2RmZDlmOWM5NjZiZmVmZWZmYzNkYzAwMTUyMjE0MTciLCJpc3N1ZWRfYXQiOjExMDAsIm1ldGhvZCI6IlBPU1QiLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJwYXRoIjoiL3YxL3JlcXVlc3RzL3N1Ym1pdCIsInB1cnBvc2UiOiJzdWJtaXQiLCJyZXF1ZXN0ZXIiOnsiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImtleSI6ImRpZDprZXk6ejZNa285aFRnZ013alNURWFKYVBVZkU2dHFjeTJ4dlU2Qm5OcTNlM284cVZCaXlIIiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
-      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+      "expected_error": "signature_invalid"
     },
     {
       "id": "wrong-body",
@@ -97,7 +98,8 @@
       "purpose": "submit",
       "now": 1100,
       "expected_preimage": "YXdlYi5hd3NpZ24taHR0cC1yZXF1ZXN0LzEKeyJib2R5X3NoYTI1NiI6IjBlYmRiMWE0ZTgyOGNlZWNiMjE5ODViYWZjNjhlMTU2Y2RmZDlmOWM5NjZiZmVmZWZmYzNkYzAwMTUyMjE0MTciLCJpc3N1ZWRfYXQiOjExMDAsIm1ldGhvZCI6IlBPU1QiLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJwYXRoIjoiL3YxL3JlcXVlc3RzL3N1Ym1pdCIsInB1cnBvc2UiOiJzdWJtaXQiLCJyZXF1ZXN0ZXIiOnsiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImtleSI6ImRpZDprZXk6ejZNa285aFRnZ013alNURWFKYVBVZkU2dHFjeTJ4dlU2Qm5OcTNlM284cVZCaXlIIiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
-      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+      "expected_error": "http_body_mismatch"
     },
     {
       "id": "wrong-origin",
@@ -115,7 +117,8 @@
       "purpose": "submit",
       "now": 1100,
       "expected_preimage": "YXdlYi5hd3NpZ24taHR0cC1yZXF1ZXN0LzEKeyJib2R5X3NoYTI1NiI6IjBlYmRiMWE0ZTgyOGNlZWNiMjE5ODViYWZjNjhlMTU2Y2RmZDlmOWM5NjZiZmVmZWZmYzNkYzAwMTUyMjE0MTciLCJpc3N1ZWRfYXQiOjExMDAsIm1ldGhvZCI6IlBPU1QiLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJwYXRoIjoiL3YxL3JlcXVlc3RzL3N1Ym1pdCIsInB1cnBvc2UiOiJzdWJtaXQiLCJyZXF1ZXN0ZXIiOnsiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImtleSI6ImRpZDprZXk6ejZNa285aFRnZ013alNURWFKYVBVZkU2dHFjeTJ4dlU2Qm5OcTNlM284cVZCaXlIIiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
-      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+      "expected_error": "http_binding_mismatch"
     },
     {
       "id": "wrong-path",
@@ -133,7 +136,8 @@
       "purpose": "submit",
       "now": 1100,
       "expected_preimage": "YXdlYi5hd3NpZ24taHR0cC1yZXF1ZXN0LzEKeyJib2R5X3NoYTI1NiI6IjBlYmRiMWE0ZTgyOGNlZWNiMjE5ODViYWZjNjhlMTU2Y2RmZDlmOWM5NjZiZmVmZWZmYzNkYzAwMTUyMjE0MTciLCJpc3N1ZWRfYXQiOjExMDAsIm1ldGhvZCI6IlBPU1QiLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJwYXRoIjoiL3YxL3JlcXVlc3RzL3N1Ym1pdCIsInB1cnBvc2UiOiJzdWJtaXQiLCJyZXF1ZXN0ZXIiOnsiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImtleSI6ImRpZDprZXk6ejZNa285aFRnZ013alNURWFKYVBVZkU2dHFjeTJ4dlU2Qm5OcTNlM284cVZCaXlIIiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
-      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+      "expected_error": "http_binding_mismatch"
     },
     {
       "id": "wrong-method",
@@ -151,7 +155,8 @@
       "purpose": "submit",
       "now": 1100,
       "expected_preimage": "YXdlYi5hd3NpZ24taHR0cC1yZXF1ZXN0LzEKeyJib2R5X3NoYTI1NiI6IjBlYmRiMWE0ZTgyOGNlZWNiMjE5ODViYWZjNjhlMTU2Y2RmZDlmOWM5NjZiZmVmZWZmYzNkYzAwMTUyMjE0MTciLCJpc3N1ZWRfYXQiOjExMDAsIm1ldGhvZCI6IlBPU1QiLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJwYXRoIjoiL3YxL3JlcXVlc3RzL3N1Ym1pdCIsInB1cnBvc2UiOiJzdWJtaXQiLCJyZXF1ZXN0ZXIiOnsiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImtleSI6ImRpZDprZXk6ejZNa285aFRnZ013alNURWFKYVBVZkU2dHFjeTJ4dlU2Qm5OcTNlM284cVZCaXlIIiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
-      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+      "expected_error": "http_binding_mismatch"
     },
     {
       "id": "wrong-purpose",
@@ -169,7 +174,8 @@
       "purpose": "poll",
       "now": 1100,
       "expected_preimage": "YXdlYi5hd3NpZ24taHR0cC1yZXF1ZXN0LzEKeyJib2R5X3NoYTI1NiI6IjBlYmRiMWE0ZTgyOGNlZWNiMjE5ODViYWZjNjhlMTU2Y2RmZDlmOWM5NjZiZmVmZWZmYzNkYzAwMTUyMjE0MTciLCJpc3N1ZWRfYXQiOjExMDAsIm1ldGhvZCI6IlBPU1QiLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJwYXRoIjoiL3YxL3JlcXVlc3RzL3N1Ym1pdCIsInB1cnBvc2UiOiJzdWJtaXQiLCJyZXF1ZXN0ZXIiOnsiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImtleSI6ImRpZDprZXk6ejZNa285aFRnZ013alNURWFKYVBVZkU2dHFjeTJ4dlU2Qm5OcTNlM284cVZCaXlIIiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
-      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+      "expected_error": "http_binding_mismatch"
     },
     {
       "id": "changed-descriptor",
@@ -187,7 +193,8 @@
       "purpose": "submit",
       "now": 1100,
       "expected_preimage": "YXdlYi5hd3NpZ24taHR0cC1yZXF1ZXN0LzEKeyJib2R5X3NoYTI1NiI6IjBlYmRiMWE0ZTgyOGNlZWNiMjE5ODViYWZjNjhlMTU2Y2RmZDlmOWM5NjZiZmVmZWZmYzNkYzAwMTUyMjE0MTciLCJpc3N1ZWRfYXQiOjExMDAsIm1ldGhvZCI6IlBPU1QiLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJwYXRoIjoiL3YxL3JlcXVlc3RzL3N1Ym1pdCIsInB1cnBvc2UiOiJzdWJtaXQiLCJyZXF1ZXN0ZXIiOnsiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImtleSI6ImRpZDprZXk6ejZNa285aFRnZ013alNURWFKYVBVZkU2dHFjeTJ4dlU2Qm5OcTNlM284cVZCaXlIIiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
-      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+      "expected_error": "requester_mismatch"
     },
     {
       "id": "too-old",
@@ -205,7 +212,8 @@
       "purpose": "submit",
       "now": 1161,
       "expected_preimage": "YXdlYi5hd3NpZ24taHR0cC1yZXF1ZXN0LzEKeyJib2R5X3NoYTI1NiI6IjBlYmRiMWE0ZTgyOGNlZWNiMjE5ODViYWZjNjhlMTU2Y2RmZDlmOWM5NjZiZmVmZWZmYzNkYzAwMTUyMjE0MTciLCJpc3N1ZWRfYXQiOjExMDAsIm1ldGhvZCI6IlBPU1QiLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJwYXRoIjoiL3YxL3JlcXVlc3RzL3N1Ym1pdCIsInB1cnBvc2UiOiJzdWJtaXQiLCJyZXF1ZXN0ZXIiOnsiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImtleSI6ImRpZDprZXk6ejZNa285aFRnZ013alNURWFKYVBVZkU2dHFjeTJ4dlU2Qm5OcTNlM284cVZCaXlIIiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
-      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+      "expected_error": "http_expired"
     },
     {
       "id": "future",
@@ -223,7 +231,8 @@
       "purpose": "submit",
       "now": 1099,
       "expected_preimage": "YXdlYi5hd3NpZ24taHR0cC1yZXF1ZXN0LzEKeyJib2R5X3NoYTI1NiI6IjBlYmRiMWE0ZTgyOGNlZWNiMjE5ODViYWZjNjhlMTU2Y2RmZDlmOWM5NjZiZmVmZWZmYzNkYzAwMTUyMjE0MTciLCJpc3N1ZWRfYXQiOjExMDAsIm1ldGhvZCI6IlBPU1QiLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJwYXRoIjoiL3YxL3JlcXVlc3RzL3N1Ym1pdCIsInB1cnBvc2UiOiJzdWJtaXQiLCJyZXF1ZXN0ZXIiOnsiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImtleSI6ImRpZDprZXk6ejZNa285aFRnZ013alNURWFKYVBVZkU2dHFjeTJ4dlU2Qm5OcTNlM284cVZCaXlIIiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
-      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+      "expected_error": "http_expired"
     },
     {
       "id": "padded-token",
@@ -241,7 +250,8 @@
       "purpose": "submit",
       "now": 1100,
       "expected_preimage": "YXdlYi5hd3NpZ24taHR0cC1yZXF1ZXN0LzEKeyJib2R5X3NoYTI1NiI6IjBlYmRiMWE0ZTgyOGNlZWNiMjE5ODViYWZjNjhlMTU2Y2RmZDlmOWM5NjZiZmVmZWZmYzNkYzAwMTUyMjE0MTciLCJpc3N1ZWRfYXQiOjExMDAsIm1ldGhvZCI6IlBPU1QiLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJwYXRoIjoiL3YxL3JlcXVlc3RzL3N1Ym1pdCIsInB1cnBvc2UiOiJzdWJtaXQiLCJyZXF1ZXN0ZXIiOnsiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImtleSI6ImRpZDprZXk6ejZNa285aFRnZ013alNURWFKYVBVZkU2dHFjeTJ4dlU2Qm5OcTNlM284cVZCaXlIIiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
-      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+      "expected_error": "http_invalid"
     },
     {
       "id": "duplicate-header-packet",
@@ -259,7 +269,8 @@
       "purpose": "submit",
       "now": 1100,
       "expected_preimage": "YXdlYi5hd3NpZ24taHR0cC1yZXF1ZXN0LzEKeyJib2R5X3NoYTI1NiI6IjBlYmRiMWE0ZTgyOGNlZWNiMjE5ODViYWZjNjhlMTU2Y2RmZDlmOWM5NjZiZmVmZWZmYzNkYzAwMTUyMjE0MTciLCJpc3N1ZWRfYXQiOjExMDAsIm1ldGhvZCI6IlBPU1QiLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJwYXRoIjoiL3YxL3JlcXVlc3RzL3N1Ym1pdCIsInB1cnBvc2UiOiJzdWJtaXQiLCJyZXF1ZXN0ZXIiOnsiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImtleSI6ImRpZDprZXk6ejZNa285aFRnZ013alNURWFKYVBVZkU2dHFjeTJ4dlU2Qm5OcTNlM284cVZCaXlIIiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
-      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+      "expected_error": "http_invalid"
     },
     {
       "id": "unknown-field",
@@ -277,7 +288,8 @@
       "purpose": "submit",
       "now": 1100,
       "expected_preimage": "YXdlYi5hd3NpZ24taHR0cC1yZXF1ZXN0LzEKeyJib2R5X3NoYTI1NiI6IjBlYmRiMWE0ZTgyOGNlZWNiMjE5ODViYWZjNjhlMTU2Y2RmZDlmOWM5NjZiZmVmZWZmYzNkYzAwMTUyMjE0MTciLCJpc3N1ZWRfYXQiOjExMDAsIm1ldGhvZCI6IlBPU1QiLCJvcmlnaW4iOiJodHRwczovL2F3c2lnbi5jb20iLCJwYXRoIjoiL3YxL3JlcXVlc3RzL3N1Ym1pdCIsInB1cnBvc2UiOiJzdWJtaXQiLCJyZXF1ZXN0ZXIiOnsiaWQiOiJkaWQ6YXc6MlVxNTFpRlZMbnFtZ2JWWTN2TFp0TUQ1UFI4NyIsImtleSI6ImRpZDprZXk6ejZNa285aFRnZ013alNURWFKYVBVZkU2dHFjeTJ4dlU2Qm5OcTNlM284cVZCaXlIIiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
-      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH"
+      "expected_requester_key": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+      "expected_error": "http_invalid"
     },
     {
       "id": "oldest-allowed-boundary",

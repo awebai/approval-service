@@ -39,8 +39,7 @@ def outcome(case, call):
         return call()
     with pytest.raises(Refused) as failure:
         call()
-    if "expected_error" in case:
-        assert failure.value.code == case["expected_error"]
+    assert failure.value.code == case["expected_error"]
 
 
 @pytest.mark.parametrize("case", corpus("requester-service"), ids=lambda c: c["id"])
@@ -158,3 +157,15 @@ def test_enforcer_requester_shared_exchange(case):
             case["request"]["act"]["target"]["person"] == case["expected_target_person"]
         )
         assert case["expected_approver_person"] != case["expected_target_person"]
+
+
+def test_published_definition_hashes_are_literal_immutable_pins():
+    from approval_service.definitions import definition_ref
+    from approval_service.wire import SCHEMA
+
+    pins = json.loads((ROOT / "definition-hashes-v1.json").read_text())
+    definitions = SCHEMA["x-act-definitions"].values()
+    assert set(pins) == {f"{d['id']}@{d['version']}" for d in definitions}
+    for item in definitions:
+        expected = pins[f"{item['id']}@{item['version']}"]
+        assert definition_ref(item["id"])["sha256"] == expected
