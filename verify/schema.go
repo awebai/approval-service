@@ -117,6 +117,16 @@ func validateNode(s map[string]any, v any) error {
 			}
 		}
 	case []any:
+		if unique, _ := s["uniqueItems"].(bool); unique {
+			seen := make(map[string]bool, len(x))
+			for _, item := range x {
+				raw, err := Canonical(item)
+				if err != nil || seen[string(raw)] {
+					return bad()
+				}
+				seen[string(raw)] = true
+			}
+		}
 		if n, ok := s["minItems"].(float64); ok && len(x) < int(n) {
 			return bad()
 		}

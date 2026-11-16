@@ -5,8 +5,9 @@ starts the first person's enrollment; the first person approves adding a
 DISTINCT second person. Test keys and identities are synthetic and public.
 The JSON schema and all domains, routes and limits live in
 `src/approval_service/data/format-v1.json`; Go embeds its generated projection.
-The same source bundles the closed `human.add` and limited
-`enrollment.confirm` act/display definitions. R carries the actual canonical
+The same source bundles the closed `human.add`, `human.enrollment.replace`,
+`agent.root.authorize` and limited `enrollment.confirm` act/display definitions.
+R carries the actual canonical
 content hash of that definition; no example hash or fetched definition is used.
 `tests/test_seams.py` and `verify/seams_test.go` consume these exact files.
 
@@ -128,3 +129,24 @@ requester with current admission, can carry activation. The same person with
 a non-current key and a different person's key both refuse with
 `requester_mismatch`. No carrier exception applies to other enrollment routes,
 polling, receipt recovery or LOGIN.
+
+`root-agent-v1.json` pins the exact root effect and the live/historical split.
+Live checks pin same-holder audience, current approver == target person, exact
+revision, owned organisation teams and aw's empty-list-only rule. Replacement
+returns the whole new list; empty withdraws. The consumer commits that list and
+nonce atomically. Historical `{version:1,receipt:C}` is a distinct `root_proof`
+profile, never a human-creation statement. All three enforcer audiences use the
+same historical check. Expired effect windows do not invalidate saved proof.
+
+RootIdentity and PersonContinuity in these cases are independently checked
+SDK/lifecycle/as-of input ports, like Trust; they are NOT proof fields and this
+corpus does not qualify their acquisition. Continuous root-ID key history keeps
+the proof; broken history or a changed root ID refuses that evidence. Person
+continuity is from the receipt's person key to the chosen as-of key. Unbroken
+continuity preserves approval; assisted/recreated reports an approval predating
+a break; missing history is unknown. The returned since-time names that existing
+checked basis, not an independently proved time of the human's touch. The raw
+assertion and issuer signature are real. Missing or invalid root evidence never
+changes the caller's independent ID-chain verdict, and ordinary agent-to-agent
+links need no receipt. These vectors do not claim that a holder stored a grant
+or that aw issued a certificate; those consumers own their effect tests.

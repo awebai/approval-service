@@ -1,4 +1,4 @@
-"""Proposed root-act cases for pre-publication review. Real signatures, test keys.
+"""Root-agent receipt and grant cases. Real signatures, public test keys. Real signatures, test keys.
 
 This generator never calls the seam to select an expected result. Refuse to
 overwrite a corpus. Root/person histories are explicitly independently checked
@@ -21,7 +21,7 @@ from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
 from approval_service.canonical import canonical
 from approval_service.encoding import encode
-from approval_service.wire import domain
+from approval_service.wire import SCHEMA, domain
 
 root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(root / "tests"))
@@ -53,9 +53,7 @@ trust = {
     "issuer": issuer,
     "issuer_public_key": encode(w["status"]["issuer_public_key"]),
 }
-definition = json.loads(
-    (root / "vectors/root-agent-definition-v1.proposed.json").read_text()
-)
+definition = SCHEMA["x-act-definitions"]["agent.root.authorize"]
 ref = {
     "id": definition["id"],
     "version": 1,
@@ -118,7 +116,7 @@ base = {
         "since": 1000,
     },
     "now": 1100,
-    "presenter": request["requester"],
+    "presenter": copy.deepcopy(request["requester"]),
     "nonce_key": encode(w["secret"]),
     "origin": "https://approval.example.test",
     "audience": request["enforcer"]["audience"],
@@ -189,6 +187,9 @@ for name, teams in [
     c["presentation"]["request_bytes"] = encode(canonical(c["request"]))
 c = case("aw-evidence-only-empty-teams")
 c["enforcer_kind"] = "aw"
+c["audience"] = "urn:awsign:aw:customer.example"
+c["request"]["enforcer"]["audience"] = c["audience"]
+c["expected"]["enforcer"] = c["audience"]
 c["request"]["act"]["target"]["teams"] = []
 c["expected"]["teams"] = []
 c["presentation"]["receipt"] = signed(c["request"])
@@ -366,6 +367,34 @@ for mode, status in [
         current_key=new_person_key, mode=mode, since=None if mode == "unknown" else 1200
     )
     c["expected"].update(status=status, continuity=mode, since=c["continuity"]["since"])
+
+case(
+    "historical-malformed-request-bytes",
+    phase="historical",
+    error="root_proof_invalid",
+    edit=lambda c: c["proof"]["receipt"].update(request_bytes="AA"),
+)
+case(
+    "historical-altered-assertion",
+    phase="historical",
+    error="assertion_invalid",
+    edit=lambda c: c["proof"]["receipt"]["assertion"].update(signature="AA"),
+)
+for suffix, fault, error in [
+    ("keeps-id-and-key", None, None),
+    ("changed-id", "root_id", "root_identity_mismatch"),
+    ("changed-key", "root_key", "root_key_discontinuous"),
+]:
+
+    def edit_adoption(c, fault=fault):
+        c["request"]["act"]["target"]["mode"] = "adopt"
+        c["expected"]["mode"] = "adopt"
+        if fault == "root_id":
+            c["request"]["act"]["target"][fault] = stable_id_from_did_key(rotated_key)
+        elif fault == "root_key":
+            c["request"]["act"]["target"][fault] = rotated_key
+
+    case("adopt-" + suffix, error=error, edit=edit_adoption, resign=True)
 
 path.write_text(
     json.dumps(

@@ -5,14 +5,14 @@ from dataclasses import asdict
 from pathlib import Path
 
 import pytest
+
+from approval_service.encoding import decode
 from approval_service.root_agent import (
     PersonContinuity,
     RootIdentity,
     check_root_agent_presentation,
     verify_root_agent_proof,
 )
-
-from approval_service.encoding import decode
 from approval_service.verify import Refused, Trust
 
 CASES = json.loads(

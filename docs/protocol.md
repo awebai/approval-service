@@ -706,6 +706,49 @@ requires a new exact request and approval, not reusing its old signature.
 Application receipts/effect reconciliation and key-holder audit stay with their
 owners; no generic service API marks external effects applied.
 
+### 9.1 A person approves a deployment root
+
+`agent.root.authorize@1` covers exactly `{person, root_id, root_key, mode, teams}`,
+where mode is `issue` or `adopt` and teams is at most 128 distinct canonical
+full team IDs in the request's exact organisation. The approver is that person.
+The existing act-level `expected_revision` fences the enforcer's state.
+
+For a holder or hosted organisation, the team-key holder/Cloud key process is
+the enforcer. It owns every listed team, verifies the receipt live, and records
+the entire replacement grant: this root ID may request routine admission of its
+own descendants to exactly these teams. Empty teams withdraws the grant; there
+is no separate revoke act and no union with the previous list. Nonce consumption
+and the grant change are atomic in that enforcer. A self-held aw enforcer accepts
+only `teams=[]`; its receipt is evidence, not a lock on the person's key. The
+person's own identity key signs the person-to-root certificate wherever it lives.
+That ordinary signing step needs no second receipt.
+
+Adoption attaches the receipt to an existing person-to-root link. A root directly
+under the organisation instead gets a person-parented certificate with the same
+ID and key. A root rotates unattended through the existing SDK's checked old-key
+continuity proof. The grant and receipt follow its stable root ID while the
+approved root key remains in that continuous history; a different ID or broken
+key history cannot inherit them. No certificate digest is added to this act, so
+routine re-signing of unchanged ancestry does not require another approval.
+
+The optional per-certificate `root_proof` profile is `{version:1, receipt:C}`.
+It is distinct from the human-creation `statement` profile. Historical checking
+uses the same shared verifier for holder, Cloud and aw audiences, without live
+effect deadlines. It binds the exact human-to-root link, not an arbitrary
+descendant with the same nearest human. SDK-checked root key history and explicit
+as-of person Trust/checked lifecycle continuity are inputs, never claims accepted
+from this proof. It returns its continuity basis: unbroken person continuity
+keeps the root approval; assisted/recreated breaks report that the approval
+predates a break; unavailable history is unknown. The since-time is that checked
+history basis, not a WebAuthn signing time manufactured from request timestamps.
+
+A person approves the root once; agents issued by agents below it carry no
+additional receipt and are attributed through the ID chain. A missing root
+receipt is reported without refusing a valid chain. The honest descendant claim
+is that it descends from a root the person approved, not that the person approved
+each descendant. Historical evidence does not assert that a team grant was
+applied or that the agent currently has admission permission.
+
 ## 10. Extraction names and migration boundary
 
 Boundaryca9a7c95 supplied the accepted adcl.2 inventory at DAB and states there
