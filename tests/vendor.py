@@ -216,12 +216,14 @@ class Vendor:
         be=False,
         backed_up=False,
         challenge=None,
+        credential=None,
         origin="https://approval.example.test",
         rp_id="approval.example.test",
     ):
         batch = batch or self.batch()
-        w = fixture()
-        entry = w["receipt"]["binding"]["binding"]["credentials"][0]
+        entry = (
+            credential or fixture()["receipt"]["binding"]["binding"]["credentials"][0]
+        )
         cid = decode(entry["id"])
         challenge = (
             challenge
