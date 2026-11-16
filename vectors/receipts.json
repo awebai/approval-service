@@ -977,6 +977,542 @@
         "key": "requester-key"
       },
       "accept": false
+    },
+    {
+      "id": "cross-origin-true",
+      "receipt": {
+        "version": 1,
+        "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsInJlc291cmNlIjoidmF1bHQva2V5IiwicmlnaHRzIjpbInJlYWQiLCJ3cml0ZSJdfSwiYXBwcm92ZXIiOiJkaWQ6YXc6cGVyc29uLXAiLCJkZWFkbGluZSI6MTMwMCwiZGVmaW5pdGlvbiI6eyJpZCI6InNlY3JldHMucmVhZC13cml0ZSIsInNoYTI1NiI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmIiLCJ2ZXJzaW9uIjoxfSwiZW5mb3JjZXIiOnsiYXVkaWVuY2UiOiJodHRwczovL3NlY3JldHMuZXhhbXBsZS50ZXN0In0sIm5vbmNlIjp7ImtpZCI6ImsxIiwidmFsdWUiOiJHV3hHN2YxMzJ4WmlmWDlpVzRQYjd3N2U4dWJJQWl2N1k3ZWRQXzhqSzF3In0sIm5vdF9iZWZvcmUiOjEwMDAsIm9yZ2FuaXNhdGlvbiI6ImN1c3RvbWVyLmV4YW1wbGUiLCJwdXJwb3NlIjoiYWN0X2FwcHJvdmFsIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OmFnZW50LWEiLCJrZXkiOiJyZXF1ZXN0ZXIta2V5Iiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:person-p",
+            "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "identity_key": "identity-key-before",
+            "issuer": "issuer-key",
+            "origin": "https://approval.example.test",
+            "rp_id": "approval.example.test",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIEr2-0Ra9U60yufLQlCXJmvh0CowA9UDRFlBj0HkhSYgIlggmtshfHXLPMPhsYjHcKFMc4pAzP4sc5ANQGxm_JdQUYg",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "jSKW6R0mtNkWcZrfxqhgwavxntFp9xt_RUrRZ1IP8RF1P419Vcn-40ukzc0imVrIOKoYejCcRm7wb1wJH7WhBg"
+        },
+        "id_chain": [],
+        "assertion": {
+          "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+          "client_data_json": "eyJjaGFsbGVuZ2UiOiJqNTB5cS10VG9pYnExWmxmaWtVUVJfbnpndmc4MDJHZU40dmE0TU05Yks0IiwiY3Jvc3NPcmlnaW4iOnRydWUsIm9yaWdpbiI6Imh0dHBzOi8vYXBwcm92YWwuZXhhbXBsZS50ZXN0IiwidHlwZSI6IndlYmF1dGhuLmdldCJ9",
+          "authenticator_data": "IP2P_eNPmVCyHmB6JfFa1QjgGG3qkGDKFYeq0xCyjAAFAAAAAA",
+          "signature": "MEQCIBA153tHy1vWrZBMyzCz56SO_ucEOcNoCvJDyi7gB3LbAiAcNeZaAH151WbgwRQZldQ-5ESBn5Ckpp511PLZOS2sKQ"
+        }
+      },
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:person-p",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:agent-a",
+          "key": "requester-key"
+        },
+        "enforcer": {
+          "audience": "https://secrets.example.test"
+        },
+        "definition": {
+          "id": "secrets.read-write",
+          "version": 1,
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "act": {
+          "resource": "vault/key",
+          "rights": [
+            "read",
+            "write"
+          ],
+          "expected_revision": 1
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "trust": {
+        "person": "did:aw:person-p",
+        "organisation": "customer.example",
+        "identity_key": "identity-key-before",
+        "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "issuer": "issuer-key",
+        "issuer_public_key": "k4l4tgNVVJCwdmXwLiKWP25Xs4OMCSehcx8k08BcoZM",
+        "observed_at": 1100
+      },
+      "nonce_key": "ZW5mb3JjZXItb25seS1zZWNyZXQtMzItYnl0ZXMtbG9uZw",
+      "now": 1100,
+      "required_grade": "passkey_uv",
+      "presenter": {
+        "kind": "identity",
+        "id": "did:aw:agent-a",
+        "key": "requester-key"
+      },
+      "accept": false
+    },
+    {
+      "id": "client-duplicate-same",
+      "receipt": {
+        "version": 1,
+        "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsInJlc291cmNlIjoidmF1bHQva2V5IiwicmlnaHRzIjpbInJlYWQiLCJ3cml0ZSJdfSwiYXBwcm92ZXIiOiJkaWQ6YXc6cGVyc29uLXAiLCJkZWFkbGluZSI6MTMwMCwiZGVmaW5pdGlvbiI6eyJpZCI6InNlY3JldHMucmVhZC13cml0ZSIsInNoYTI1NiI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmIiLCJ2ZXJzaW9uIjoxfSwiZW5mb3JjZXIiOnsiYXVkaWVuY2UiOiJodHRwczovL3NlY3JldHMuZXhhbXBsZS50ZXN0In0sIm5vbmNlIjp7ImtpZCI6ImsxIiwidmFsdWUiOiJHV3hHN2YxMzJ4WmlmWDlpVzRQYjd3N2U4dWJJQWl2N1k3ZWRQXzhqSzF3In0sIm5vdF9iZWZvcmUiOjEwMDAsIm9yZ2FuaXNhdGlvbiI6ImN1c3RvbWVyLmV4YW1wbGUiLCJwdXJwb3NlIjoiYWN0X2FwcHJvdmFsIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OmFnZW50LWEiLCJrZXkiOiJyZXF1ZXN0ZXIta2V5Iiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:person-p",
+            "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "identity_key": "identity-key-before",
+            "issuer": "issuer-key",
+            "origin": "https://approval.example.test",
+            "rp_id": "approval.example.test",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIFZWMjaHv5rj2-Yvki2acRJEbMIHT8Ii7ANOqVniGB7bIlggXdpuz3yepcidoG-lBUa5DkSjXwi8eXLI6RspM3t-l54",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "oML7O1Rq8ZBgmNvvsf0SOoTLub0AG2y3Y4zQrctNSBKDV0eqq_qVbsiaF0krI74ATimbIk3F1JeJJm6HOk5AAQ"
+        },
+        "id_chain": [],
+        "assertion": {
+          "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+          "client_data_json": "eyJjaGFsbGVuZ2UiOiJqNTB5cS10VG9pYnExWmxmaWtVUVJfbnpndmc4MDJHZU40dmE0TU05Yks0IiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2FwcHJvdmFsLmV4YW1wbGUudGVzdCIsInR5cGUiOiJ3ZWJhdXRobi5nZXQiLCJvcmlnaW4iOiJodHRwczovL2FwcHJvdmFsLmV4YW1wbGUudGVzdCJ9",
+          "authenticator_data": "IP2P_eNPmVCyHmB6JfFa1QjgGG3qkGDKFYeq0xCyjAAFAAAAAA",
+          "signature": "MEUCIQDRul7snZuukqb2LvFQjAk06W48Olvhq9g7NBb3m0-IcwIgfClRlQvP4i5U8juW1rI1d1q1oA_EcbVpwKOXvU_KupU"
+        }
+      },
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:person-p",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:agent-a",
+          "key": "requester-key"
+        },
+        "enforcer": {
+          "audience": "https://secrets.example.test"
+        },
+        "definition": {
+          "id": "secrets.read-write",
+          "version": 1,
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "act": {
+          "resource": "vault/key",
+          "rights": [
+            "read",
+            "write"
+          ],
+          "expected_revision": 1
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "trust": {
+        "person": "did:aw:person-p",
+        "organisation": "customer.example",
+        "identity_key": "identity-key-before",
+        "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "issuer": "issuer-key",
+        "issuer_public_key": "rtIYtih4VOOAVTgxzE_ic3VY4ruXYWK07ActdH4GiDQ",
+        "observed_at": 1100
+      },
+      "nonce_key": "ZW5mb3JjZXItb25seS1zZWNyZXQtMzItYnl0ZXMtbG9uZw",
+      "now": 1100,
+      "required_grade": "passkey_uv",
+      "presenter": {
+        "kind": "identity",
+        "id": "did:aw:agent-a",
+        "key": "requester-key"
+      },
+      "accept": false
+    },
+    {
+      "id": "client-duplicate-first-foreign",
+      "receipt": {
+        "version": 1,
+        "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsInJlc291cmNlIjoidmF1bHQva2V5IiwicmlnaHRzIjpbInJlYWQiLCJ3cml0ZSJdfSwiYXBwcm92ZXIiOiJkaWQ6YXc6cGVyc29uLXAiLCJkZWFkbGluZSI6MTMwMCwiZGVmaW5pdGlvbiI6eyJpZCI6InNlY3JldHMucmVhZC13cml0ZSIsInNoYTI1NiI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmIiLCJ2ZXJzaW9uIjoxfSwiZW5mb3JjZXIiOnsiYXVkaWVuY2UiOiJodHRwczovL3NlY3JldHMuZXhhbXBsZS50ZXN0In0sIm5vbmNlIjp7ImtpZCI6ImsxIiwidmFsdWUiOiJHV3hHN2YxMzJ4WmlmWDlpVzRQYjd3N2U4dWJJQWl2N1k3ZWRQXzhqSzF3In0sIm5vdF9iZWZvcmUiOjEwMDAsIm9yZ2FuaXNhdGlvbiI6ImN1c3RvbWVyLmV4YW1wbGUiLCJwdXJwb3NlIjoiYWN0X2FwcHJvdmFsIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OmFnZW50LWEiLCJrZXkiOiJyZXF1ZXN0ZXIta2V5Iiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:person-p",
+            "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "identity_key": "identity-key-before",
+            "issuer": "issuer-key",
+            "origin": "https://approval.example.test",
+            "rp_id": "approval.example.test",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIJHGCnBjmuHIPuK2w9wHJYYPu9TwQO3anuIGSKqXinB0IlggDjKRYOL8paAiUuZywJYnZ7aSKvZoKqTpEGdCNyLpMLE",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "yOmtzsovRutrJXgzRjW13plTCt-rZDnObtWZqHldYaPyo2mKhbk_T53uWhqlJ2dgaTFfPFMbMHtElCeGdDY_DA"
+        },
+        "id_chain": [],
+        "assertion": {
+          "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+          "client_data_json": "eyJvcmlnaW4iOiJodHRwczovL2ZvcmVpZ24uZXhhbXBsZS50ZXN0IiwiY2hhbGxlbmdlIjoiajUweXEtdFRvaWJxMVpsZmlrVVFSX256Z3ZnODAyR2VONHZhNE1NOWJLNCIsImNyb3NzT3JpZ2luIjpmYWxzZSwib3JpZ2luIjoiaHR0cHM6Ly9hcHByb3ZhbC5leGFtcGxlLnRlc3QiLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+          "authenticator_data": "IP2P_eNPmVCyHmB6JfFa1QjgGG3qkGDKFYeq0xCyjAAFAAAAAA",
+          "signature": "MEUCIQC5yITe7whugea9R7S9Tev-HFlfmQ8lUz3DH2XcgghUjgIgQYratAlLE1HBO1yJBHiNcbjCdfisRSyp5ZB_m9F-__8"
+        }
+      },
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:person-p",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:agent-a",
+          "key": "requester-key"
+        },
+        "enforcer": {
+          "audience": "https://secrets.example.test"
+        },
+        "definition": {
+          "id": "secrets.read-write",
+          "version": 1,
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "act": {
+          "resource": "vault/key",
+          "rights": [
+            "read",
+            "write"
+          ],
+          "expected_revision": 1
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "trust": {
+        "person": "did:aw:person-p",
+        "organisation": "customer.example",
+        "identity_key": "identity-key-before",
+        "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "issuer": "issuer-key",
+        "issuer_public_key": "l6cEW9nYsq6JxgrYKspbc_lQTwJb-Nzlif68hEPAbgw",
+        "observed_at": 1100
+      },
+      "nonce_key": "ZW5mb3JjZXItb25seS1zZWNyZXQtMzItYnl0ZXMtbG9uZw",
+      "now": 1100,
+      "required_grade": "passkey_uv",
+      "presenter": {
+        "kind": "identity",
+        "id": "did:aw:agent-a",
+        "key": "requester-key"
+      },
+      "accept": false
+    },
+    {
+      "id": "client-padded-challenge",
+      "receipt": {
+        "version": 1,
+        "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsInJlc291cmNlIjoidmF1bHQva2V5IiwicmlnaHRzIjpbInJlYWQiLCJ3cml0ZSJdfSwiYXBwcm92ZXIiOiJkaWQ6YXc6cGVyc29uLXAiLCJkZWFkbGluZSI6MTMwMCwiZGVmaW5pdGlvbiI6eyJpZCI6InNlY3JldHMucmVhZC13cml0ZSIsInNoYTI1NiI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmIiLCJ2ZXJzaW9uIjoxfSwiZW5mb3JjZXIiOnsiYXVkaWVuY2UiOiJodHRwczovL3NlY3JldHMuZXhhbXBsZS50ZXN0In0sIm5vbmNlIjp7ImtpZCI6ImsxIiwidmFsdWUiOiJHV3hHN2YxMzJ4WmlmWDlpVzRQYjd3N2U4dWJJQWl2N1k3ZWRQXzhqSzF3In0sIm5vdF9iZWZvcmUiOjEwMDAsIm9yZ2FuaXNhdGlvbiI6ImN1c3RvbWVyLmV4YW1wbGUiLCJwdXJwb3NlIjoiYWN0X2FwcHJvdmFsIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OmFnZW50LWEiLCJrZXkiOiJyZXF1ZXN0ZXIta2V5Iiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:person-p",
+            "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "identity_key": "identity-key-before",
+            "issuer": "issuer-key",
+            "origin": "https://approval.example.test",
+            "rp_id": "approval.example.test",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIG0DZcp-uHQlL3is4fDxEnpvwGgPtzDHQkJskPNltlUIIlgghw8zOadPH9VtXgrmSrwzTp35-Yxk0eUHAJyc5pS8Xf0",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "MUyA8TIQfKuNN_h_dOJ8_8NY6XcDIfPKO4CRXbqafZOgZcPzacIJ30UIv4J1Qtkp5pfmLbn5Cj-qxbKUpeU8Bg"
+        },
+        "id_chain": [],
+        "assertion": {
+          "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+          "client_data_json": "eyJjaGFsbGVuZ2UiOiJqNTB5cS10VG9pYnExWmxmaWtVUVJfbnpndmc4MDJHZU40dmE0TU05Yks0PSIsImNyb3NzT3JpZ2luIjpmYWxzZSwib3JpZ2luIjoiaHR0cHM6Ly9hcHByb3ZhbC5leGFtcGxlLnRlc3QiLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0",
+          "authenticator_data": "IP2P_eNPmVCyHmB6JfFa1QjgGG3qkGDKFYeq0xCyjAAFAAAAAA",
+          "signature": "MEUCIHTCnZm1o_a4DjtEWUUfs3oELHi6Yop9in8AEq41g_gdAiEA8NkXYjKW2f3KCRC2_2RGhMyFVlvBii5J7xOnpFRjFak"
+        }
+      },
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:person-p",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:agent-a",
+          "key": "requester-key"
+        },
+        "enforcer": {
+          "audience": "https://secrets.example.test"
+        },
+        "definition": {
+          "id": "secrets.read-write",
+          "version": 1,
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "act": {
+          "resource": "vault/key",
+          "rights": [
+            "read",
+            "write"
+          ],
+          "expected_revision": 1
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "trust": {
+        "person": "did:aw:person-p",
+        "organisation": "customer.example",
+        "identity_key": "identity-key-before",
+        "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "issuer": "issuer-key",
+        "issuer_public_key": "YwQdLxnkqBexD169qT2ZzqZMTuvwCXYei1y4iCqhA_c",
+        "observed_at": 1100
+      },
+      "nonce_key": "ZW5mb3JjZXItb25seS1zZWNyZXQtMzItYnl0ZXMtbG9uZw",
+      "now": 1100,
+      "required_grade": "passkey_uv",
+      "presenter": {
+        "kind": "identity",
+        "id": "did:aw:agent-a",
+        "key": "requester-key"
+      },
+      "accept": false
+    },
+    {
+      "id": "origin-uppercase-host",
+      "receipt": {
+        "version": 1,
+        "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsInJlc291cmNlIjoidmF1bHQva2V5IiwicmlnaHRzIjpbInJlYWQiLCJ3cml0ZSJdfSwiYXBwcm92ZXIiOiJkaWQ6YXc6cGVyc29uLXAiLCJkZWFkbGluZSI6MTMwMCwiZGVmaW5pdGlvbiI6eyJpZCI6InNlY3JldHMucmVhZC13cml0ZSIsInNoYTI1NiI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmIiLCJ2ZXJzaW9uIjoxfSwiZW5mb3JjZXIiOnsiYXVkaWVuY2UiOiJodHRwczovL3NlY3JldHMuZXhhbXBsZS50ZXN0In0sIm5vbmNlIjp7ImtpZCI6ImsxIiwidmFsdWUiOiJHV3hHN2YxMzJ4WmlmWDlpVzRQYjd3N2U4dWJJQWl2N1k3ZWRQXzhqSzF3In0sIm5vdF9iZWZvcmUiOjEwMDAsIm9yZ2FuaXNhdGlvbiI6ImN1c3RvbWVyLmV4YW1wbGUiLCJwdXJwb3NlIjoiYWN0X2FwcHJvdmFsIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OmFnZW50LWEiLCJrZXkiOiJyZXF1ZXN0ZXIta2V5Iiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:person-p",
+            "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "identity_key": "identity-key-before",
+            "issuer": "issuer-key",
+            "origin": "https://APPROVAL.example.test",
+            "rp_id": "approval.example.test",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIHclkxjmT98kmqCK4MkiPvlL99ELixrGWVpdVsb1L3yRIlggmR_JLapAKJawKGxKhJ4qBiWeHij2XqzLsTHjosBMZy8",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "djWPrfnLic9b41eM_zNIjVpX4dOfxpoc5yLsEqMt9LoWpC49ETcYKcW1djqKFFE8WGjMk5nzDAMw-G7uW1HXDg"
+        },
+        "id_chain": [],
+        "assertion": {
+          "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+          "client_data_json": "eyJjaGFsbGVuZ2UiOiJqNTB5cS10VG9pYnExWmxmaWtVUVJfbnpndmc4MDJHZU40dmE0TU05Yks0IiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL0FQUFJPVkFMLmV4YW1wbGUudGVzdCIsInR5cGUiOiJ3ZWJhdXRobi5nZXQifQ",
+          "authenticator_data": "IP2P_eNPmVCyHmB6JfFa1QjgGG3qkGDKFYeq0xCyjAAFAAAAAA",
+          "signature": "MEUCIQClQT69KXy60nSe4SEeY_7_k6-deLms15kOYnBUW8MpoQIgHX5MHWuwTq2T2UYcDeWg3-1IMn1asSsO7oiwRF0qEbY"
+        }
+      },
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:person-p",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:agent-a",
+          "key": "requester-key"
+        },
+        "enforcer": {
+          "audience": "https://secrets.example.test"
+        },
+        "definition": {
+          "id": "secrets.read-write",
+          "version": 1,
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "act": {
+          "resource": "vault/key",
+          "rights": [
+            "read",
+            "write"
+          ],
+          "expected_revision": 1
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "trust": {
+        "person": "did:aw:person-p",
+        "organisation": "customer.example",
+        "identity_key": "identity-key-before",
+        "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "issuer": "issuer-key",
+        "issuer_public_key": "4lZ6GncmOHhLLZ0m4uldoKOMQwjomXe0TL2_zHqjqhg",
+        "observed_at": 1100
+      },
+      "nonce_key": "ZW5mb3JjZXItb25seS1zZWNyZXQtMzItYnl0ZXMtbG9uZw",
+      "now": 1100,
+      "required_grade": "passkey_uv",
+      "presenter": {
+        "kind": "identity",
+        "id": "did:aw:agent-a",
+        "key": "requester-key"
+      },
+      "accept": false
+    },
+    {
+      "id": "unselected-off-curve-key",
+      "receipt": {
+        "version": 1,
+        "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjEsInJlc291cmNlIjoidmF1bHQva2V5IiwicmlnaHRzIjpbInJlYWQiLCJ3cml0ZSJdfSwiYXBwcm92ZXIiOiJkaWQ6YXc6cGVyc29uLXAiLCJkZWFkbGluZSI6MTMwMCwiZGVmaW5pdGlvbiI6eyJpZCI6InNlY3JldHMucmVhZC13cml0ZSIsInNoYTI1NiI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmIiLCJ2ZXJzaW9uIjoxfSwiZW5mb3JjZXIiOnsiYXVkaWVuY2UiOiJodHRwczovL3NlY3JldHMuZXhhbXBsZS50ZXN0In0sIm5vbmNlIjp7ImtpZCI6ImsxIiwidmFsdWUiOiJHV3hHN2YxMzJ4WmlmWDlpVzRQYjd3N2U4dWJJQWl2N1k3ZWRQXzhqSzF3In0sIm5vdF9iZWZvcmUiOjEwMDAsIm9yZ2FuaXNhdGlvbiI6ImN1c3RvbWVyLmV4YW1wbGUiLCJwdXJwb3NlIjoiYWN0X2FwcHJvdmFsIiwicmVxdWVzdGVyIjp7ImlkIjoiZGlkOmF3OmFnZW50LWEiLCJrZXkiOiJyZXF1ZXN0ZXIta2V5Iiwia2luZCI6ImlkZW50aXR5In0sInZlcnNpb24iOjF9",
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:person-p",
+            "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "identity_key": "identity-key-before",
+            "issuer": "issuer-key",
+            "origin": "https://approval.example.test",
+            "rp_id": "approval.example.test",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIKYXt75hhuF1dJRFXpTO1zo8FmgiQy5b7WinmfNIHkOsIlggPKZFJfaF8PyxHaQdx-z5870kh_khJBNuSkDz1XqHXU0",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              },
+              {
+                "id": "b3RoZXItb2ZmLWN1cnZl",
+                "key": "pQECAyYgASFYIAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBIlggAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgI",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "nksK1LM_p5rmewWyVf442Qq3h8CDKRWthDlRs8aBt_snquSFDbQvhXZK84G5ntSoa3ECBTqX7ajFBmNv8F66CA"
+        },
+        "id_chain": [],
+        "assertion": {
+          "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+          "client_data_json": "eyJjaGFsbGVuZ2UiOiJqNTB5cS10VG9pYnExWmxmaWtVUVJfbnpndmc4MDJHZU40dmE0TU05Yks0IiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2FwcHJvdmFsLmV4YW1wbGUudGVzdCIsInR5cGUiOiJ3ZWJhdXRobi5nZXQifQ",
+          "authenticator_data": "IP2P_eNPmVCyHmB6JfFa1QjgGG3qkGDKFYeq0xCyjAAFAAAAAA",
+          "signature": "MEYCIQD1Q8dcC6Okm9GW85GwntB13OCso-5vmyQGS191HlQxVQIhANFyEP4Qot5vNeg3MDCRIC9CSQ2itkSEpMMFn-I2QuL6"
+        }
+      },
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:person-p",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:agent-a",
+          "key": "requester-key"
+        },
+        "enforcer": {
+          "audience": "https://secrets.example.test"
+        },
+        "definition": {
+          "id": "secrets.read-write",
+          "version": 1,
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "act": {
+          "resource": "vault/key",
+          "rights": [
+            "read",
+            "write"
+          ],
+          "expected_revision": 1
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "trust": {
+        "person": "did:aw:person-p",
+        "organisation": "customer.example",
+        "identity_key": "identity-key-before",
+        "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "issuer": "issuer-key",
+        "issuer_public_key": "INalyji7KBsPZsxX9kGykZv2JV5ArKj12R-nwUm8SuU",
+        "observed_at": 1100
+      },
+      "nonce_key": "ZW5mb3JjZXItb25seS1zZWNyZXQtMzItYnl0ZXMtbG9uZw",
+      "now": 1100,
+      "required_grade": "passkey_uv",
+      "presenter": {
+        "kind": "identity",
+        "id": "did:aw:agent-a",
+        "key": "requester-key"
+      },
+      "accept": false
     }
   ]
 }

@@ -166,34 +166,22 @@ def test_binding_downgrade_of_the_actual_key_applies_to_old_assertion():
         check(w, grade="certified_hardware")
 
 
-def test_the_shared_frozen_receipt_corpus():
-    import json
-    from pathlib import Path
+import json
+from pathlib import Path
+from approval_service.encoding import decode
 
-    from approval_service.encoding import decode
+_CASES=json.loads((Path(__file__).parents[1]/"vectors/receipts.json").read_text())["cases"]
 
-    corpus = json.loads(
-        (Path(__file__).parents[1] / "vectors/receipts.json").read_text()
-    )
-    assert len(corpus["cases"]) == 11
-    for case in corpus["cases"]:
-        status = {
-            **case["trust"],
-            "issuer_public_key": decode(case["trust"]["issuer_public_key"]),
-        }
-        kwargs = {
-            "expected_request": case["request"],
-            "trust": Trust(**status),
-            "now": case["now"],
-            "required_grade": case["required_grade"],
-            "presenter": case["presenter"],
-            "nonce_keys": {"k1": decode(case["nonce_key"])},
-        }
-        if case["accept"]:
-            assert (
-                verify_for_effect(case["receipt"], **kwargs).person
-                == case["request"]["approver"]
-            )
-        else:
-            with pytest.raises(Refused):
-                verify_for_effect(case["receipt"], **kwargs)
+@pytest.mark.parametrize("case",_CASES,ids=lambda c:c["id"])
+def test_the_shared_frozen_receipt_corpus(case):
+    status={**case["trust"],"issuer_public_key":decode(case["trust"]["issuer_public_key"])}
+    kwargs={"expected_request":case["request"],"trust":Trust(**status),"now":case["now"],"required_grade":case["required_grade"],"presenter":case["presenter"],"nonce_keys":{"k1":decode(case["nonce_key"])}}
+    if case["accept"]:
+        assert verify_for_effect(case["receipt"],**kwargs).person==case["request"]["approver"]
+    else:
+        with pytest.raises(Refused):verify_for_effect(case["receipt"],**kwargs)
+
+
+def test_shared_corpus_keeps_all_review_neighbors():
+    assert len(_CASES)==17
+    assert len({c["id"] for c in _CASES})==17
