@@ -89,3 +89,21 @@ def test_plain_strings_remain_text_not_markup(row):
     assert article.get_by_text(value, exact=True).count() == 1
     assert article.locator("img").count() == 0
     assert page.evaluate("window.injected === undefined")
+
+
+def test_admission_labels_the_effect_organisation_separately_from_home(row):
+    _, item, page = row
+    item["display"] = definition("organisation.person.admit")["display"]
+    item["request"]["organisation"] = "approver-home.example"
+    item["request"]["act"]["target"] = {
+        "organisation": "organisation-being-joined.example",
+        "person": "did:aw:hrCg7FYuHsoU5tqQ8r5JMUDHudr",
+        "role": "member",
+    }
+    page.evaluate(
+        "item => document.querySelector('#requests').replaceChildren(window.renderApprovalForTest(item))", item,
+    )
+    article = page.locator("#requests article")
+    assert article.locator("p", has_text="Organisation being joined").count() == 1
+    assert article.get_by_text("Organisation being joined", exact=True).locator("+ pre").inner_text() == "organisation-being-joined.example"
+    assert article.get_by_text("Organisation", exact=True).locator("+ pre").inner_text() == "approver-home.example"
