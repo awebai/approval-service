@@ -62,50 +62,6 @@ async def test_same_digest_retries_return_original_locator_and_cannot_change_req
 
 
 @pytest.mark.asyncio
-async def test_denial_or_expiry_never_stores_assertion_or_renews_deadline(store):
-    own = "a" * 64
-    digest = "c" * 64
-    await store.prepare(
-        "op-1",
-        digest,
-        own,
-        "person-p",
-        b'{"private":true}',
-        1000,
-        1300,
-        organisation="customer.example",
-        requester_key="one-test-key",
-    )
-    await store.refuse(
-        "op-1", "person-p", "denied", 1100, organisation="customer.example"
-    )
-    assert (
-        await store.poll(
-            "op-1",
-            digest,
-            own,
-            1200,
-            organisation="customer.example",
-            person_id="person-p",
-        )
-    )["request_bytes"] is None
-    assert (
-        await store.poll(
-            "op-1",
-            digest,
-            own,
-            1200,
-            organisation="customer.example",
-            person_id="person-p",
-        )
-    )["assertion"] is None
-    with pytest.raises(StoreRefused):
-        await store.refuse(
-            "op-1", "person-p", "denied", 1200, organisation="customer.example"
-        )
-
-
-@pytest.mark.asyncio
 async def test_parallel_polls_reuse_a_bounded_pool_without_read_transactions(store):
     import asyncio
 

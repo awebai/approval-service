@@ -178,8 +178,11 @@ async def test_login_never_approves_and_act_uv_is_single_consumed_and_recoverabl
         )
     )["assertion"] == saved["assertion"]
     assert (
-        await store.audit(
-            "operation", organisation=trust.organisation, person_id=trust.person
+        await store.db.fetch_all(
+            "SELECT outcome FROM {{tables.approval_audit}} WHERE organisation=$1 AND person_id=$2 AND operation_id=$3",
+            trust.organisation,
+            trust.person,
+            "operation",
         )
     )[0]["outcome"] == "approved"
     assert await store.pending(person, organisation=trust.organisation) == []

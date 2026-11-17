@@ -407,6 +407,16 @@ async def test_pending_registration_confirmation_and_committed_activation_are_di
     assert c["binding"] == binding
     assert c["assertion"]["id"] == binding["binding"]["credentials"][0]["id"]
     assert c["id_chain"]
+    credentials = await store.db.fetch_all(
+        "SELECT * FROM {{tables.approval_credentials}} WHERE organisation=$1 AND person_id=$2",
+        trust.organisation,
+        trust.person,
+    )
+    assert credentials
+    for credential in credentials:
+        assert "attestation" not in credential
+        assert credential["registration"] is None
+        assert credential["client_extension_results"] is None
 
 
 @pytest.mark.asyncio
