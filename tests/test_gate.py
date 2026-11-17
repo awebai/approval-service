@@ -130,3 +130,22 @@ def test_malformed_expected_request_is_a_named_refusal(field, bad):
     value[field] = bad
     with pytest.raises(Refused):
         gate().evaluate(ACTION, request=value)
+
+
+def test_rendered_policy_is_organisation_bound_and_missing_file_is_not_off(tmp_path):
+    from approval_service.gate import load_policy, render_policy
+
+    path = tmp_path / "human-approval.json"
+    organisation = CASE["request"]["organisation"]
+    assert load_policy(None, organisation=organisation) == Policy.from_section(None)
+    with pytest.raises(Refused, match="human_approval_unavailable"):
+        load_policy(path, organisation=organisation)
+    path.write_bytes(render_policy(organisation, configured().as_section()))
+    assert load_policy(path, organisation=organisation) == configured()
+    with pytest.raises(Refused, match="human_approval_invalid"):
+        load_policy(path, organisation="other.test")
+    path.write_text('{"organisation":"' + organisation + '","human_approval":null}')
+    with pytest.raises(Refused, match="human_approval_invalid"):
+        load_policy(path, organisation=organisation)
+    path.write_text('{"organisation":"' + organisation + '","human_approval":{}}')
+    assert load_policy(path, organisation=organisation).grade(ACTION) is None

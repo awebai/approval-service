@@ -7,10 +7,12 @@ that the organisation has not required approval; ordinary authority still applie
 """
 
 from dataclasses import dataclass
+from pathlib import Path
 from urllib.parse import urlsplit
 
 from jsonschema import ValidationError
 
+from .canonical import canonical, parse
 from .definitions import check_definition
 from .seams import check_presentation, make_needs_human
 from .verify import Refused
@@ -114,3 +116,40 @@ class Gate:
             required_grade=grade,
             nonce_keys=nonce_keys,
         )
+
+
+def render_policy(organisation, section):
+    """One non-secret snapshot rendered from the deployment's section."""
+    if not isinstance(organisation, str) or not organisation:
+        raise Refused("human_approval_invalid")
+    return canonical(
+        {
+            "organisation": organisation,
+            "human_approval": Policy.from_section(section).as_section(),
+        }
+    )
+
+
+def load_policy(path, *, organisation):
+    """No configured source is off; failure of an explicit source is not."""
+    if path is None:
+        return Policy.from_section(None)
+    try:
+        with Path(path).open("rb") as stream:
+            raw = stream.read(65537)
+    except OSError as exc:
+        raise Refused("human_approval_unavailable") from exc
+    try:
+        if len(raw) > 65536:
+            raise ValueError("configuration too large")
+        value = parse(raw)
+        if (
+            not isinstance(value, dict)
+            or set(value) != {"organisation", "human_approval"}
+            or value["organisation"] != organisation
+            or not isinstance(value["human_approval"], dict)
+        ):
+            raise ValueError("invalid organisation configuration")
+        return Policy.from_section(value["human_approval"])
+    except (ValueError, TypeError) as exc:
+        raise Refused("human_approval_invalid") from exc
