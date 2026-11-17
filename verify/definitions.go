@@ -68,6 +68,12 @@ func CheckDefinition(request map[string]any) error {
 	if validateNode(spec, request["act"]) != nil {
 		return refuse("definition_invalid")
 	}
+	if id == "organisation.person.admit" {
+		person := text(object(object(request, "act"), "target"), "person")
+		if _, err := awid.DecodeStableID(strings.TrimPrefix(person, "did:aw:")); err != nil {
+			return refuse("definition_invalid")
+		}
+	}
 	if id == "agent.root.authorize" {
 		target := object(object(request, "act"), "target")
 		if _, err := awid.DecodeStableID(strings.TrimPrefix(text(target, "person"), "did:aw:")); err != nil {

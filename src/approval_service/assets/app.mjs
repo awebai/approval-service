@@ -41,7 +41,7 @@ function display(item) {
   show('Organisation', item.request.organisation, box);
   for (const field of item.display.technical_fields.filter(f => f !== 'organisation')) {
     const value = field.split('.').reduce((v, part) => v?.[part], item.request.act);
-    show(field, value, box);
+    show(item.display.technical_labels?.[field] ?? field, value, box);
   }
   show('Exact act', item.request.act, box);
   show('Deadline', new Date(item.request.deadline * 1000).toISOString(), box);

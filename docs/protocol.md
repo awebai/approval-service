@@ -226,6 +226,32 @@ does not infer application permission from the definition or substitute its
 own policy for an enforcer's requirement. Any rule revision or expected state
 needed by that enforcer must be part of `act`.
 
+`display.technical_fields` contains paths into validated, typed act data, not
+requester-authored prose. Plain scalar strings use identifier or enum grammars
+that exclude line breaks; structured values retain their JSON types. The page
+inserts values as text. A new definition can give those paths fixed labels in
+`display.technical_labels`; existing definitions keep their bytes and hashes.
+
+The organisation-admission definition `organisation.person.admit@1` commits
+`target={organisation,person,role}` and `expected_revision`. It admits an existing
+human ID, never creates or reparents it, and carries no mailbox or personal name.
+Its `policy_organisation="act.target.organisation"` tells the shared gate which
+organisation's policy owns the effect. `R.organisation` still names the approver's
+ID home, as does the approver's binding; the two domains need not coincide.
+Without that property, the gate compares the policy to `R.organisation`, as before.
+The service still admits the self-requesting approver in their home. The enforcer
+independently checks their current management membership in the admitting
+organisation, including after the wait for approval and at the locked insertion.
+The page separately labels the organisation being joined.
+
+`organisation.human_approval.change@1` commits the target organisation, configured
+action, exact `before` and `after` service/level pairs, and `expected_revision`.
+The old policy authorizes a lowering, removal or change of service. A receipt for
+admission is never permission to change policy. The enforcer loads the current
+policy again under its effect lock; it also refuses to add or raise a requirement
+unless a current entitled person is enrolled at that level. This last check is
+the enforcer's membership fact, not a new approval-service authority.
+
 Proposed byte profile: reuse the B2 canonical JSON profile, with its existing
 positive/negative bytes, not the hooks' different ASCII-only/no-null profile.
 UTF-8, Unicode-code-point object-key order, array order unchanged, compact

@@ -37,6 +37,10 @@ def check_definition(request):
         if request["purpose"] != value["purpose"]:
             raise Refused("purpose_invalid")
         WireValidator(value["act_schema"]).validate(request["act"])
+        if value["id"] == "organisation.person.admit":
+            person = request["act"]["target"]["person"]
+            if validate_stable_id(person) != person:
+                raise ValueError("noncanonical person ID")
         if value["id"] == "agent.root.authorize":
             target = request["act"]["target"]
             if validate_stable_id(target["person"]) != target["person"]:

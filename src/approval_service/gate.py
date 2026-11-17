@@ -19,8 +19,9 @@ from .verify import Refused
 from .wire import validate_site
 
 # The configuration name and existing frozen act definition are distinct.
-ACTIONS = {"organisation.human.add": "human.add"}
+ACTIONS = {"organisation.human.add": ("human.add", "organisation.person.admit")}
 LEVELS = {"passkey": "passkey_uv", "hardware": "certified_hardware"}
+POLICY_CHANGE = "organisation.human_approval.change"
 
 
 @dataclass(frozen=True)
@@ -67,6 +68,32 @@ class Policy:
         level = dict(self.requirements).get(action)
         return LEVELS[level] if level is not None else None
 
+    def changes_requiring_approval(self, next_policy):
+        """Changing the service or weakening a current requirement uses it first."""
+        rank = {None: 0, "passkey": 1, "hardware": 2}
+        after = dict(next_policy.requirements)
+        return tuple(
+            action
+            for action, level in self.requirements
+            if self.service != next_policy.service
+            or rank[after.get(action)] < rank[level]
+        )
+
+    def change_target(self, action, next_policy, *, organisation):
+        self.grade(action)  # Unknown actions are never treated as unconfigured.
+        return {
+            "organisation": organisation,
+            "action": action,
+            "before": {
+                "service": self.service,
+                "level": dict(self.requirements).get(action, "none"),
+            },
+            "after": {
+                "service": next_policy.service,
+                "level": dict(next_policy.requirements).get(action, "none"),
+            },
+        }
+
 
 class Gate:
     def __init__(self, policy: Policy, *, organisation: str, audience: str):
@@ -95,13 +122,72 @@ class Gate:
         grade = self.policy.grade(action)
         if grade is None:
             return None
-        check_definition(request)
+        return self._evaluate(
+            ACTIONS[action],
+            grade,
+            request=request,
+            presentation=presentation,
+            presenter=presenter,
+            trust=trust,
+            now=now,
+            nonce_keys=nonce_keys,
+        )
+
+    def evaluate_policy_change(
+        self, action, next_policy, *, revision, request=None, **inputs
+    ):
+        """The enforcer supplies the locked before/after policy and revision.
+
+        This checks one affected action at its OLD level/service. Ordinary
+        management authority and availability of enrolled approvers are owned
+        by the enforcer, including when this method returns None for a raise.
+        """
+        grade = self.policy.grade(action)
+        if action not in self.policy.changes_requiring_approval(next_policy):
+            return None
+        try:
+            if (
+                request["definition"]["id"] != POLICY_CHANGE
+                or type(revision) is not int
+                or request["act"]["expected_revision"] != revision
+                or canonical(request["act"]["target"])
+                != canonical(
+                    self.policy.change_target(
+                        action, next_policy, organisation=self.organisation
+                    )
+                )
+            ):
+                raise Refused("approval_policy_mismatch")
+        except (KeyError, TypeError, ValueError) as exc:
+            raise Refused("approval_policy_mismatch") from exc
+        return self._evaluate((POLICY_CHANGE,), grade, request=request, **inputs)
+
+    def _evaluate(
+        self,
+        definitions,
+        grade,
+        *,
+        request,
+        presentation=None,
+        presenter=None,
+        trust=None,
+        now=None,
+        nonce_keys=None,
+    ):
+        definition = check_definition(request)
+        selector = definition.get("policy_organisation", "request.organisation")
+        if selector == "act.target.organisation":
+            organisation = request["act"]["target"].get("organisation")
+        elif selector == "request.organisation":
+            organisation = request.get("organisation")
+        else:
+            raise Refused("definition_invalid")
         if (
             not isinstance(request, dict)
-            or request.get("organisation") != self.organisation
+            or organisation != self.organisation
             or request.get("enforcer") != {"audience": self.audience}
-            or request.get("act", {}).get("operation") != ACTIONS[action]
-            or request.get("definition", {}).get("id") != ACTIONS[action]
+            or definition["id"] not in definitions
+            or request.get("act", {}).get("operation") != definition["id"]
         ):
             raise Refused("approval_act_mismatch")
         if presentation is None:

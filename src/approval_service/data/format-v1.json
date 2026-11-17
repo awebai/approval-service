@@ -2198,6 +2198,207 @@
         ]
       },
       "description": "Team IDs are canonical lowercase name:domain, sorted and unique. Each act replaces the full team list; a later mapped team is outside the grant until a new act lists the full set. expected_revision is the revision of this enforcer\u2019s grant record for (organisation, person, root_id): 0 when absent, then incremented once per committed grant replacement, including empty-list withdrawal. An idempotent retry does not increment it. The enforcer reads its own record and returns the current revision inside the canonical R carried by its 428 needs_human prepare answer. The caller carries that R unchanged; no registry or separate public revision lookup is needed. An aw enforcer has no team grant record, accepts only empty teams and uses revision 0."
+    },
+    "organisation.person.admit": {
+      "id": "organisation.person.admit",
+      "version": 1,
+      "purpose": "act_approval",
+      "policy_organisation": "act.target.organisation",
+      "act_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation",
+          "target",
+          "expected_revision"
+        ],
+        "properties": {
+          "operation": {
+            "type": "string",
+            "const": "organisation.person.admit"
+          },
+          "target": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "organisation",
+              "person",
+              "role"
+            ],
+            "properties": {
+              "organisation": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 253,
+                "pattern": "^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*$"
+              },
+              "person": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^did:aw:[1-9A-HJ-NP-Za-km-z]+$"
+              },
+              "role": {
+                "enum": [
+                  "owner",
+                  "admin",
+                  "member"
+                ],
+                "type": "string"
+              }
+            }
+          },
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "display": {
+        "heading": "Admit an existing person",
+        "consequence": "Admit this existing human ID to the named organisation with exactly this role. This does not create or change the person\u2019s ID.",
+        "technical_fields": [
+          "organisation",
+          "target.organisation",
+          "target.person",
+          "target.role",
+          "expected_revision"
+        ],
+        "technical_labels": {
+          "target.organisation": "Organisation being joined",
+          "target.person": "Person being admitted",
+          "target.role": "Role being granted"
+        }
+      }
+    },
+    "organisation.human_approval.change": {
+      "id": "organisation.human_approval.change",
+      "version": 1,
+      "purpose": "act_approval",
+      "policy_organisation": "act.target.organisation",
+      "act_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation",
+          "target",
+          "expected_revision"
+        ],
+        "properties": {
+          "operation": {
+            "type": "string",
+            "const": "organisation.human_approval.change"
+          },
+          "target": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "organisation",
+              "action",
+              "before",
+              "after"
+            ],
+            "properties": {
+              "organisation": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 253,
+                "pattern": "^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*$"
+              },
+              "action": {
+                "const": "organisation.human.add",
+                "type": "string"
+              },
+              "before": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "service",
+                  "level"
+                ],
+                "properties": {
+                  "service": {
+                    "oneOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4096,
+                        "pattern": "^https://[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?(?::[0-9]{1,5})?$"
+                      }
+                    ]
+                  },
+                  "level": {
+                    "enum": [
+                      "none",
+                      "passkey",
+                      "hardware"
+                    ],
+                    "type": "string"
+                  }
+                }
+              },
+              "after": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "service",
+                  "level"
+                ],
+                "properties": {
+                  "service": {
+                    "oneOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4096,
+                        "pattern": "^https://[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?(?::[0-9]{1,5})?$"
+                      }
+                    ]
+                  },
+                  "level": {
+                    "enum": [
+                      "none",
+                      "passkey",
+                      "hardware"
+                    ],
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "display": {
+        "heading": "Change a human approval requirement",
+        "consequence": "Replace this action\u2019s human approval requirement and approval service with exactly the shown settings. Approval is checked under the current settings.",
+        "technical_fields": [
+          "organisation",
+          "target.organisation",
+          "target.action",
+          "target.before",
+          "target.after",
+          "expected_revision"
+        ],
+        "technical_labels": {
+          "target.organisation": "Organisation whose policy changes",
+          "target.action": "Action whose requirement changes",
+          "target.before": "Current settings",
+          "target.after": "New settings"
+        }
+      }
     }
   },
   "x-answer-status": {

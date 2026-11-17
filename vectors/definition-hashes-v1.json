@@ -2,5 +2,7 @@
   "human.add@1": "f911038c3328c857c01e4fadcd5462cb5a03f5815895888a9a7a718adbe31a86",
   "enrollment.confirm@1": "95eb9dd6c9c88c8d2aa5d47a056069b99521ebdde3b6fe991b69abeb422e7660",
   "human.enrollment.replace@1": "1196a96e4d4e4474ebfd4b07e8ecde5169a0e1faac6755ae1188a299db05f6b9",
-  "agent.root.authorize@1": "afde132cc1faab1408a38dd9c125fb7e67095d470ff7bb758f6ebb28f58c1e8b"
+  "agent.root.authorize@1": "afde132cc1faab1408a38dd9c125fb7e67095d470ff7bb758f6ebb28f58c1e8b",
+  "organisation.person.admit@1": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787",
+  "organisation.human_approval.change@1": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
 }

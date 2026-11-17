@@ -101,9 +101,18 @@ def test_admission_labels_the_effect_organisation_separately_from_home(row):
         "role": "member",
     }
     page.evaluate(
-        "item => document.querySelector('#requests').replaceChildren(window.renderApprovalForTest(item))", item,
+        "item => document.querySelector('#requests').replaceChildren(window.renderApprovalForTest(item))",
+        item,
     )
     article = page.locator("#requests article")
     assert article.locator("p", has_text="Organisation being joined").count() == 1
-    assert article.get_by_text("Organisation being joined", exact=True).locator("+ pre").inner_text() == "organisation-being-joined.example"
-    assert article.get_by_text("Organisation", exact=True).locator("+ pre").inner_text() == "approver-home.example"
+    assert (
+        article.get_by_text("Organisation being joined", exact=True)
+        .locator("+ pre")
+        .inner_text()
+        == "organisation-being-joined.example"
+    )
+    assert (
+        article.get_by_text("Organisation", exact=True).locator("+ pre").inner_text()
+        == "approver-home.example"
+    )

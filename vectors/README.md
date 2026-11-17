@@ -192,3 +192,19 @@ for both creation and later enrollment, at both intent and activation entry
 points, and the challenge/confirmation-byte refusal codes. An activation body's
 schema error is `activation_invalid`; a malformed certificate inside an otherwise
 valid intent is `enrollment_invalid`. No caller may rely on a panic as refusal.
+
+`organisation-actions-v1.json` covers the two new organisation effects in both
+languages: admission of an existing person, and a human-approval policy change.
+The 33 cases include real signed receipts bound to the approver's HOME namespace,
+with a different effect organisation, changed-role/service and presenter refusals,
+expiry and old-level checks, closed targets and typed values that reject newlines,
+personal names, mailboxes and malformed types. These are shared proof/format
+controls; Cloud's current organisation membership and locked insertion are tested
+by that enforcer, not asserted by the approval service or by these vectors.
+
+The new definitions declare `policy_organisation="act.target.organisation"` and
+fixed `technical_labels` for that target. The old definitions and hash pins are
+unchanged. A policy change commits exact before/after service and level, the
+configured action and the enforcer's policy revision. The old requirement checks
+the approval, including on a service change; the enforcer owns policy persistence,
+ordinary management authority and the available-enrolled-approver check.

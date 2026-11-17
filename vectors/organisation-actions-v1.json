@@ -1,0 +1,1815 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "admit-typed-act",
+      "phase": "definition",
+      "accept": true,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.person.admit",
+          "version": 1,
+          "sha256": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787"
+        },
+        "act": {
+          "operation": "organisation.person.admit",
+          "target": {
+            "organisation": "admitting.example",
+            "person": "did:aw:3Xn1FPpLta6E8UYxASttoseuxrdY",
+            "role": "member"
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      }
+    },
+    {
+      "id": "admit-home-bound-real-proof",
+      "phase": "receipt",
+      "accept": true,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.person.admit",
+          "version": 1,
+          "sha256": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787"
+        },
+        "act": {
+          "operation": "organisation.person.admit",
+          "target": {
+            "organisation": "admitting.example",
+            "person": "did:aw:3Xn1FPpLta6E8UYxASttoseuxrdY",
+            "role": "member"
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "l8mAVFN0uASLqt5vtaxE9XgdBcXUByrJahvE-QQpVBo"
+        }
+      },
+      "receipt": {
+        "version": 1,
+        "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjcsIm9wZXJhdGlvbiI6Im9yZ2FuaXNhdGlvbi5wZXJzb24uYWRtaXQiLCJ0YXJnZXQiOnsib3JnYW5pc2F0aW9uIjoiYWRtaXR0aW5nLmV4YW1wbGUiLCJwZXJzb24iOiJkaWQ6YXc6M1huMUZQcEx0YTZFOFVZeEFTdHRvc2V1eHJkWSIsInJvbGUiOiJtZW1iZXIifX0sImFwcHJvdmVyIjoiZGlkOmF3OlBoMlVKMldXYzQ3MnFQOEV5c3M1V0ZOTmFScSIsImRlYWRsaW5lIjoxMzAwLCJkZWZpbml0aW9uIjp7ImlkIjoib3JnYW5pc2F0aW9uLnBlcnNvbi5hZG1pdCIsInNoYTI1NiI6ImI5YzI4MzBkZjc3ZWMwNjljMDAzZDMyNTg0NjA2ZDQxMDcyNTdkMzE0YTVhOTA3MTFjZjJlN2M5MmJlYjk3ODciLCJ2ZXJzaW9uIjoxfSwiZW5mb3JjZXIiOnsiYXVkaWVuY2UiOiJodHRwczovL2Nsb3VkLmV4YW1wbGUudGVzdCJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibDhtQVZGTjB1QVNMcXQ1dnRheEU5WGdkQmNYVUJ5ckphaHZFLVFRcFZCbyJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImFjdF9hcHByb3ZhbCIsInJlcXVlc3RlciI6eyJpZCI6ImRpZDphdzpQaDJVSjJXV2M0NzJxUDhFeXNzNVdGTk5hUnEiLCJrZXkiOiJkaWQ6a2V5Ono2TWt3VkJuOUo0c0JuYzFzOWE4NHg3bVZZV0JvaVhoQ3UzeWJ2dGZMcVhLWHJiYiIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+            "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "identity_key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb",
+            "issuer": "did:key:z6MkqCs8teyju7KANWAT8QtXe4jHn1eETEvVSPPUusZ3NEjL",
+            "origin": "https://approval.example.test",
+            "rp_id": "approval.example.test",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIP6FCSoq2J_JSVvSnG-u6JfmViBxyM4_rWZlvsbtEHvHIlggef-FS-hQRwf3LBhAchynBC2SRLNJfXkLCJJfOkJlpJs",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "HPd3IBmSjt51vtJ17P5moC7aH98MISrCBLwo_zNghL9kJlVJMnR0rn6lx5nhebecyR0PMW9u1edoLa3UaCODDA"
+        },
+        "id_chain": [],
+        "assertion": {
+          "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+          "client_data_json": "eyJjaGFsbGVuZ2UiOiJBMW5BSHhyRlFVWk9NWml2U1NldEV4MFoxZVJMTXhSaktJZkZBcHB4eGRvIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2FwcHJvdmFsLmV4YW1wbGUudGVzdCIsInR5cGUiOiJ3ZWJhdXRobi5nZXQifQ",
+          "authenticator_data": "IP2P_eNPmVCyHmB6JfFa1QjgGG3qkGDKFYeq0xCyjAAFAAAAAA",
+          "signature": "MEQCIEucGGLcJyCEXnu4A-i9swDSQEC11y3ctBVnWqvjM4AjAiB1RYK7OPZcPksq_QaI44Q-pjzMeOK0u42Jazo6CRfAqA"
+        }
+      },
+      "trust": {
+        "person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb",
+        "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "issuer": "did:key:z6MkqCs8teyju7KANWAT8QtXe4jHn1eETEvVSPPUusZ3NEjL",
+        "issuer_public_key": "n8CFoi28AlDgzx6j7Eqh9iaLHdBLyULsE9Ezs01m-VM",
+        "observed_at": 1100
+      },
+      "presenter": {
+        "kind": "identity",
+        "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+      },
+      "nonce_key": "ZW5mb3JjZXItb25seS1zZWNyZXQtMzItYnl0ZXMtbG9uZw",
+      "now": 1100,
+      "required_grade": "passkey_uv",
+      "expected_person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq"
+    },
+    {
+      "id": "admit-private-email",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.person.admit",
+          "version": 1,
+          "sha256": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787"
+        },
+        "act": {
+          "operation": "organisation.person.admit",
+          "target": {
+            "organisation": "admitting.example",
+            "person": "did:aw:3Xn1FPpLta6E8UYxASttoseuxrdY",
+            "role": "member",
+            "email": "private value"
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "admit-private-name",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.person.admit",
+          "version": 1,
+          "sha256": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787"
+        },
+        "act": {
+          "operation": "organisation.person.admit",
+          "target": {
+            "organisation": "admitting.example",
+            "person": "did:aw:3Xn1FPpLta6E8UYxASttoseuxrdY",
+            "role": "member",
+            "name": "private value"
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "admit-domain-newline",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.person.admit",
+          "version": 1,
+          "sha256": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787"
+        },
+        "act": {
+          "operation": "organisation.person.admit",
+          "target": {
+            "organisation": "admitting.example\n",
+            "person": "did:aw:3Xn1FPpLta6E8UYxASttoseuxrdY",
+            "role": "member"
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "admit-role-5",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.person.admit",
+          "version": 1,
+          "sha256": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787"
+        },
+        "act": {
+          "operation": "organisation.person.admit",
+          "target": {
+            "organisation": "admitting.example",
+            "person": "did:aw:3Xn1FPpLta6E8UYxASttoseuxrdY",
+            "role": null
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "admit-role-6",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.person.admit",
+          "version": 1,
+          "sha256": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787"
+        },
+        "act": {
+          "operation": "organisation.person.admit",
+          "target": {
+            "organisation": "admitting.example",
+            "person": "did:aw:3Xn1FPpLta6E8UYxASttoseuxrdY",
+            "role": []
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "admit-role-7",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.person.admit",
+          "version": 1,
+          "sha256": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787"
+        },
+        "act": {
+          "operation": "organisation.person.admit",
+          "target": {
+            "organisation": "admitting.example",
+            "person": "did:aw:3Xn1FPpLta6E8UYxASttoseuxrdY",
+            "role": {}
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "admit-role-8",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.person.admit",
+          "version": 1,
+          "sha256": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787"
+        },
+        "act": {
+          "operation": "organisation.person.admit",
+          "target": {
+            "organisation": "admitting.example",
+            "person": "did:aw:3Xn1FPpLta6E8UYxASttoseuxrdY",
+            "role": true
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "admit-role-9",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.person.admit",
+          "version": 1,
+          "sha256": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787"
+        },
+        "act": {
+          "operation": "organisation.person.admit",
+          "target": {
+            "organisation": "admitting.example",
+            "person": "did:aw:3Xn1FPpLta6E8UYxASttoseuxrdY",
+            "role": "private prose\napproved"
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "change-typed-act",
+      "phase": "definition",
+      "accept": true,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": "organisation.human.add",
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "passkey"
+            },
+            "after": {
+              "service": null,
+              "level": "none"
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      }
+    },
+    {
+      "id": "change-home-bound-real-proof",
+      "phase": "receipt",
+      "accept": true,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": "organisation.human.add",
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "passkey"
+            },
+            "after": {
+              "service": null,
+              "level": "none"
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "lB5osS7mYr4ZfPo_mg4g9JwItNEZEXQBJdufrhyNoUA"
+        }
+      },
+      "receipt": {
+        "version": 1,
+        "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjcsIm9wZXJhdGlvbiI6Im9yZ2FuaXNhdGlvbi5odW1hbl9hcHByb3ZhbC5jaGFuZ2UiLCJ0YXJnZXQiOnsiYWN0aW9uIjoib3JnYW5pc2F0aW9uLmh1bWFuLmFkZCIsImFmdGVyIjp7ImxldmVsIjoibm9uZSIsInNlcnZpY2UiOm51bGx9LCJiZWZvcmUiOnsibGV2ZWwiOiJwYXNza2V5Iiwic2VydmljZSI6Imh0dHBzOi8vYXBwcm92YWwuZXhhbXBsZS50ZXN0In0sIm9yZ2FuaXNhdGlvbiI6ImFkbWl0dGluZy5leGFtcGxlIn19LCJhcHByb3ZlciI6ImRpZDphdzpQaDJVSjJXV2M0NzJxUDhFeXNzNVdGTk5hUnEiLCJkZWFkbGluZSI6MTMwMCwiZGVmaW5pdGlvbiI6eyJpZCI6Im9yZ2FuaXNhdGlvbi5odW1hbl9hcHByb3ZhbC5jaGFuZ2UiLCJzaGEyNTYiOiI2YTgzYTVmMWE0MWE4YjdmZTBmODczZTUyMTgzN2E5ZDEzNmQxZjhkMDU5YWQ5ZTIwODU4ODk1NzU0YjdkYTZlIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoiaHR0cHM6Ly9jbG91ZC5leGFtcGxlLnRlc3QifSwibm9uY2UiOnsia2lkIjoiazEiLCJ2YWx1ZSI6ImxCNW9zUzdtWXI0WmZQb19tZzRnOUp3SXRORVpFWFFCSmR1ZnJoeU5vVUEifSwibm90X2JlZm9yZSI6MTAwMCwib3JnYW5pc2F0aW9uIjoiY3VzdG9tZXIuZXhhbXBsZSIsInB1cnBvc2UiOiJhY3RfYXBwcm92YWwiLCJyZXF1ZXN0ZXIiOnsiaWQiOiJkaWQ6YXc6UGgyVUoyV1djNDcycVA4RXlzczVXRk5OYVJxIiwia2V5IjoiZGlkOmtleTp6Nk1rd1ZCbjlKNHNCbmMxczlhODR4N21WWVdCb2lYaEN1M3lidnRmTHFYS1hyYmIiLCJraW5kIjoiaWRlbnRpdHkifSwidmVyc2lvbiI6MX0",
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+            "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "identity_key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb",
+            "issuer": "did:key:z6MkqCs8teyju7KANWAT8QtXe4jHn1eETEvVSPPUusZ3NEjL",
+            "origin": "https://approval.example.test",
+            "rp_id": "approval.example.test",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIP6FCSoq2J_JSVvSnG-u6JfmViBxyM4_rWZlvsbtEHvHIlggef-FS-hQRwf3LBhAchynBC2SRLNJfXkLCJJfOkJlpJs",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "HPd3IBmSjt51vtJ17P5moC7aH98MISrCBLwo_zNghL9kJlVJMnR0rn6lx5nhebecyR0PMW9u1edoLa3UaCODDA"
+        },
+        "id_chain": [],
+        "assertion": {
+          "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+          "client_data_json": "eyJjaGFsbGVuZ2UiOiJ1eXE5RWxuWnNPdkdaNGU1OEprOGxYU3dmTzcwaHFmWm9KdGlKNjd4bFBRIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2FwcHJvdmFsLmV4YW1wbGUudGVzdCIsInR5cGUiOiJ3ZWJhdXRobi5nZXQifQ",
+          "authenticator_data": "IP2P_eNPmVCyHmB6JfFa1QjgGG3qkGDKFYeq0xCyjAAFAAAAAA",
+          "signature": "MEUCIQDu9l0s2lolF7lu4FJRzEGpI_Jv0x2rxwKU57YBBNX3SQIgIq0X0kiO0MkaxqZ2cX9bR_yXYhfQDy02Kd2KsvwElQQ"
+        }
+      },
+      "trust": {
+        "person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb",
+        "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "issuer": "did:key:z6MkqCs8teyju7KANWAT8QtXe4jHn1eETEvVSPPUusZ3NEjL",
+        "issuer_public_key": "n8CFoi28AlDgzx6j7Eqh9iaLHdBLyULsE9Ezs01m-VM",
+        "observed_at": 1100
+      },
+      "presenter": {
+        "kind": "identity",
+        "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+      },
+      "nonce_key": "ZW5mb3JjZXItb25seS1zZWNyZXQtMzItYnl0ZXMtbG9uZw",
+      "now": 1100,
+      "required_grade": "passkey_uv",
+      "expected_person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq"
+    },
+    {
+      "id": "change-private-email",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": "organisation.human.add",
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "passkey"
+            },
+            "after": {
+              "service": null,
+              "level": "none"
+            },
+            "email": "private value"
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "change-private-name",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": "organisation.human.add",
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "passkey"
+            },
+            "after": {
+              "service": null,
+              "level": "none"
+            },
+            "name": "private value"
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "change-domain-newline",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example\n",
+            "action": "organisation.human.add",
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "passkey"
+            },
+            "after": {
+              "service": null,
+              "level": "none"
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "change-action-15",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": null,
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "passkey"
+            },
+            "after": {
+              "service": null,
+              "level": "none"
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "change-action-16",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": [],
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "passkey"
+            },
+            "after": {
+              "service": null,
+              "level": "none"
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "change-action-17",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": {},
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "passkey"
+            },
+            "after": {
+              "service": null,
+              "level": "none"
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "change-action-18",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": true,
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "passkey"
+            },
+            "after": {
+              "service": null,
+              "level": "none"
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "change-action-19",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": "private prose\napproved",
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "passkey"
+            },
+            "after": {
+              "service": null,
+              "level": "none"
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "person-newline",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.person.admit",
+          "version": 1,
+          "sha256": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787"
+        },
+        "act": {
+          "operation": "organisation.person.admit",
+          "target": {
+            "organisation": "admitting.example",
+            "person": "did:aw:3Xn1FPpLta6E8UYxASttoseuxrdY\n",
+            "role": "member"
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "before-level-21",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": "organisation.human.add",
+            "before": {
+              "service": "https://approval.example.test",
+              "level": {}
+            },
+            "after": {
+              "service": null,
+              "level": "none"
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "before-level-22",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": "organisation.human.add",
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "email"
+            },
+            "after": {
+              "service": null,
+              "level": "none"
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "before-service-23",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": "organisation.human.add",
+            "before": {
+              "service": "https://safe.example\n",
+              "level": "passkey"
+            },
+            "after": {
+              "service": null,
+              "level": "none"
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "after-level-24",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": "organisation.human.add",
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "passkey"
+            },
+            "after": {
+              "service": null,
+              "level": {}
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "after-level-25",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": "organisation.human.add",
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "passkey"
+            },
+            "after": {
+              "service": null,
+              "level": "email"
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "after-service-26",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": "organisation.human.add",
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "passkey"
+            },
+            "after": {
+              "service": "https://safe.example\n",
+              "level": "none"
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "person-malformed-stable-id",
+      "phase": "definition",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.person.admit",
+          "version": 1,
+          "sha256": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787"
+        },
+        "act": {
+          "operation": "organisation.person.admit",
+          "target": {
+            "organisation": "admitting.example",
+            "person": "did:aw:abc",
+            "role": "member"
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "GWxG7f132xZifX9iW4Pb7w7e8ubIAiv7Y7edP_8jK1w"
+        }
+      },
+      "expected_error": "definition_invalid"
+    },
+    {
+      "id": "admission-role-changed-after-approval",
+      "phase": "receipt",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.person.admit",
+          "version": 1,
+          "sha256": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787"
+        },
+        "act": {
+          "operation": "organisation.person.admit",
+          "target": {
+            "organisation": "admitting.example",
+            "person": "did:aw:3Xn1FPpLta6E8UYxASttoseuxrdY",
+            "role": "admin"
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "l8mAVFN0uASLqt5vtaxE9XgdBcXUByrJahvE-QQpVBo"
+        }
+      },
+      "receipt": {
+        "version": 1,
+        "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjcsIm9wZXJhdGlvbiI6Im9yZ2FuaXNhdGlvbi5wZXJzb24uYWRtaXQiLCJ0YXJnZXQiOnsib3JnYW5pc2F0aW9uIjoiYWRtaXR0aW5nLmV4YW1wbGUiLCJwZXJzb24iOiJkaWQ6YXc6M1huMUZQcEx0YTZFOFVZeEFTdHRvc2V1eHJkWSIsInJvbGUiOiJtZW1iZXIifX0sImFwcHJvdmVyIjoiZGlkOmF3OlBoMlVKMldXYzQ3MnFQOEV5c3M1V0ZOTmFScSIsImRlYWRsaW5lIjoxMzAwLCJkZWZpbml0aW9uIjp7ImlkIjoib3JnYW5pc2F0aW9uLnBlcnNvbi5hZG1pdCIsInNoYTI1NiI6ImI5YzI4MzBkZjc3ZWMwNjljMDAzZDMyNTg0NjA2ZDQxMDcyNTdkMzE0YTVhOTA3MTFjZjJlN2M5MmJlYjk3ODciLCJ2ZXJzaW9uIjoxfSwiZW5mb3JjZXIiOnsiYXVkaWVuY2UiOiJodHRwczovL2Nsb3VkLmV4YW1wbGUudGVzdCJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibDhtQVZGTjB1QVNMcXQ1dnRheEU5WGdkQmNYVUJ5ckphaHZFLVFRcFZCbyJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImFjdF9hcHByb3ZhbCIsInJlcXVlc3RlciI6eyJpZCI6ImRpZDphdzpQaDJVSjJXV2M0NzJxUDhFeXNzNVdGTk5hUnEiLCJrZXkiOiJkaWQ6a2V5Ono2TWt3VkJuOUo0c0JuYzFzOWE4NHg3bVZZV0JvaVhoQ3UzeWJ2dGZMcVhLWHJiYiIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+            "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "identity_key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb",
+            "issuer": "did:key:z6MkqCs8teyju7KANWAT8QtXe4jHn1eETEvVSPPUusZ3NEjL",
+            "origin": "https://approval.example.test",
+            "rp_id": "approval.example.test",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIP6FCSoq2J_JSVvSnG-u6JfmViBxyM4_rWZlvsbtEHvHIlggef-FS-hQRwf3LBhAchynBC2SRLNJfXkLCJJfOkJlpJs",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "HPd3IBmSjt51vtJ17P5moC7aH98MISrCBLwo_zNghL9kJlVJMnR0rn6lx5nhebecyR0PMW9u1edoLa3UaCODDA"
+        },
+        "id_chain": [],
+        "assertion": {
+          "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+          "client_data_json": "eyJjaGFsbGVuZ2UiOiJBMW5BSHhyRlFVWk9NWml2U1NldEV4MFoxZVJMTXhSaktJZkZBcHB4eGRvIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2FwcHJvdmFsLmV4YW1wbGUudGVzdCIsInR5cGUiOiJ3ZWJhdXRobi5nZXQifQ",
+          "authenticator_data": "IP2P_eNPmVCyHmB6JfFa1QjgGG3qkGDKFYeq0xCyjAAFAAAAAA",
+          "signature": "MEQCIEucGGLcJyCEXnu4A-i9swDSQEC11y3ctBVnWqvjM4AjAiB1RYK7OPZcPksq_QaI44Q-pjzMeOK0u42Jazo6CRfAqA"
+        }
+      },
+      "trust": {
+        "person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb",
+        "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "issuer": "did:key:z6MkqCs8teyju7KANWAT8QtXe4jHn1eETEvVSPPUusZ3NEjL",
+        "issuer_public_key": "n8CFoi28AlDgzx6j7Eqh9iaLHdBLyULsE9Ezs01m-VM",
+        "observed_at": 1100
+      },
+      "presenter": {
+        "kind": "identity",
+        "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+      },
+      "nonce_key": "ZW5mb3JjZXItb25seS1zZWNyZXQtMzItYnl0ZXMtbG9uZw",
+      "now": 1100,
+      "required_grade": "passkey_uv",
+      "expected_person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+      "expected_error": "request_mismatch"
+    },
+    {
+      "id": "policy-service-changed-after-approval",
+      "phase": "receipt",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": "organisation.human.add",
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "passkey"
+            },
+            "after": {
+              "service": "https://different.example.test",
+              "level": "none"
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "lB5osS7mYr4ZfPo_mg4g9JwItNEZEXQBJdufrhyNoUA"
+        }
+      },
+      "receipt": {
+        "version": 1,
+        "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjcsIm9wZXJhdGlvbiI6Im9yZ2FuaXNhdGlvbi5odW1hbl9hcHByb3ZhbC5jaGFuZ2UiLCJ0YXJnZXQiOnsiYWN0aW9uIjoib3JnYW5pc2F0aW9uLmh1bWFuLmFkZCIsImFmdGVyIjp7ImxldmVsIjoibm9uZSIsInNlcnZpY2UiOm51bGx9LCJiZWZvcmUiOnsibGV2ZWwiOiJwYXNza2V5Iiwic2VydmljZSI6Imh0dHBzOi8vYXBwcm92YWwuZXhhbXBsZS50ZXN0In0sIm9yZ2FuaXNhdGlvbiI6ImFkbWl0dGluZy5leGFtcGxlIn19LCJhcHByb3ZlciI6ImRpZDphdzpQaDJVSjJXV2M0NzJxUDhFeXNzNVdGTk5hUnEiLCJkZWFkbGluZSI6MTMwMCwiZGVmaW5pdGlvbiI6eyJpZCI6Im9yZ2FuaXNhdGlvbi5odW1hbl9hcHByb3ZhbC5jaGFuZ2UiLCJzaGEyNTYiOiI2YTgzYTVmMWE0MWE4YjdmZTBmODczZTUyMTgzN2E5ZDEzNmQxZjhkMDU5YWQ5ZTIwODU4ODk1NzU0YjdkYTZlIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoiaHR0cHM6Ly9jbG91ZC5leGFtcGxlLnRlc3QifSwibm9uY2UiOnsia2lkIjoiazEiLCJ2YWx1ZSI6ImxCNW9zUzdtWXI0WmZQb19tZzRnOUp3SXRORVpFWFFCSmR1ZnJoeU5vVUEifSwibm90X2JlZm9yZSI6MTAwMCwib3JnYW5pc2F0aW9uIjoiY3VzdG9tZXIuZXhhbXBsZSIsInB1cnBvc2UiOiJhY3RfYXBwcm92YWwiLCJyZXF1ZXN0ZXIiOnsiaWQiOiJkaWQ6YXc6UGgyVUoyV1djNDcycVA4RXlzczVXRk5OYVJxIiwia2V5IjoiZGlkOmtleTp6Nk1rd1ZCbjlKNHNCbmMxczlhODR4N21WWVdCb2lYaEN1M3lidnRmTHFYS1hyYmIiLCJraW5kIjoiaWRlbnRpdHkifSwidmVyc2lvbiI6MX0",
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+            "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "identity_key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb",
+            "issuer": "did:key:z6MkqCs8teyju7KANWAT8QtXe4jHn1eETEvVSPPUusZ3NEjL",
+            "origin": "https://approval.example.test",
+            "rp_id": "approval.example.test",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIP6FCSoq2J_JSVvSnG-u6JfmViBxyM4_rWZlvsbtEHvHIlggef-FS-hQRwf3LBhAchynBC2SRLNJfXkLCJJfOkJlpJs",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "HPd3IBmSjt51vtJ17P5moC7aH98MISrCBLwo_zNghL9kJlVJMnR0rn6lx5nhebecyR0PMW9u1edoLa3UaCODDA"
+        },
+        "id_chain": [],
+        "assertion": {
+          "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+          "client_data_json": "eyJjaGFsbGVuZ2UiOiJ1eXE5RWxuWnNPdkdaNGU1OEprOGxYU3dmTzcwaHFmWm9KdGlKNjd4bFBRIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2FwcHJvdmFsLmV4YW1wbGUudGVzdCIsInR5cGUiOiJ3ZWJhdXRobi5nZXQifQ",
+          "authenticator_data": "IP2P_eNPmVCyHmB6JfFa1QjgGG3qkGDKFYeq0xCyjAAFAAAAAA",
+          "signature": "MEUCIQDu9l0s2lolF7lu4FJRzEGpI_Jv0x2rxwKU57YBBNX3SQIgIq0X0kiO0MkaxqZ2cX9bR_yXYhfQDy02Kd2KsvwElQQ"
+        }
+      },
+      "trust": {
+        "person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb",
+        "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "issuer": "did:key:z6MkqCs8teyju7KANWAT8QtXe4jHn1eETEvVSPPUusZ3NEjL",
+        "issuer_public_key": "n8CFoi28AlDgzx6j7Eqh9iaLHdBLyULsE9Ezs01m-VM",
+        "observed_at": 1100
+      },
+      "presenter": {
+        "kind": "identity",
+        "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+      },
+      "nonce_key": "ZW5mb3JjZXItb25seS1zZWNyZXQtMzItYnl0ZXMtbG9uZw",
+      "now": 1100,
+      "required_grade": "passkey_uv",
+      "expected_person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+      "expected_error": "request_mismatch"
+    },
+    {
+      "id": "expired-admission",
+      "phase": "receipt",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.person.admit",
+          "version": 1,
+          "sha256": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787"
+        },
+        "act": {
+          "operation": "organisation.person.admit",
+          "target": {
+            "organisation": "admitting.example",
+            "person": "did:aw:3Xn1FPpLta6E8UYxASttoseuxrdY",
+            "role": "member"
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "l8mAVFN0uASLqt5vtaxE9XgdBcXUByrJahvE-QQpVBo"
+        }
+      },
+      "receipt": {
+        "version": 1,
+        "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjcsIm9wZXJhdGlvbiI6Im9yZ2FuaXNhdGlvbi5wZXJzb24uYWRtaXQiLCJ0YXJnZXQiOnsib3JnYW5pc2F0aW9uIjoiYWRtaXR0aW5nLmV4YW1wbGUiLCJwZXJzb24iOiJkaWQ6YXc6M1huMUZQcEx0YTZFOFVZeEFTdHRvc2V1eHJkWSIsInJvbGUiOiJtZW1iZXIifX0sImFwcHJvdmVyIjoiZGlkOmF3OlBoMlVKMldXYzQ3MnFQOEV5c3M1V0ZOTmFScSIsImRlYWRsaW5lIjoxMzAwLCJkZWZpbml0aW9uIjp7ImlkIjoib3JnYW5pc2F0aW9uLnBlcnNvbi5hZG1pdCIsInNoYTI1NiI6ImI5YzI4MzBkZjc3ZWMwNjljMDAzZDMyNTg0NjA2ZDQxMDcyNTdkMzE0YTVhOTA3MTFjZjJlN2M5MmJlYjk3ODciLCJ2ZXJzaW9uIjoxfSwiZW5mb3JjZXIiOnsiYXVkaWVuY2UiOiJodHRwczovL2Nsb3VkLmV4YW1wbGUudGVzdCJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibDhtQVZGTjB1QVNMcXQ1dnRheEU5WGdkQmNYVUJ5ckphaHZFLVFRcFZCbyJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImFjdF9hcHByb3ZhbCIsInJlcXVlc3RlciI6eyJpZCI6ImRpZDphdzpQaDJVSjJXV2M0NzJxUDhFeXNzNVdGTk5hUnEiLCJrZXkiOiJkaWQ6a2V5Ono2TWt3VkJuOUo0c0JuYzFzOWE4NHg3bVZZV0JvaVhoQ3UzeWJ2dGZMcVhLWHJiYiIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+            "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "identity_key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb",
+            "issuer": "did:key:z6MkqCs8teyju7KANWAT8QtXe4jHn1eETEvVSPPUusZ3NEjL",
+            "origin": "https://approval.example.test",
+            "rp_id": "approval.example.test",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIP6FCSoq2J_JSVvSnG-u6JfmViBxyM4_rWZlvsbtEHvHIlggef-FS-hQRwf3LBhAchynBC2SRLNJfXkLCJJfOkJlpJs",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "HPd3IBmSjt51vtJ17P5moC7aH98MISrCBLwo_zNghL9kJlVJMnR0rn6lx5nhebecyR0PMW9u1edoLa3UaCODDA"
+        },
+        "id_chain": [],
+        "assertion": {
+          "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+          "client_data_json": "eyJjaGFsbGVuZ2UiOiJBMW5BSHhyRlFVWk9NWml2U1NldEV4MFoxZVJMTXhSaktJZkZBcHB4eGRvIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2FwcHJvdmFsLmV4YW1wbGUudGVzdCIsInR5cGUiOiJ3ZWJhdXRobi5nZXQifQ",
+          "authenticator_data": "IP2P_eNPmVCyHmB6JfFa1QjgGG3qkGDKFYeq0xCyjAAFAAAAAA",
+          "signature": "MEQCIEucGGLcJyCEXnu4A-i9swDSQEC11y3ctBVnWqvjM4AjAiB1RYK7OPZcPksq_QaI44Q-pjzMeOK0u42Jazo6CRfAqA"
+        }
+      },
+      "trust": {
+        "person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb",
+        "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "issuer": "did:key:z6MkqCs8teyju7KANWAT8QtXe4jHn1eETEvVSPPUusZ3NEjL",
+        "issuer_public_key": "n8CFoi28AlDgzx6j7Eqh9iaLHdBLyULsE9Ezs01m-VM",
+        "observed_at": 1100
+      },
+      "presenter": {
+        "kind": "identity",
+        "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+      },
+      "nonce_key": "ZW5mb3JjZXItb25seS1zZWNyZXQtMzItYnl0ZXMtbG9uZw",
+      "now": 1300,
+      "required_grade": "passkey_uv",
+      "expected_person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+      "expected_error": "request_expired"
+    },
+    {
+      "id": "old-level-still-required",
+      "phase": "receipt",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.human_approval.change",
+          "version": 1,
+          "sha256": "6a83a5f1a41a8b7fe0f873e521837a9d136d1f8d059ad9e20858895754b7da6e"
+        },
+        "act": {
+          "operation": "organisation.human_approval.change",
+          "target": {
+            "organisation": "admitting.example",
+            "action": "organisation.human.add",
+            "before": {
+              "service": "https://approval.example.test",
+              "level": "passkey"
+            },
+            "after": {
+              "service": null,
+              "level": "none"
+            }
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "lB5osS7mYr4ZfPo_mg4g9JwItNEZEXQBJdufrhyNoUA"
+        }
+      },
+      "receipt": {
+        "version": 1,
+        "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjcsIm9wZXJhdGlvbiI6Im9yZ2FuaXNhdGlvbi5odW1hbl9hcHByb3ZhbC5jaGFuZ2UiLCJ0YXJnZXQiOnsiYWN0aW9uIjoib3JnYW5pc2F0aW9uLmh1bWFuLmFkZCIsImFmdGVyIjp7ImxldmVsIjoibm9uZSIsInNlcnZpY2UiOm51bGx9LCJiZWZvcmUiOnsibGV2ZWwiOiJwYXNza2V5Iiwic2VydmljZSI6Imh0dHBzOi8vYXBwcm92YWwuZXhhbXBsZS50ZXN0In0sIm9yZ2FuaXNhdGlvbiI6ImFkbWl0dGluZy5leGFtcGxlIn19LCJhcHByb3ZlciI6ImRpZDphdzpQaDJVSjJXV2M0NzJxUDhFeXNzNVdGTk5hUnEiLCJkZWFkbGluZSI6MTMwMCwiZGVmaW5pdGlvbiI6eyJpZCI6Im9yZ2FuaXNhdGlvbi5odW1hbl9hcHByb3ZhbC5jaGFuZ2UiLCJzaGEyNTYiOiI2YTgzYTVmMWE0MWE4YjdmZTBmODczZTUyMTgzN2E5ZDEzNmQxZjhkMDU5YWQ5ZTIwODU4ODk1NzU0YjdkYTZlIiwidmVyc2lvbiI6MX0sImVuZm9yY2VyIjp7ImF1ZGllbmNlIjoiaHR0cHM6Ly9jbG91ZC5leGFtcGxlLnRlc3QifSwibm9uY2UiOnsia2lkIjoiazEiLCJ2YWx1ZSI6ImxCNW9zUzdtWXI0WmZQb19tZzRnOUp3SXRORVpFWFFCSmR1ZnJoeU5vVUEifSwibm90X2JlZm9yZSI6MTAwMCwib3JnYW5pc2F0aW9uIjoiY3VzdG9tZXIuZXhhbXBsZSIsInB1cnBvc2UiOiJhY3RfYXBwcm92YWwiLCJyZXF1ZXN0ZXIiOnsiaWQiOiJkaWQ6YXc6UGgyVUoyV1djNDcycVA4RXlzczVXRk5OYVJxIiwia2V5IjoiZGlkOmtleTp6Nk1rd1ZCbjlKNHNCbmMxczlhODR4N21WWVdCb2lYaEN1M3lidnRmTHFYS1hyYmIiLCJraW5kIjoiaWRlbnRpdHkifSwidmVyc2lvbiI6MX0",
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+            "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "identity_key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb",
+            "issuer": "did:key:z6MkqCs8teyju7KANWAT8QtXe4jHn1eETEvVSPPUusZ3NEjL",
+            "origin": "https://approval.example.test",
+            "rp_id": "approval.example.test",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIP6FCSoq2J_JSVvSnG-u6JfmViBxyM4_rWZlvsbtEHvHIlggef-FS-hQRwf3LBhAchynBC2SRLNJfXkLCJJfOkJlpJs",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "HPd3IBmSjt51vtJ17P5moC7aH98MISrCBLwo_zNghL9kJlVJMnR0rn6lx5nhebecyR0PMW9u1edoLa3UaCODDA"
+        },
+        "id_chain": [],
+        "assertion": {
+          "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+          "client_data_json": "eyJjaGFsbGVuZ2UiOiJ1eXE5RWxuWnNPdkdaNGU1OEprOGxYU3dmTzcwaHFmWm9KdGlKNjd4bFBRIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2FwcHJvdmFsLmV4YW1wbGUudGVzdCIsInR5cGUiOiJ3ZWJhdXRobi5nZXQifQ",
+          "authenticator_data": "IP2P_eNPmVCyHmB6JfFa1QjgGG3qkGDKFYeq0xCyjAAFAAAAAA",
+          "signature": "MEUCIQDu9l0s2lolF7lu4FJRzEGpI_Jv0x2rxwKU57YBBNX3SQIgIq0X0kiO0MkaxqZ2cX9bR_yXYhfQDy02Kd2KsvwElQQ"
+        }
+      },
+      "trust": {
+        "person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb",
+        "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "issuer": "did:key:z6MkqCs8teyju7KANWAT8QtXe4jHn1eETEvVSPPUusZ3NEjL",
+        "issuer_public_key": "n8CFoi28AlDgzx6j7Eqh9iaLHdBLyULsE9Ezs01m-VM",
+        "observed_at": 1100
+      },
+      "presenter": {
+        "kind": "identity",
+        "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+      },
+      "nonce_key": "ZW5mb3JjZXItb25seS1zZWNyZXQtMzItYnl0ZXMtbG9uZw",
+      "now": 1100,
+      "required_grade": "certified_hardware",
+      "expected_person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+      "expected_error": "grade_insufficient"
+    },
+    {
+      "id": "different-presenter",
+      "phase": "receipt",
+      "accept": false,
+      "request": {
+        "version": 1,
+        "purpose": "act_approval",
+        "organisation": "customer.example",
+        "approver": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "requester": {
+          "kind": "identity",
+          "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+          "key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb"
+        },
+        "enforcer": {
+          "audience": "https://cloud.example.test"
+        },
+        "definition": {
+          "id": "organisation.person.admit",
+          "version": 1,
+          "sha256": "b9c2830df77ec069c003d32584606d4107257d314a5a90711cf2e7c92beb9787"
+        },
+        "act": {
+          "operation": "organisation.person.admit",
+          "target": {
+            "organisation": "admitting.example",
+            "person": "did:aw:3Xn1FPpLta6E8UYxASttoseuxrdY",
+            "role": "member"
+          },
+          "expected_revision": 7
+        },
+        "not_before": 1000,
+        "deadline": 1300,
+        "nonce": {
+          "kid": "k1",
+          "value": "l8mAVFN0uASLqt5vtaxE9XgdBcXUByrJahvE-QQpVBo"
+        }
+      },
+      "receipt": {
+        "version": 1,
+        "request_bytes": "eyJhY3QiOnsiZXhwZWN0ZWRfcmV2aXNpb24iOjcsIm9wZXJhdGlvbiI6Im9yZ2FuaXNhdGlvbi5wZXJzb24uYWRtaXQiLCJ0YXJnZXQiOnsib3JnYW5pc2F0aW9uIjoiYWRtaXR0aW5nLmV4YW1wbGUiLCJwZXJzb24iOiJkaWQ6YXc6M1huMUZQcEx0YTZFOFVZeEFTdHRvc2V1eHJkWSIsInJvbGUiOiJtZW1iZXIifX0sImFwcHJvdmVyIjoiZGlkOmF3OlBoMlVKMldXYzQ3MnFQOEV5c3M1V0ZOTmFScSIsImRlYWRsaW5lIjoxMzAwLCJkZWZpbml0aW9uIjp7ImlkIjoib3JnYW5pc2F0aW9uLnBlcnNvbi5hZG1pdCIsInNoYTI1NiI6ImI5YzI4MzBkZjc3ZWMwNjljMDAzZDMyNTg0NjA2ZDQxMDcyNTdkMzE0YTVhOTA3MTFjZjJlN2M5MmJlYjk3ODciLCJ2ZXJzaW9uIjoxfSwiZW5mb3JjZXIiOnsiYXVkaWVuY2UiOiJodHRwczovL2Nsb3VkLmV4YW1wbGUudGVzdCJ9LCJub25jZSI6eyJraWQiOiJrMSIsInZhbHVlIjoibDhtQVZGTjB1QVNMcXQ1dnRheEU5WGdkQmNYVUJ5ckphaHZFLVFRcFZCbyJ9LCJub3RfYmVmb3JlIjoxMDAwLCJvcmdhbmlzYXRpb24iOiJjdXN0b21lci5leGFtcGxlIiwicHVycG9zZSI6ImFjdF9hcHByb3ZhbCIsInJlcXVlc3RlciI6eyJpZCI6ImRpZDphdzpQaDJVSjJXV2M0NzJxUDhFeXNzNVdGTk5hUnEiLCJrZXkiOiJkaWQ6a2V5Ono2TWt3VkJuOUo0c0JuYzFzOWE4NHg3bVZZV0JvaVhoQ3UzeWJ2dGZMcVhLWHJiYiIsImtpbmQiOiJpZGVudGl0eSJ9LCJ2ZXJzaW9uIjoxfQ",
+        "binding": {
+          "binding": {
+            "version": 1,
+            "organisation": "customer.example",
+            "person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+            "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "identity_key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb",
+            "issuer": "did:key:z6MkqCs8teyju7KANWAT8QtXe4jHn1eETEvVSPPUusZ3NEjL",
+            "origin": "https://approval.example.test",
+            "rp_id": "approval.example.test",
+            "credentials": [
+              {
+                "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+                "key": "pQECAyYgASFYIP6FCSoq2J_JSVvSnG-u6JfmViBxyM4_rWZlvsbtEHvHIlggef-FS-hQRwf3LBhAchynBC2SRLNJfXkLCJJfOkJlpJs",
+                "algorithm": -7,
+                "grade": "passkey_uv",
+                "snapshot": null,
+                "grade_policy": "uv-v1"
+              }
+            ]
+          },
+          "signature": "HPd3IBmSjt51vtJ17P5moC7aH98MISrCBLwo_zNghL9kJlVJMnR0rn6lx5nhebecyR0PMW9u1edoLa3UaCODDA"
+        },
+        "id_chain": [],
+        "assertion": {
+          "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+          "client_data_json": "eyJjaGFsbGVuZ2UiOiJBMW5BSHhyRlFVWk9NWml2U1NldEV4MFoxZVJMTXhSaktJZkZBcHB4eGRvIiwiY3Jvc3NPcmlnaW4iOmZhbHNlLCJvcmlnaW4iOiJodHRwczovL2FwcHJvdmFsLmV4YW1wbGUudGVzdCIsInR5cGUiOiJ3ZWJhdXRobi5nZXQifQ",
+          "authenticator_data": "IP2P_eNPmVCyHmB6JfFa1QjgGG3qkGDKFYeq0xCyjAAFAAAAAA",
+          "signature": "MEQCIEucGGLcJyCEXnu4A-i9swDSQEC11y3ctBVnWqvjM4AjAiB1RYK7OPZcPksq_QaI44Q-pjzMeOK0u42Jazo6CRfAqA"
+        }
+      },
+      "trust": {
+        "person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "organisation": "customer.example",
+        "identity_key": "did:key:z6MkwVBn9J4sBnc1s9a84x7mVYWBoiXhCu3ybvtfLqXKXrbb",
+        "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "issuer": "did:key:z6MkqCs8teyju7KANWAT8QtXe4jHn1eETEvVSPPUusZ3NEjL",
+        "issuer_public_key": "n8CFoi28AlDgzx6j7Eqh9iaLHdBLyULsE9Ezs01m-VM",
+        "observed_at": 1100
+      },
+      "presenter": {
+        "kind": "identity",
+        "id": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+        "key": "wrong-key"
+      },
+      "nonce_key": "ZW5mb3JjZXItb25seS1zZWNyZXQtMzItYnl0ZXMtbG9uZw",
+      "now": 1100,
+      "required_grade": "passkey_uv",
+      "expected_person": "did:aw:Ph2UJ2WWc472qP8Eyss5WFNNaRq",
+      "expected_error": "requester_mismatch"
+    }
+  ]
+}
