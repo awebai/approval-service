@@ -8,6 +8,7 @@ from importlib.resources import files
 import asyncpg
 import pytest
 from pgdbm import AsyncMigrationManager
+from pgdbm.errors import QueryError
 
 from approval_service.store import Store
 
@@ -62,7 +63,7 @@ async def test_upgrade_discards_raw_attestation_and_unused_registration_challeng
         assert not await store.db.fetch_all(
             "SELECT * FROM {{tables.approval_challenges}}"
         )
-        with pytest.raises(asyncpg.CheckViolationError) as refused:
+        with pytest.raises(QueryError) as refused:
             await store.db.execute(
                 """INSERT INTO {{tables.approval_challenges}}
                 (challenge_id,organisation,person_id,purpose,challenge,issued_at,
@@ -71,7 +72,9 @@ async def test_upgrade_discards_raw_attestation_and_unused_registration_challeng
                        1000,1100,'locator')""",
                 b"challenge",
             )
-        assert refused.value.constraint_name == "approval_challenges_purpose_check"
+        cause = refused.value.__cause__
+        assert isinstance(cause, asyncpg.CheckViolationError)
+        assert cause.constraint_name == "approval_challenges_purpose_check"
         for purpose in ("login", "approval"):
             await store.db.execute(
                 """INSERT INTO {{tables.approval_challenges}}
