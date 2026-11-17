@@ -94,7 +94,11 @@ are continuing requirements, not a one-time setup or a silent downgrade path.
 Run `uv run awsign migrate`, then `uv run awsign serve --bind 127.0.0.1 --port 8030`.
 Disable proxy request-body logging. The process disables access logs, serves
 only local browser assets and adds a restrictive CSP, no-store responses and
-secure HttpOnly SameSite cookies. Its bounded expiry worker erases terminal act
+secure HttpOnly SameSite cookies. Pending registration material, including raw
+attestation, is kept only until activation or deletion of the pending enrollment.
+Activation erases that material; no separate attestation copy is retained. Run
+`awsign migrate` before starting the service to remove legacy attestation copies.
+Its bounded expiry worker erases terminal act
 bytes and expired assertion slots; unactivated pending enrollments expire too.
 `GET /health` includes the metadata expiry warning for the operator monitor.
 

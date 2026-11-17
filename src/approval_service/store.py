@@ -179,22 +179,6 @@ class Store:
         )
         return [request_row(row) for row in rows]
 
-    async def refuse(self, operation_id, person_id, outcome, now, *, organisation):
-        if outcome not in ("denied", "cancelled"):
-            raise StoreRefused("invalid_outcome")
-        async with self.transaction() as tx:
-            row = await tx.fetch_one(
-                "SELECT * FROM {{tables.approval_requests}} WHERE organisation=$1 AND person_id=$2 AND operation_id=$3 FOR UPDATE",
-                organisation,
-                person_id,
-                operation_id,
-            )
-            if row is None:
-                raise StoreRefused("request_not_found")
-            if now >= row["deadline"]:
-                return await self._expire(tx, row, now)
-            return await self._terminal(tx, row, outcome, now)
-
     async def poll(
         self, operation_id, digest, requester_hash, now, *, organisation, person_id
     ):
@@ -217,14 +201,6 @@ class Store:
             **row,
             "receipt_available": row["assertion"] is not None and now < row["deadline"],
         }
-
-    async def audit(self, operation_id, *, organisation, person_id):
-        return await self.db.fetch_all(
-            "SELECT digest,person_id,organisation,decided_at,outcome FROM {{tables.approval_audit}} WHERE organisation=$1 AND person_id=$2 AND operation_id=$3",
-            organisation,
-            person_id,
-            operation_id,
-        )
 
     async def cleanup(self, now):
         async with self.transaction() as tx:

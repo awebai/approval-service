@@ -3,6 +3,7 @@
 import pytest
 
 from approval_service.store import StoreRefused
+from approval_service.verify import Refused
 
 
 async def submit(store, key, number, *, created=1000, deadline=1500):
@@ -58,7 +59,7 @@ async def test_old_terminal_requests_pruned_but_audit_and_recent_requests_surviv
     assert await ceremonies.deny(
         trust.person, "operation", session["session"], session["csrf"], trust, requester
     ) == {"state": "denied"}
-    with pytest.raises(ValueError):
+    with pytest.raises(Refused, match="request_expired"):
         await ceremonies.deny(
             trust.person,
             "operation",

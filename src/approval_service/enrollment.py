@@ -333,15 +333,14 @@ class Enrollments:
                     raise Refused("credential_limit")
                 await tx.execute(
                     """INSERT INTO {{tables.approval_credentials}}
-                    (person_id,credential_id,public_key,sign_count,grade,snapshot,attestation,registration,client_extension_results,binding_entry,organisation,enrollment_locator)
-                    VALUES($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10::jsonb,$11,$12)""",
+                    (person_id,credential_id,public_key,sign_count,grade,snapshot,registration,client_extension_results,binding_entry,organisation,enrollment_locator)
+                    VALUES($1,$2,$3,$4,$5,$6,$7::jsonb,$8::jsonb,$9::jsonb,$10,$11)""",
                     row["person_id"],
                     checked.credential_id,
                     checked.public_key,
                     checked.sign_count,
                     checked.grade,
                     checked.snapshot,
-                    checked.attestation,
                     json.dumps(registration),
                     json.dumps(extensions),
                     json.dumps(checked.binding_entry()),
