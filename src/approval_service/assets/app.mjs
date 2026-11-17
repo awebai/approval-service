@@ -28,14 +28,14 @@ async function get(options) {
   if (publicKey.allowCredentials) publicKey.allowCredentials = publicKey.allowCredentials.map(c => ({...c, id: bytes(c.id)}));
   return navigator.credentials.get({publicKey});
 }
-function show(label, value, parent, technical = true) {
+function show(label, value, parent) {
   const title = document.createElement('p'); title.textContent = label; parent.append(title);
-  const content = document.createElement('pre'); content.textContent = technical ? JSON.stringify(value, null, 2) : value; parent.append(content);
+  const content = document.createElement('pre'); content.textContent = typeof value === 'string' ? value : JSON.stringify(value, null, 2); parent.append(content);
 }
 function display(item) {
   const box = document.createElement('article');
   const heading = document.createElement('h2'); heading.textContent = item.display.heading; box.append(heading);
-  show('What this approves', item.display.consequence, box, false);
+  show('What this approves', item.display.consequence, box);
   show('Requester', item.request.requester, box);
   show('Enforcer', item.request.enforcer.audience, box);
   show('Organisation', item.request.organisation, box);
