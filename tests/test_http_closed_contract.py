@@ -56,6 +56,7 @@ def signed_submit_body(*, kind="team_member", chain=None):
     )
     r.update(
         requester=descriptor,
+        enforcer={"audience": "https://holder.example.test"},
         not_before=int(time.time()) - 1,
         deadline=int(time.time()) + 120,
     )

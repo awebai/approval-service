@@ -22,7 +22,13 @@ from approval_service.verify import Refused
 from approval_service.wire import domain
 
 from .test_ceremonies import login_assertion
-from .test_enrollment import ORIGIN, RP, enroll_person, enrollment_world
+from .test_enrollment import (
+    ORIGIN,
+    RP,
+    creation_status,
+    enroll_person,
+    enrollment_world,
+)
 
 
 def replacement_intent(trust, binding, *, purpose="replace_person_keys"):
@@ -133,7 +139,14 @@ async def pending_ceremony(service, intent, issuer, caller, w, *, current=None):
         int(time.time()),
     )
     started = await service.start(
-        intent, issuer=public, requester=caller, current=current
+        intent,
+        issuer=public,
+        requester=caller,
+        current=current,
+        observation=creation_status(intent)
+        if intent["intent"]["purpose"] == "enroll_person"
+        and "previous_binding_commitment" not in intent["intent"]
+        else None,
     )
     opened = await service.browser_options(started["locator"])
     raw, _ = Vendor().registration(

@@ -86,7 +86,6 @@ async def test_denial_or_expiry_never_stores_assertion_or_renews_deadline(store)
             own,
             1200,
             organisation="customer.example",
-            requester_key="one-test-key",
             person_id="person-p",
         )
     )["request_bytes"] is None
@@ -97,7 +96,6 @@ async def test_denial_or_expiry_never_stores_assertion_or_renews_deadline(store)
             own,
             1200,
             organisation="customer.example",
-            requester_key="one-test-key",
             person_id="person-p",
         )
     )["assertion"] is None
@@ -131,7 +129,6 @@ async def test_parallel_polls_reuse_a_bounded_pool_without_read_transactions(sto
                 own,
                 1100,
                 organisation="customer.example",
-                requester_key="one-test-key",
                 person_id="person-p",
             )
             for _ in range(40)
