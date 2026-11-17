@@ -64,7 +64,6 @@ class RegisteredCredential:
     sign_count: int
     grade: str
     snapshot: str | None
-    attestation: bytes = field(repr=False)
     client_data_json: bytes = field(repr=False)
 
     def binding_entry(self):
@@ -318,7 +317,6 @@ def check_registration(
             verified.sign_count,
             "certified_hardware" if hardware else "passkey_uv",
             "sha256:" + snapshot.digest if hardware else None,
-            raw,
             client,
         )
     except Refused:

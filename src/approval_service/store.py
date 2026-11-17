@@ -7,6 +7,7 @@ import re
 import time
 from importlib.resources import files
 
+from asyncpg import UndefinedTableError
 from pgdbm import AsyncDatabaseManager, AsyncMigrationManager, DatabaseConfig
 
 
@@ -45,12 +46,25 @@ class Store:
     async def close(self):
         await self.db.disconnect()
 
-    async def migrate(self):
-        return await AsyncMigrationManager(
+    def _migrations(self):
+        return AsyncMigrationManager(
             self.db,
             migrations_path=str(files("approval_service").joinpath("migrations")),
             module_name="awsign",
-        ).apply_pending_migrations()
+        )
+
+    async def migrate(self):
+        return await self._migrations().apply_pending_migrations()
+
+    async def require_current_schema(self):
+        try:
+            pending = await self._migrations().get_pending_migrations()
+        except UndefinedTableError as exc:
+            raise RuntimeError(
+                "Run awsign migrate before starting this service"
+            ) from exc
+        if pending:
+            raise RuntimeError("Run awsign migrate before starting this service")
 
     def transaction(self):
         return self.db.transaction()

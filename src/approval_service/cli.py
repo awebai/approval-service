@@ -43,12 +43,7 @@ async def operate(args):
             await store.migrate()
             return
         # Refuse startup without the current schema; a server never applies it.
-        row = await store.db.fetch_one(
-            "SELECT count(*) AS n FROM {{tables.schema_migrations}} WHERE module_name='awsign' AND filename=$1",
-            "001_initial.sql",
-        )
-        if row["n"] != 1:
-            raise RuntimeError("Run awsign migrate before starting this service")
+        await store.require_current_schema()
         origin = os.environ.get("AWSIGN_ORIGIN", "https://awsign.com")
         rp_id = os.environ.get("AWSIGN_RP_ID", "awsign.com")
         grading = await asyncio.to_thread(
