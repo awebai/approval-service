@@ -419,3 +419,65 @@ def test_attested_registration_without_hardware_metadata_refuses():
             rp_id="approval.example.test",
             now=NOW,
         )
+
+
+@pytest.mark.parametrize(
+    "protection, grade",
+    [
+        (["hardware"], "certified_hardware"),
+        (["secure_element"], "certified_hardware"),
+        (["hardware", "secure_element", "remote_handle"], "certified_hardware"),
+        (["hardware", "tee"], "certified_hardware"),
+        (["software"], "passkey_uv"),
+        (["hardware", "software"], "passkey_uv"),
+        (["secure_element", "software"], "passkey_uv"),
+        (None, "passkey_uv"),
+        ([], "passkey_uv"),
+        (["unknown"], "passkey_uv"),
+        (["hardware", "unknown"], "passkey_uv"),
+        (["tee"], "passkey_uv"),
+        (["remote_handle"], "passkey_uv"),
+        ("hardware", "passkey_uv"),
+        ([None], "passkey_uv"),
+        ([{}], "passkey_uv"),
+    ],
+)
+def test_attested_certified_model_requires_hardware_key_protection(protection, grade):
+    vendor = Vendor()
+    entry = vendor.entry()
+    if protection is None:
+        del entry["metadataStatement"]["keyProtection"]
+    else:
+        entry["metadataStatement"]["keyProtection"] = protection
+    response, challenge = vendor.registration()
+    result = check(response, challenge, vendor.snapshot([entry]))
+    assert result.grade == grade
+    assert (result.snapshot is not None) == (grade == "certified_hardware")
+
+
+@pytest.mark.parametrize(
+    "aaguid, grade",
+    [
+        ("6028b017-b1d4-4c02-b4b3-afcdafc96bb2", "passkey_uv"),
+        ("fa2b99dc-9e39-4257-8f92-4a30d23c4118", "certified_hardware"),
+    ],
+)
+def test_published_mds_key_protection_fields_go_through_registration(aaguid, grade):
+    import json
+    from pathlib import Path
+
+    # Exact protection fields from the public MDS entries; the remaining model,
+    # root and registration are the synthetic vendor's. This tests grading,
+    # not a physical Windows Hello or YubiKey registration. Full blobs stay
+    # outside Git; the excerpt records the source blob and complete entry hash.
+    published = json.loads(
+        (Path(__file__).parent / "fixtures/mds-key-protection.json").read_text()
+    )
+    model = next(e for e in published["entries"] if e["aaguid"] == aaguid)
+    vendor = Vendor()
+    entry = vendor.entry()
+    entry["metadataStatement"]["keyProtection"] = model["keyProtection"]
+    response, challenge = vendor.registration()
+    result = check(response, challenge, vendor.snapshot([entry]))
+    assert result.grade == grade
+    assert (result.snapshot is not None) == (grade == "certified_hardware")

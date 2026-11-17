@@ -185,6 +185,7 @@ class Vendor:
             "aaguid": aaguid,
             "metadataStatement": {
                 "attestationTypes": ["basic_full"],
+                "keyProtection": ["hardware"],
                 "attestationRootCertificates": [
                     base64.b64encode(self.root.public_bytes(Encoding.DER)).decode()
                 ],

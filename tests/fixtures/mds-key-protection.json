@@ -1,0 +1,24 @@
+{
+  "source": "https://mds3.fidoalliance.org/",
+  "blob_sha256": "d2ad4e42a8afbd74a34b3e997ae46d43df9e046f8a5bf1feda97206d8c84e0bb",
+  "sequence": 302,
+  "entries": [
+    {
+      "aaguid": "6028b017-b1d4-4c02-b4b3-afcdafc96bb2",
+      "description": "Windows Hello Software Authenticator",
+      "keyProtection": [
+        "software"
+      ],
+      "entry_sha256": "25ae4a2a5cf7fdc72e4834bb34b0b98f398ccb6c177e5ca5262e5c2b3974be07"
+    },
+    {
+      "aaguid": "fa2b99dc-9e39-4257-8f92-4a30d23c4118",
+      "description": "YubiKey 5 Series with NFC",
+      "keyProtection": [
+        "hardware",
+        "secure_element"
+      ],
+      "entry_sha256": "24aaad1aef62e05f67504656f9003b2038c04479ee2c8c88ad5b676237398593"
+    }
+  ]
+}
