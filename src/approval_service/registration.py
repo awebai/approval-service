@@ -167,6 +167,15 @@ def _hardware(snapshot, entry, chain, aaguid, firmware, has_aaguid, fmt, now):
     if snapshot is None or entry is None or not chain:
         return False
     statement = entry.get("metadataStatement", {})
+    protection = statement.get("keyProtection")
+    policy = POLICY["key_protection"]
+    if (
+        not isinstance(protection, list)
+        or any(not isinstance(value, str) for value in protection)
+        or not set(protection).issubset(policy["allowed"])
+        or not set(protection).intersection(policy["required_any"])
+    ):
+        return False
     if not set(statement.get("attestationTypes", [])).intersection(
         {"basic_full", "attca"}
     ):

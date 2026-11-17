@@ -83,8 +83,9 @@ The default pins record snapshot 301 (retrieved 2026-11-15, next update 2026-12-
 its CRLs have their own earlier deadlines. Operators must replace the reviewed
 pins and refresh before any input expires; there is no automatic downgrade.
 Ordinary tests use real signatures under a synthetic vendor trust anchor and
-exercise an actual HTTPS fetch. They distribute no FIDO data. To check the real
-downloaded pinned artifact as of its recorded date:
+exercise an actual HTTPS fetch. Only selected public key-protection fields are
+included as test fixtures; full FIDO blobs remain outside the repository. To check
+the real downloaded pinned artifact as of its recorded date:
 
 ```sh
 APPROVAL_MDS_CACHE=/private/path/mds-cache uv run pytest -q artifact_tests
