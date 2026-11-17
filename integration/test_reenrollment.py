@@ -211,6 +211,7 @@ async def approve_transition(store, actor, request, caller):
         int(time.time()),
         request["deadline"],
         organisation=trust.organisation,
+        requester_key=caller.key,
     )
     options = await ceremonies.approval_options(
         trust.person, locator, session["session"], session["csrf"], trust, caller

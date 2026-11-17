@@ -120,34 +120,14 @@ certificate-status SDK dependency.
 Pending enrollment links are bearer capabilities; follow the issuer's
 [delivery and registration-count checks](docs/deployment.md#enrollment-link-handling).
 
-## Re-enrollment and lost approval keys
+## Lost approval keys
 
-A pending replacement has a fresh user handle, browser window and credential
-set beside the active enrollment. It cannot sign in or approve ordinary acts.
-The issuer prepares the AFTER binding, obtains the normal prior-key or helper
-approval over the exact BEFORE/AFTER target, applies its own rule and nonce,
-then commits the new identity key and signed evidence. Activation observes that
-committed identity, checks both proofs and the service's own credential grades,
-and atomically retires the old generation and its sessions. Expiring an
-unfinished attempt leaves the old generation usable. Historical receipt recovery
-still returns the binding originally selected at decision. An activated
-generation's issuer-signed evidence is immutable on retry; a new signature by
-a retired BEFORE key cannot relabel assisted history as unbroken.
+Replacing a lost enrolled key is not implemented; today a person who loses their only enrolled key is issued a new ID by the operator and enrols again, and the old ID is revoked. Enrol two keys.
 
-When every approval key is lost, the identity key can still sign its ordinary
-rotation. Recovery enrollment requires that new key to be current for the SAME
-stable person ID. Its evidence says `recreated` and records a new recovery
-creation event, never an unbroken continuation or an inherited old grade. An
-organisation key alone cannot move an existing ID. Losing the identity key too
-requires revoking that ID and creating a new one.
-
-The `enrollment-lifecycle-v1` vectors cover the shared Python/Go activation
-checks. Previous enrollment state and historical transition Trust are checked
-inputs, not receipt-supplied authority. The service takes them from previously
-committed binding versions. Unavailable prior E can be supplied as the
-issuer-authenticated saved public statement from its requester; it does not
-reconstruct it from an act archive. Recovery can explicitly record unavailable
-prior history while starting a new evidence history after the break.
+The shared lifecycle checkers preserve existing `unbroken`, `assisted` and
+`recreated` evidence semantics. They do not provide an issuer replacement
+workflow. Old saved receipts remain historical proofs under explicit as-of
+Trust; they cannot supply current approval authority.
 
 Activation alone also accepts the exact target person's current identity key
 as authenticated carrier after rotation. `carrier` names that identity in the
@@ -181,3 +161,17 @@ replace that Git pin with the released `awid-service` version. Requester routes
 also apply an operator-configured per-IP budget before processing input.
 For metadata renewal without restarting, install reviewed pins in
 `AWSIGN_MDS_MANIFEST`; see [deployment](docs/deployment.md#installing-metadata-without-restarting).
+
+Ordinary act submissions last at most 10 minutes; enrollment confirmation keeps
+its separate 24-hour window. The service quotes caller identifiers as technical
+data and accepts only an HTTPS origin for the enforcer. Pending budgets and
+queue interleaving follow the actual signing key, rather than its descriptor.
+Terminal requests are pruned after 30 days; expired sessions and challenges
+are removed by cleanup, at most 30 days after their deadline.
+Enrollment confirmation state, signed bindings, evidence and outcome audit are
+retained; pruning cannot erase an approved confirmation needed for activation.
+
+Issuer and service independently grade each registration. The issuer may claim
+a weaker grade, and two valid hardware snapshots may differ; the service refuses
+a grade beyond its own assessment. A missing or expired hardware list still
+refuses attested enrollment rather than silently lowering its grade.

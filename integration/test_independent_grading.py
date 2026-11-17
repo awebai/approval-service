@@ -3,7 +3,6 @@
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from vendor import Vendor, signed_metadata
 
 from approval_service.grading import EnrollmentGrading
 from approval_service.metadata import load_snapshot
@@ -17,6 +16,8 @@ from .test_enrollment import confirmed_person
 async def test_independent_grading_can_activate_a_weaker_or_different_snapshot(
     store, issuer_hardware
 ):
+    from vendor import Vendor, signed_metadata
+
     vendor = Vendor()
     now = datetime.now(UTC)
     service_snapshot = load_snapshot(
@@ -50,11 +51,13 @@ async def test_independent_grading_can_activate_a_weaker_or_different_snapshot(
     entry = p["binding"]["binding"]["credentials"][0]
     assert entry["grade"] == ("certified_hardware" if issuer_hardware else "passkey_uv")
     if issuer_hardware:
-        assert entry["snapshot"] != service_snapshot.digest
+        assert entry["snapshot"] != "sha256:" + service_snapshot.digest
 
 
 @pytest.mark.asyncio
 async def test_issuer_cannot_upgrade_beyond_the_services_assessment(store):
+    from vendor import Vendor, signed_metadata
+
     vendor = Vendor()
     now = datetime.now(UTC)
     issuer_snapshot = load_snapshot(

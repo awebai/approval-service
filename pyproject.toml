@@ -40,4 +40,4 @@ asyncio_default_fixture_loop_scope = "function"
 [tool.uv]
 # This root-only development pin is ignored by projects consuming this library.
 # Replace it with the released SDK version at server release.
-override-dependencies = ["awid-service @ git+https://github.com/awebai/aweb.git@9bbdd365d85ad6d476663a1484fe3060bb2b9679#subdirectory=awid"]
+override-dependencies = ["awid-service @ git+https://github.com/awebai/aweb.git@429eb19c510a2742d4f58f437c501a1024510fb9#subdirectory=awid"]

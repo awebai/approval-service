@@ -68,3 +68,52 @@ async def test_old_terminal_requests_pruned_but_audit_and_recent_requests_surviv
     assert (await store.pending("person", organisation="example.test", now=cutoff))[0][
         "operation_id"
     ] == "recent-0"
+
+
+@pytest.mark.asyncio
+async def test_cleanup_removes_expired_sessions_and_challenges_but_keeps_enrollment(
+    store,
+):
+    import time
+
+    from approval_service.ceremonies import Ceremonies
+
+    from .test_ceremonies import active_port, login_assertion
+
+    world, trust, requester = await active_port(store)
+    ceremonies = Ceremonies(
+        store, origin="https://approval.example.test", rp_id="approval.example.test"
+    )
+    options = await ceremonies.login_options()
+    session = await ceremonies.finish_login(
+        options["id"], login_assertion(world, options), world["user_handle"], trust
+    )
+    await ceremonies.approval_options(
+        trust.person, "operation", session["session"], session["csrf"], trust, requester
+    )
+    await store.cleanup(int(time.time()) + 31 * 86400)
+    assert (
+        await store.db.fetch_one(
+            "SELECT count(*) AS n FROM {{tables.approval_sessions}}"
+        )
+    )["n"] == 0
+    assert (
+        await store.db.fetch_one(
+            "SELECT count(*) AS n FROM {{tables.approval_challenges}}"
+        )
+    )["n"] == 0
+    assert (
+        await store.db.fetch_one(
+            "SELECT count(*) AS n FROM {{tables.approval_enrollments}} WHERE state='active'"
+        )
+    )["n"] == 1
+    assert (
+        await store.db.fetch_one(
+            "SELECT count(*) AS n FROM {{tables.approval_binding_versions}}"
+        )
+    )["n"] == 1
+    assert (
+        await store.db.fetch_one(
+            "SELECT count(*) AS n FROM {{tables.approval_requests}} WHERE outcome='approved'"
+        )
+    )["n"] == 1

@@ -20,6 +20,7 @@ from webauthn.helpers.exceptions import WebAuthnException
 from .canonical import canonical, parse
 from .client_data import verify_client_data
 from .encoding import decode, encode
+from .registration import require_supported_entry
 from .verify import Refused, verify_historical
 from .wire import domain, validate, validate_site
 
@@ -489,16 +490,9 @@ class Ceremonies:
                 selected = next(
                     c for c in body["credentials"] if c["id"] == assertion["id"]
                 )
-                if (
-                    decode(selected["key"]),
-                    selected["grade"],
-                    selected["snapshot"],
-                ) != (
-                    bytes(credential["public_key"]),
-                    credential["grade"],
-                    credential["snapshot"],
-                ):
-                    raise Refused("binding_credential_mismatch")
+                require_supported_entry(
+                    json.loads(credential["binding_entry"]), selected
+                )
                 counter = self._assertion(assertion, credential, challenge["challenge"])
                 self._bounds(
                     int(time.time()),

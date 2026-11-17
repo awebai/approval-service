@@ -21,6 +21,7 @@ from .ceremonies import Ceremonies
 from .ceremonies import commitment as token_commitment
 from .definitions import check_definition
 from .encoding import decode, encode
+from .registration import require_supported_entry
 from .seams import (
     _creation_assertion,
     check_activation,
@@ -154,7 +155,7 @@ class Enrollments:
         async with self.store.transaction() as tx:
             await tx.execute(
                 "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
-                requester.commitment,
+                requester.key,
             )
             await tx.execute(
                 "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
@@ -228,16 +229,16 @@ class Enrollments:
                     raise Refused("enrollment_identity_mismatch")
             if old is None:
                 count = await tx.fetch_one(
-                    "SELECT count(*) AS n FROM {{tables.approval_enrollments}} WHERE requester_hash=$1 AND state='pending' AND deadline>$2",
-                    requester.commitment,
+                    "SELECT count(*) AS n FROM {{tables.approval_enrollments}} WHERE requester_key=$1 AND state='pending' AND deadline>$2",
+                    requester.key,
                     int(time.time()),
                 )
                 if count["n"] >= 32:
                     raise Refused("pending_limit")
                 old = await tx.fetch_one(
                     """INSERT INTO {{tables.approval_enrollments}}
-                    (person_id,organisation,identity_key,certificate,issuer,user_handle,deadline,state,enrollment_locator,intent,requester_hash,previous_locator)
-                    VALUES($1,$2,$3,$4,$5,$6,$7,'pending',$8,$9::jsonb,$10,$11) RETURNING *""",
+                    (person_id,organisation,identity_key,certificate,issuer,user_handle,deadline,state,enrollment_locator,intent,requester_hash,previous_locator,requester_key)
+                    VALUES($1,$2,$3,$4,$5,$6,$7,'pending',$8,$9::jsonb,$10,$11,$12) RETURNING *""",
                     i["person"],
                     i["organisation"],
                     checked["identity_key"],
@@ -249,6 +250,7 @@ class Enrollments:
                     json.dumps(intent),
                     requester.commitment,
                     None if active is None else active["enrollment_locator"],
+                    requester.key,
                 )
             elif (
                 old["enrollment_locator"] != checked["locator"]
@@ -391,11 +393,10 @@ class Enrollments:
         )
         entries = sorted(binding["binding"]["credentials"], key=lambda c: c["id"])
         credentials = sorted(credentials, key=lambda c: c["credential_id"])
-        if (
-            not credentials
-            or [json.loads(c["binding_entry"]) for c in credentials] != entries
-        ):
+        if not credentials or len(credentials) != len(entries):
             raise Refused("binding_credential_mismatch")
+        for credential, entry in zip(credentials, entries, strict=True):
+            require_supported_entry(json.loads(credential["binding_entry"]), entry)
         return credentials
 
     async def confirm(self, body, *, issuer, requester, current=None):
@@ -483,8 +484,8 @@ class Enrollments:
                 row["enrollment_locator"],
             )
             await tx.execute(
-                """INSERT INTO {{tables.approval_requests}}(operation_id,digest,requester_hash,person_id,request_bytes,created_at,deadline,organisation)
-                VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT DO NOTHING""",
+                """INSERT INTO {{tables.approval_requests}}(operation_id,digest,requester_hash,person_id,request_bytes,created_at,deadline,organisation,requester_key)
+                VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT DO NOTHING""",
                 locator,
                 checked["digest"],
                 requester.commitment,
@@ -493,6 +494,7 @@ class Enrollments:
                 r["not_before"],
                 r["deadline"],
                 row["organisation"],
+                requester.key,
             )
             request = await tx.fetch_one(
                 "SELECT * FROM {{tables.approval_requests}} WHERE operation_id=$1 AND organisation=$2 AND person_id=$3 FOR UPDATE",

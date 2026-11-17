@@ -2,7 +2,7 @@
 
 import httpx
 import pytest
-from awid.did import did_from_public_key, generate_keypair
+from awid.did import did_from_public_key, generate_keypair, stable_id_from_did_key
 from awid.registry import RegistryClient
 
 from approval_service.grading import EnrollmentGrading
@@ -109,7 +109,12 @@ async def test_one_signing_key_cannot_reset_its_budget_with_identity_descriptors
         ) as client:
             for n in range(100):
                 r = copy.deepcopy(original)
-                r["requester"]["id"] = "did:aw:alias-" + str(n)
+                r["requester"]["id"] = stable_id_from_did_key(
+                    did_from_public_key(generate_keypair()[1])
+                )
+                r["enforcer"]["audience"] = "https://holder.example.test"
+                r["not_before"] = int(time.time()) - 1
+                r["deadline"] = int(time.time()) + 120
                 body = canonical(
                     {
                         **packet,

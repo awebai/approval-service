@@ -13,8 +13,10 @@ import time
 from collections import OrderedDict
 from contextlib import asynccontextmanager
 from importlib.resources import files
+from urllib.parse import urlsplit
 
 from asyncpg import UniqueViolationError
+from awid.did import public_key_from_did, validate_stable_id
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 from jsonschema import ValidationError
@@ -276,6 +278,26 @@ def create_app(store, *, public, origin, rp_id, grading, requests_per_ip=600):
             if purpose in ("poll", "enrollment_material", "enrollment_confirm")
             else 32,
         )
+        if purpose == "submit":
+            if r["purpose"] == "act_approval" and r["deadline"] - r["not_before"] > 600:
+                raise Refused("request_lifetime_invalid")
+            try:
+                audience = r["enforcer"]["audience"]
+                validate_site(audience, urlsplit(audience).hostname)
+            except (ValueError, TypeError, ValidationError) as error:
+                raise Refused("enforcer_origin_invalid") from error
+            pending = [r["act"]["target"]]
+            try:
+                while pending:
+                    for name, value in pending.pop().items():
+                        if name == "person":
+                            validate_stable_id(value)
+                        elif name == "identity_key":
+                            public_key_from_did(value)
+                        elif isinstance(value, dict):
+                            pending.append(value)
+            except (ValueError, TypeError) as error:
+                raise Refused("act_identifier_invalid") from error
         if purpose == "enrollment_activate":
             i = intent["intent"]
             trust = await public.person(
@@ -396,6 +418,7 @@ def create_app(store, *, public, origin, rp_id, grading, requests_per_ip=600):
                 int(time.time()),
                 r["deadline"],
                 admission=admission,
+                requester_key=caller.key,
                 organisation=r["organisation"],
             )
         else:

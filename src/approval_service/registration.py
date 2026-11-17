@@ -39,6 +39,23 @@ FIRMWARE_OID = ObjectIdentifier("1.3.6.1.4.1.45724.1.1.5")
 ENTERPRISE_SERIAL_OID = ObjectIdentifier("1.3.6.1.4.1.45724.1.1.2")
 
 
+def require_supported_entry(assessed, declared):
+    """An issuer may grade down; one independently checked key cannot grade up.
+
+    Each party has already checked its own pinned snapshot at registration.
+    Hardware snapshots may differ; their hashes are evidence, not key identity.
+    The service retains its original assessment rather than overwriting it.
+    """
+    if (
+        {k: v for k, v in assessed.items() if k not in ("grade", "snapshot")}
+        != {k: v for k, v in declared.items() if k not in ("grade", "snapshot")}
+        or declared["grade"] not in ("passkey_uv", assessed["grade"])
+        or (declared["grade"] == "passkey_uv" and declared["snapshot"] is not None)
+        or (declared["grade"] == "certified_hardware" and not declared["snapshot"])
+    ):
+        raise Refused("binding_credential_mismatch")
+
+
 @dataclass(frozen=True)
 class RegisteredCredential:
     credential_id: str

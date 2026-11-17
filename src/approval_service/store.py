@@ -108,13 +108,15 @@ class Store:
         deadline,
         *,
         organisation,
+        requester_key,
         admission=None,
     ):
         if deadline <= now:
             raise StoreRefused("request_expired")
         async with self.transaction() as tx:
             await tx.execute(
-                "SELECT pg_advisory_xact_lock(hashtextextended($1,0))", requester_hash
+                "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+                organisation + ":" + requester_key,
             )
             row = await tx.fetch_one(
                 "SELECT * FROM {{tables.approval_requests}} WHERE organisation=$1 AND person_id=$2 AND operation_id=$3 FOR UPDATE",
@@ -136,9 +138,9 @@ class Store:
             if row:
                 return await self._expire(tx, row, now)
             count = await tx.fetch_one(
-                "SELECT count(*) AS n FROM {{tables.approval_requests}} WHERE organisation=$1 AND requester_hash=$2 AND outcome='pending' AND deadline>$3",
+                "SELECT count(*) AS n FROM {{tables.approval_requests}} WHERE organisation=$1 AND requester_key=$2 AND outcome='pending' AND deadline>$3",
                 organisation,
-                requester_hash,
+                requester_key,
                 now,
             )
             if count["n"] >= 32:
@@ -146,8 +148,8 @@ class Store:
             # Never look up enrollment here: a foreign/mistyped approver gets the
             # same submit answer but cannot see this row in any person's list.
             row = await tx.fetch_one(
-                """INSERT INTO {{tables.approval_requests}}(organisation,person_id,operation_id,digest,requester_hash,request_bytes,created_at,deadline,admission)
-                VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb) ON CONFLICT DO NOTHING RETURNING *""",
+                """INSERT INTO {{tables.approval_requests}}(organisation,person_id,operation_id,digest,requester_hash,request_bytes,created_at,deadline,admission,requester_key)
+                VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,$10) ON CONFLICT DO NOTHING RETURNING *""",
                 organisation,
                 person_id,
                 operation_id,
@@ -157,18 +159,24 @@ class Store:
                 now,
                 deadline,
                 json.dumps(admission) if admission is not None else None,
+                requester_key,
             )
             if row is None:
                 raise StoreRefused("selection_conflict")
             return request_row(row)
 
     async def pending(self, person_id, *, organisation, now=None):
-        query = "SELECT * FROM {{tables.approval_requests}} WHERE organisation=$1 AND person_id=$2 AND outcome='pending'"
+        query = "SELECT *,row_number() OVER (PARTITION BY requester_key ORDER BY created_at,operation_id) AS queue_turn FROM {{tables.approval_requests}} WHERE organisation=$1 AND person_id=$2 AND outcome='pending'"
         args = [organisation, person_id]
         if now is not None:
             query += " AND deadline>$3"
             args.append(now)
-        rows = await self.db.fetch_all(query + " ORDER BY created_at LIMIT 128", *args)
+        rows = await self.db.fetch_all(
+            "SELECT * FROM ("
+            + query
+            + ") fair ORDER BY queue_turn,created_at,requester_key,operation_id LIMIT 128",
+            *args,
+        )
         return [request_row(row) for row in rows]
 
     async def refuse(self, operation_id, person_id, outcome, now, *, organisation):
@@ -226,6 +234,26 @@ class Store:
             )
             for row in rows:
                 await self._expire(tx, row, now)
+            cutoff = now - 30 * 86400
+            await tx.execute(
+                "DELETE FROM {{tables.approval_challenges}} WHERE challenge_id IN (SELECT challenge_id FROM {{tables.approval_challenges}} WHERE deadline<=$1 ORDER BY deadline LIMIT 128 FOR UPDATE SKIP LOCKED)",
+                cutoff,
+            )
+            await tx.execute(
+                "DELETE FROM {{tables.approval_sessions}} WHERE token_hash IN (SELECT token_hash FROM {{tables.approval_sessions}} WHERE deadline<=$1 ORDER BY deadline LIMIT 128 FOR UPDATE SKIP LOCKED)",
+                cutoff,
+            )
+            # Confirmation rows are part of retained enrollment state: an
+            # approved confirmation permits activation after the ceremony.
+            await tx.execute(
+                """DELETE FROM {{tables.approval_requests}} r WHERE (r.organisation,r.person_id,r.operation_id) IN (
+                SELECT q.organisation,q.person_id,q.operation_id FROM {{tables.approval_requests}} q
+                WHERE q.outcome<>'pending' AND q.decided_at<=$1
+                AND NOT EXISTS (SELECT 1 FROM {{tables.approval_enrollments}} e WHERE e.organisation=q.organisation AND e.person_id=q.person_id AND e.confirmation_id=q.operation_id)
+                AND NOT EXISTS (SELECT 1 FROM {{tables.approval_challenges}} c WHERE c.organisation=q.organisation AND c.person_id=q.person_id AND c.operation_id=q.operation_id)
+                ORDER BY q.decided_at LIMIT 128 FOR UPDATE OF q SKIP LOCKED)""",
+                cutoff,
+            )
             return len(rows)
 
     async def decision_answer(self, row, locator, *, db=None):

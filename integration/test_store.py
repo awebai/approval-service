@@ -20,6 +20,7 @@ async def test_same_digest_retries_return_original_locator_and_cannot_change_req
         1000,
         1300,
         organisation="customer.example",
+        requester_key="one-test-key",
     )
     assert (
         await store.prepare(
@@ -31,6 +32,7 @@ async def test_same_digest_retries_return_original_locator_and_cannot_change_req
             1001,
             1300,
             organisation="customer.example",
+            requester_key="one-test-key",
         )
     )["operation_id"] == first["operation_id"]
     with pytest.raises(StoreRefused):
@@ -43,6 +45,7 @@ async def test_same_digest_retries_return_original_locator_and_cannot_change_req
             1002,
             1300,
             organisation="customer.example",
+            requester_key="one-test-key",
         )
     with pytest.raises(StoreRefused):
         await store.prepare(
@@ -54,6 +57,7 @@ async def test_same_digest_retries_return_original_locator_and_cannot_change_req
             1002,
             1300,
             organisation="customer.example",
+            requester_key="one-test-key",
         )
 
 
@@ -70,6 +74,7 @@ async def test_denial_or_expiry_never_stores_assertion_or_renews_deadline(store)
         1000,
         1300,
         organisation="customer.example",
+        requester_key="one-test-key",
     )
     await store.refuse(
         "op-1", "person-p", "denied", 1100, organisation="customer.example"
@@ -81,6 +86,7 @@ async def test_denial_or_expiry_never_stores_assertion_or_renews_deadline(store)
             own,
             1200,
             organisation="customer.example",
+            requester_key="one-test-key",
             person_id="person-p",
         )
     )["request_bytes"] is None
@@ -91,6 +97,7 @@ async def test_denial_or_expiry_never_stores_assertion_or_renews_deadline(store)
             own,
             1200,
             organisation="customer.example",
+            requester_key="one-test-key",
             person_id="person-p",
         )
     )["assertion"] is None
@@ -114,6 +121,7 @@ async def test_parallel_polls_reuse_a_bounded_pool_without_read_transactions(sto
         1000,
         1300,
         organisation="customer.example",
+        requester_key="one-test-key",
     )
     rows = await asyncio.gather(
         *(
@@ -123,6 +131,7 @@ async def test_parallel_polls_reuse_a_bounded_pool_without_read_transactions(sto
                 own,
                 1100,
                 organisation="customer.example",
+                requester_key="one-test-key",
                 person_id="person-p",
             )
             for _ in range(40)
