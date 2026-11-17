@@ -175,3 +175,13 @@ Issuer and service independently grade each registration. The issuer may claim
 a weaker grade, and two valid hardware snapshots may differ; the service refuses
 a grade beyond its own assessment. A missing or expired hardware list still
 refuses attested enrollment rather than silently lowering its grade.
+
+## Approval-page display tests
+
+The browser tests render the actual page module in Chromium, without a service,
+registry or signing fixture:
+
+```sh
+uv run --frozen --group browser playwright install chromium
+uv run --frozen --group browser pytest -q browser_tests
+```

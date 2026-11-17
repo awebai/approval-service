@@ -20,6 +20,9 @@ dependencies = [
 awsign = "approval_service.cli:main"
 
 [dependency-groups]
+browser = [
+    "playwright==1.63.0",
+]
 dev = [
     "ruff>=0.12,<1",
     "pytest>=8,<10",
