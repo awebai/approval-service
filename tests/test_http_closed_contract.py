@@ -1,5 +1,7 @@
 """Real signed HTTP inputs and TCP admission failure need no SQL fixture."""
 
+from contextlib import aclosing
+
 import httpx
 import pytest
 from awid.registry import RegistryClient
@@ -81,18 +83,22 @@ async def test_registry_outage_and_malformed_evidence_keep_the_closed_http_contr
     with socket.socket() as unavailable:
         unavailable.bind(("127.0.0.1", 0))
         bad = f"http://127.0.0.1:{unavailable.getsockname()[1]}"
+        registry = RegistryClient(registry_url=bad, timeout_seconds=1.0)
         app = create_app(
             None,
-            public=PublicReader(RegistryClient(registry_url=bad, timeout_seconds=1.0)),
+            public=PublicReader(registry),
             origin="https://approval.example.test",
             rp_id="approval.example.test",
             grading=EnrollmentGrading("passkey_only", None),
         )
-        async with httpx.AsyncClient(
-            transport=httpx.ASGITransport(app=app),
-            base_url="https://approval.example.test",
-            timeout=10.0,
-        ) as client:
+        async with (
+            aclosing(registry),
+            httpx.AsyncClient(
+                transport=httpx.ASGITransport(app=app),
+                base_url="https://approval.example.test",
+                timeout=10.0,
+            ) as client,
+        ):
             for kind, chain, expected in [
                 ("team_member", None, 503),
                 ("identity", [{"malformed": True}], 400),
