@@ -10,27 +10,38 @@ from __future__ import annotations
 import hashlib
 import hmac
 from dataclasses import dataclass
+from enum import StrEnum
 
 import cbor2
+from aweb_naapp.webauthn import (
+    AssertionRefused,
+    BackupPolicy,
+    VerifiedAssertion,
+    verify_assertion,
+)
 from awid.did import public_key_from_did
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 from jsonschema import ValidationError
 from nacl.bindings import crypto_core_ed25519_is_valid_point
-from webauthn import verify_authentication_response
-from webauthn.helpers.exceptions import WebAuthnException
 
 from .canonical import InvalidJSON, canonical, parse
-from .cbor import CBORProfileError, decode_map
-from .client_data import ClientDataInvalid, verify_client_data
+from .cbor import decode_map
 from .encoding import EncodingError, decode
 from .wire import domain, validate, validate_site
 
 REQUEST_PREFIX = domain("request")
 BINDING_PREFIX = domain("binding")
 NONCE_PREFIX = domain("nonce")
-GRADES = {"passkey_uv": 0, "certified_hardware": 1}
+
+
+class CredentialGrade(StrEnum):
+    PASSKEY = "passkey_uv"
+    HARDWARE = "certified_hardware"
+
+
+GRADES = {CredentialGrade.PASSKEY: 0, CredentialGrade.HARDWARE: 1}
 
 
 class Refused(ValueError):
@@ -60,6 +71,13 @@ class CheckedApproval:
     digest: str
     origin: str
     deadline: int
+
+
+@dataclass(frozen=True)
+class CheckedReceipt:
+    request: dict
+    approval: CheckedApproval
+    assertion: VerifiedAssertion
 
 
 def _closed(value, fields):
@@ -127,7 +145,7 @@ def _key(raw, algorithm):
         raise Refused("credential_key_invalid")
 
 
-def _verify(receipt, expected_request, trust):
+def _verify(receipt, *, expected_request, trust, sign_count: int = 0) -> CheckedReceipt:
     canonical(receipt)
     validate("receipt", receipt)
     if receipt["version"] != 1 or not isinstance(receipt["id_chain"], list):
@@ -220,32 +238,6 @@ def _verify(receipt, expected_request, trust):
     if selected is None:
         raise Refused("credential_not_enrolled")
     digest = hashlib.sha256(REQUEST_PREFIX + raw).digest()
-    try:
-        verify_client_data(
-            decode(a["client_data_json"]),
-            expected_type="webauthn.get",
-            expected_challenge=digest,
-            expected_origin=b["origin"],
-        )
-    except ClientDataInvalid as exc:
-        raise Refused("assertion_invalid") from exc
-    auth = decode(a["authenticator_data"])
-    if (
-        len(auth) < 37
-        or auth[32] & 5 != 5
-        or auth[32] & 64
-        or (auth[32] & 16 and not auth[32] & 8)
-    ):
-        raise Refused("assertion_invalid")
-    if auth[32] & 128:
-        try:
-            extensions = decode_map(auth[37:])
-            if any(type(k) is not str for k in extensions):
-                raise CBORProfileError("extension_key_invalid")
-        except (ValueError, cbor2.CBORDecodeError) as exc:
-            raise Refused("assertion_invalid") from exc
-    elif len(auth) != 37:
-        raise Refused("assertion_invalid")
     proof = {
         "id": a["id"],
         "rawId": a["id"],
@@ -259,39 +251,59 @@ def _verify(receipt, expected_request, trust):
     for field in ("client_data_json", "authenticator_data", "signature"):
         decode(a[field])
     try:
-        result = verify_authentication_response(
-            credential=proof,
+        assertion = verify_assertion(
+            proof,
             expected_challenge=digest,
             expected_rp_id=b["rp_id"],
             expected_origin=b["origin"],
-            credential_public_key=decode(selected["key"]),
-            credential_current_sign_count=0,
-            require_user_verification=True,
+            credential_id=decode(selected["id"]),
+            public_key=decode(selected["key"]),
+            sign_count=sign_count,
+            backup_policy=(
+                BackupPolicy.FORBIDDEN
+                if selected["grade"] == CredentialGrade.HARDWARE
+                else BackupPolicy.ALLOWED
+            ),
         )
-    except (WebAuthnException, ValueError, TypeError, LookupError) as exc:
-        raise Refused("assertion_invalid") from exc
-    if result.credential_id != decode(selected["id"]):
-        raise Refused("credential_not_enrolled")
-    auth = decode(a["authenticator_data"])
-    if selected["grade"] == "certified_hardware" and auth[32] & 0x18:
-        raise Refused("credential_backup_eligible")
-    return request, CheckedApproval(
-        trust.person,
-        trust.identity_key,
-        selected["id"],
-        selected["grade"],
-        digest.hex(),
-        b["origin"],
-        request["deadline"],
+    except AssertionRefused as error:
+        raise Refused(error.reason.value) from error
+    approval = CheckedApproval(
+        person=trust.person,
+        identity_key=trust.identity_key,
+        credential=selected["id"],
+        grade=selected["grade"],
+        digest=digest.hex(),
+        origin=b["origin"],
+        deadline=request["deadline"],
     )
+    return CheckedReceipt(request=request, approval=approval, assertion=assertion)
 
 
 def verify_historical(receipt, *, expected_request, trust):
     """Check raw proof under explicit as-of trust, without live effect permission."""
     try:
-        return _verify(receipt, expected_request, trust)[1]
+        return _verify(receipt, expected_request=expected_request, trust=trust).approval
     except (InvalidJSON, EncodingError, ValidationError) as exc:
         raise Refused("invalid_encoding") from exc
+
+
+def verify_receipt_with_counter(
+    receipt, *, expected_request, trust: Trust, sign_count: int
+) -> CheckedReceipt:
+    """One signed proof check; the service supplies its locked counter.
+
+    The state owner checks deadlines and consumes the challenge at the effect.
+    Portable callers keep verify_historical and its explicit as-of trust.
+    """
+    try:
+        return _verify(
+            receipt,
+            expected_request=expected_request,
+            trust=trust,
+            sign_count=sign_count,
+        )
+    except (InvalidJSON, EncodingError, ValidationError) as error:
+        raise Refused("invalid_encoding") from error
 
 
 def verify_for_effect(
@@ -299,7 +311,9 @@ def verify_for_effect(
 ):
     """Checked bindings only; the enforcer owns rule/member/effect authority."""
     try:
-        request, result = _verify(receipt, expected_request, trust)
+        verified = _verify(receipt, expected_request=expected_request, trust=trust)
+        request = verified.request
+        result = verified.approval
         if request["purpose"] != "act_approval":
             raise Refused("purpose_invalid")
         if not _integer(now) or not request["not_before"] <= now < request["deadline"]:

@@ -14,6 +14,7 @@ import uuid
 from dataclasses import dataclass, field
 
 import cbor2
+from aweb_naapp.webauthn import ClientDataType, verify_client_data
 from cryptography import x509
 from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm
 from cryptography.x509.oid import NameOID, ObjectIdentifier
@@ -28,7 +29,6 @@ from webauthn.helpers.exceptions import WebAuthnException
 from webauthn.helpers.structs import COSEAlgorithmIdentifier
 
 from .cbor import read as read_cbor
-from .client_data import verify_client_data
 from .encoding import decode, encode
 from .metadata import POLICY
 from .verify import Refused, _key
@@ -239,7 +239,7 @@ def check_registration(
         raw = decode(response["attestation_object"])
         verify_client_data(
             client,
-            expected_type="webauthn.create",
+            expected_type=ClientDataType.REGISTRATION,
             expected_challenge=expected_challenge,
             expected_origin=origin,
         )

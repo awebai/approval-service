@@ -13,15 +13,13 @@ import json
 import secrets
 import time
 
+from aweb_naapp.webauthn import AssertionFailure, AssertionRefused, verify_assertion
 from jsonschema import ValidationError
-from webauthn import verify_authentication_response
-from webauthn.helpers.exceptions import WebAuthnException
 
 from .canonical import canonical, parse
-from .client_data import verify_client_data
 from .encoding import decode, encode
 from .registration import require_supported_entry
-from .verify import Refused, verify_historical
+from .verify import Refused, verify_receipt_with_counter
 from .wire import domain, validate, validate_site
 
 
@@ -247,33 +245,30 @@ class Ceremonies:
 
     def _assertion(self, assertion, credential, challenge):
         validate("assertion", assertion)
-        verify_client_data(
-            decode(assertion["client_data_json"]),
-            expected_type="webauthn.get",
-            expected_challenge=bytes(challenge),
-            expected_origin=self.origin,
-        )
-        result = verify_authentication_response(
-            credential={
-                "id": assertion["id"],
-                "rawId": assertion["id"],
-                "type": "public-key",
-                "response": {
-                    "clientDataJSON": assertion["client_data_json"],
-                    "authenticatorData": assertion["authenticator_data"],
-                    "signature": assertion["signature"],
+        try:
+            verified = verify_assertion(
+                {
+                    "id": assertion["id"],
+                    "rawId": assertion["id"],
+                    "type": "public-key",
+                    "response": {
+                        "clientDataJSON": assertion["client_data_json"],
+                        "authenticatorData": assertion["authenticator_data"],
+                        "signature": assertion["signature"],
+                    },
                 },
-            },
-            expected_challenge=bytes(challenge),
-            expected_rp_id=self.rp_id,
-            expected_origin=self.origin,
-            credential_public_key=bytes(credential["public_key"]),
-            credential_current_sign_count=credential["sign_count"],
-            require_user_verification=True,
-        )
-        if result.credential_id != decode(credential["credential_id"]):
-            raise Refused("credential_not_enrolled")
-        return result.new_sign_count
+                expected_challenge=bytes(challenge),
+                expected_rp_id=self.rp_id,
+                expected_origin=self.origin,
+                public_key=bytes(credential["public_key"]),
+                credential_id=decode(credential["credential_id"]),
+                sign_count=credential["sign_count"],
+            )
+        except AssertionRefused as error:
+            if error.reason is AssertionFailure.CREDENTIAL_MISMATCH:
+                raise Refused(error.reason.value) from error
+            raise
+        return verified.new_sign_count
 
     async def finish_login(self, identifier, assertion, user_handle, trust):
         try:
@@ -331,7 +326,6 @@ class Ceremonies:
             ValueError,
             TypeError,
             KeyError,
-            WebAuthnException,
             ValidationError,
         ) as exc:
             if isinstance(exc, Refused):
@@ -484,8 +478,17 @@ class Ceremonies:
                     "id_chain": version["id_chain"],
                     "assertion": assertion,
                 }
-                checked = verify_historical(receipt, expected_request=r, trust=trust)
-                if checked.digest != request["digest"]:
+                verified = verify_receipt_with_counter(
+                    receipt,
+                    expected_request=r,
+                    trust=trust,
+                    sign_count=credential["sign_count"],
+                )
+                checked = verified.approval
+                if (
+                    checked.digest != request["digest"]
+                    or bytes(challenge["challenge"]).hex() != checked.digest
+                ):
                     raise Refused("request_digest_mismatch")
                 selected = next(
                     c for c in body["credentials"] if c["id"] == assertion["id"]
@@ -493,7 +496,7 @@ class Ceremonies:
                 require_supported_entry(
                     json.loads(credential["binding_entry"]), selected
                 )
-                counter = self._assertion(assertion, credential, challenge["challenge"])
+                counter = verified.assertion.new_sign_count
                 self._bounds(
                     int(time.time()),
                     trust=trust,
@@ -537,7 +540,6 @@ class Ceremonies:
             ValueError,
             TypeError,
             KeyError,
-            WebAuthnException,
             ValidationError,
         ) as exc:
             if isinstance(exc, Refused):

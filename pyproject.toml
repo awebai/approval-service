@@ -8,6 +8,7 @@ dependencies = [
     "cryptography>=46,<51",
     "cbor2>=6.1.2,<7",
     "webauthn>=3.0.1,<4",
+    "aweb-naapp[webauthn]",
     "httpx>=0.28,<1",
     "fastapi>=0.116,<1",
     "uvicorn>=0.35,<1",
@@ -43,4 +44,9 @@ asyncio_default_fixture_loop_scope = "function"
 [tool.uv]
 # This root-only development pin is ignored by projects consuming this library.
 # Replace it with the released SDK version at server release.
-override-dependencies = ["awid-service @ git+https://github.com/awebai/aweb.git@429eb19c510a2742d4f58f437c501a1024510fb9#subdirectory=awid"]
+# The published floor on aweb-naapp must be the first release containing
+# aweb_naapp.webauthn.verify_assertion; the release owner sets it at the cut.
+override-dependencies = [
+    "awid-service @ git+https://github.com/awebai/aweb.git@429eb19c510a2742d4f58f437c501a1024510fb9#subdirectory=awid",
+    "aweb-naapp[webauthn] @ git+https://github.com/awebai/aweb.git@b0a33024e2e8ef3fb47da84b245cb3064e892183#subdirectory=naapp-lib",
+]

@@ -3,7 +3,10 @@ revision = 5
 requires-python = ">=3.12"
 
 [manifest]
-overrides = [{ name = "awid-service", git = "https://github.com/awebai/aweb.git?subdirectory=awid&rev=429eb19c510a2742d4f58f437c501a1024510fb9" }]
+overrides = [
+    { name = "aweb-naapp", extras = ["webauthn"], git = "https://github.com/awebai/aweb.git?subdirectory=naapp-lib&rev=b0a33024e2e8ef3fb47da84b245cb3064e892183" },
+    { name = "awid-service", git = "https://github.com/awebai/aweb.git?subdirectory=awid&rev=429eb19c510a2742d4f58f437c501a1024510fb9" },
+]
 
 [[package]]
 name = "annotated-doc"
@@ -113,6 +116,7 @@ version = "0.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "asyncpg" },
+    { name = "aweb-naapp", extra = ["webauthn"] },
     { name = "awid-service" },
     { name = "cbor2" },
     { name = "cryptography" },
@@ -138,6 +142,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "asyncpg", specifier = ">=0.30,<1" },
+    { name = "aweb-naapp", extras = ["webauthn"] },
     { name = "awid-service", specifier = ">=0.5.40rc1,<0.6" },
     { name = "cbor2", specifier = ">=6.1.2,<7" },
     { name = "cryptography", specifier = ">=46,<51" },
@@ -156,6 +161,17 @@ dev = [
     { name = "pytest", specifier = ">=8,<10" },
     { name = "pytest-asyncio", specifier = ">=1.2,<2" },
     { name = "ruff", specifier = ">=0.12,<1" },
+]
+
+[[package]]
+name = "aweb-naapp"
+version = "0.5.2rc3"
+source = { git = "https://github.com/awebai/aweb.git?subdirectory=naapp-lib&rev=b0a33024e2e8ef3fb47da84b245cb3064e892183#b0a33024e2e8ef3fb47da84b245cb3064e892183" }
+
+[package.optional-dependencies]
+webauthn = [
+    { name = "cbor2" },
+    { name = "webauthn" },
 ]
 
 [[package]]
