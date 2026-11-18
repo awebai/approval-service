@@ -330,8 +330,13 @@ func parseClientData(raw []byte) (clientData, error) {
 			return out, refuse("client_data_invalid")
 		}
 	}
-	if e := json.Unmarshal(raw, &out); e != nil {
-		return out, e
+	// Use the exact members already checked above. Struct unmarshalling matches
+	// names case-insensitively and would reinterpret these signed bytes.
+	out.Type = obj["type"].(string)
+	out.Origin = obj["origin"].(string)
+	out.Challenge = obj["challenge"].(string)
+	if value, exists := obj["crossOrigin"]; exists {
+		out.CrossOrigin = value.(bool)
 	}
 	return out, nil
 }
