@@ -1,6 +1,7 @@
 package verify
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"os"
@@ -22,7 +23,9 @@ func TestBindingRefreshAnswerVectors(t *testing.T) {
 			Code    string         `json:"code"`
 		} `json:"cases"`
 	}
-	if err := json.Unmarshal(raw, &corpus); err != nil {
+	decoder := json.NewDecoder(bytes.NewReader(raw))
+	decoder.UseNumber()
+	if err := decoder.Decode(&corpus); err != nil {
 		t.Fatal(err)
 	}
 	for _, c := range corpus.Cases {

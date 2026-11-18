@@ -1,0 +1,18 @@
+{
+  "repository": "https://github.com/awebai/aweb",
+  "commit": "915193d015cbc164c1e8de646b9f70e05807ce9f",
+  "files": {
+    "signature-primitives-v1.json": {
+      "source": "docs/vectors/signature-primitives-v1.json",
+      "sha256": "e1f42e591faaaeaacd5dcd731008c651fe085ee17f3b7d58c612cbc093aaaec0"
+    },
+    "message-signing-v1.json": {
+      "source": "docs/vectors/message-signing-v1.json",
+      "sha256": "c19418cf505c22c4782b9840f89a2dabea02751515c4a59a014f520ba152bc92"
+    },
+    "canonical-json-v1.json": {
+      "source": "docs/vectors/canonical-json-v1.json",
+      "sha256": "5ac1ea7ba988ac197c01263af6b0b0a29c1329b8cef9fcc61d4904d836356483"
+    }
+  }
+}

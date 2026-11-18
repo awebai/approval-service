@@ -2,9 +2,9 @@
 
 import time
 from contextlib import asynccontextmanager
+from datetime import UTC, datetime
 from enum import StrEnum
 from types import SimpleNamespace
-from datetime import UTC, datetime
 from uuid import uuid4
 
 import httpx
@@ -181,7 +181,7 @@ async def signed_enrollment_world(*, store, tmp_path, moment: EnrollmentMoment):
                     .sign(
                         domain(
                             "later_enrollment_evidence"
-                            if existing
+                            if moment is EnrollmentMoment.LATER
                             else "identity_evidence"
                         )
                         + canonical(e)
