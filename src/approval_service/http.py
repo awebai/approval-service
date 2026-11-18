@@ -29,11 +29,12 @@ from .encoding import decode
 from .enrollment import Enrollments, PublicIssuer
 from .grading import watch_metadata
 from .http_io import read_json_body
+from .http_routes import mount_requester_routes
 from .requester import AdmittedRequester
 from .seams import check_activation_carrier, check_http, commitment
 from .store import StoreRefused
 from .verify import Refused
-from .wire import SCHEMA, domain, validate, validate_site
+from .wire import domain, validate, validate_site
 
 logger = logging.getLogger(__name__)
 SESSION_COOKIE = "__Host-awsign"
@@ -439,8 +440,7 @@ def create_app(store, *, public, origin, rp_id, grading, requests_per_ip=600):
 
         return handle
 
-    for purpose, path in SCHEMA["x-http"]["routes"].items():
-        app.add_api_route(path, route(purpose), methods=["POST"])
+    mount_requester_routes(app, route_factory=route)
 
     @app.post("/browser/login/options")
     async def login_options(request: Request):
