@@ -320,23 +320,25 @@ func parseClientData(raw []byte) (clientData, error) {
 	if !ok {
 		return out, refuse("client_data_invalid")
 	}
-	for _, key := range []string{"type", "origin", "challenge"} {
-		if _, ok := obj[key].(string); !ok {
-			return out, refuse("client_data_invalid")
-		}
+	// protocol.md:337-345 requires verification of the original signed bytes.
+	// Read only exact member names; JSON member names are case-sensitive.
+	out.Type, ok = obj["type"].(string)
+	if !ok {
+		return out, refuse("client_data_invalid")
+	}
+	out.Origin, ok = obj["origin"].(string)
+	if !ok {
+		return out, refuse("client_data_invalid")
+	}
+	out.Challenge, ok = obj["challenge"].(string)
+	if !ok {
+		return out, refuse("client_data_invalid")
 	}
 	if value, exists := obj["crossOrigin"]; exists {
-		if _, ok := value.(bool); !ok {
+		out.CrossOrigin, ok = value.(bool)
+		if !ok {
 			return out, refuse("client_data_invalid")
 		}
-	}
-	// Use the exact members already checked above. Struct unmarshalling matches
-	// names case-insensitively and would reinterpret these signed bytes.
-	out.Type = obj["type"].(string)
-	out.Origin = obj["origin"].(string)
-	out.Challenge = obj["challenge"].(string)
-	if value, exists := obj["crossOrigin"]; exists {
-		out.CrossOrigin = value.(bool)
 	}
 	return out, nil
 }
