@@ -51,6 +51,8 @@ class BindingRefreshEndpoint:
             raise RefreshRefused(RefreshFailure.REQUEST_INVALID) from error
         except Refused as error:
             logger.info("binding refresh refused (%s)", error.code)
+            if error.code == RefreshFailure.RATE_LIMITED:
+                raise RefreshRefused(RefreshFailure.RATE_LIMITED) from error
             if error.code.endswith("_unavailable"):
                 raise RefreshRefused(RefreshFailure.UNAVAILABLE) from error
             if error.code.startswith("body_"):

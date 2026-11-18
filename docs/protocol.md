@@ -940,3 +940,27 @@ admit that exact descriptor against a fresh registry key mapping; admission is
 `{team_certificate:null,id_chain:[]}`. It grants no act submission, poll or cancel.
 Old controller/admin intents retain their original requester. The activation
 carrier exception remains the original requester or the exact committed target.
+
+## Current-issuer binding refresh
+
+`data/binding-refresh-v1.json` is an additive transport profile; it does not
+change the frozen v1 binding, request, receipt or statement bytes. A committed,
+currently valid person covers the exact refresh packet with their current
+identity key and HTTP purpose `binding_refresh`, for the same service origin
+and `POST /v1/enrollment-bindings/refresh`. The issuer's signature alone does
+not admit a controller, administrator or pending person as carrier.
+
+The packet names the last live binding commitment and a binding re-signed by
+the checked current actual-parent issuer or namespace controller. Under the
+active enrollment lock, the service compares that commitment and permits only
+the issuer, signature and checked current certificate to change. Organisation,
+person, identity key, origin, RP and exact credential declarations (including
+grades and metadata commitments) remain identical. A successful recorded replay
+is idempotent; another active generation refuses. The result names the person
+and new binding commitment. A refusal supplies controlled next-step advice.
+
+The update retains credential counters, the enrollment generation and all
+original historical artifacts. It appends an operator-visible record of the
+carrier key, old/new binding commitments, old/new issuer keys and service time.
+The person keeps the new live binding separately from original statements and
+confirmation receipts, whose commitments are never rewritten by this operation.

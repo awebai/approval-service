@@ -192,3 +192,13 @@ for both creation and later enrollment, at both intent and activation entry
 points, and the challenge/confirmation-byte refusal codes. An activation body's
 schema error is `activation_invalid`; a malformed certificate inside an otherwise
 valid intent is `enrollment_invalid`. No caller may rely on a panic as refusal.
+
+`shared-primitives/` retains the R13 public fixture files byte-for-byte; its
+provenance manifest records their aweb source paths, commit and SHA256. Tests
+consume their canonical/key-order, Ed25519 and producer bytes through approval
+adapters. Approval's canonical base64url codec remains its own frozen artifact
+profile; message-family spelling compatibility does not select that profile.
+
+`binding-refresh-v1.json` constrains the additive result reader, including exact
+person/binding commitments and actionable refusals. It does not re-freeze any
+existing request, receipt, binding or historical statement.

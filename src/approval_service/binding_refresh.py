@@ -25,6 +25,7 @@ class RequesterKind(StrEnum):
 
 
 class RefreshFailure(StrEnum):
+    RATE_LIMITED = "rate_limited"
     REQUEST_INVALID = "binding_refresh_request_invalid"
     AUTHORIZATION = "binding_refresh_authorization_invalid"
     SITE_CHANGED = "binding_refresh_site_changed"
@@ -37,6 +38,7 @@ class RefreshFailure(StrEnum):
 
 
 REFRESH_ADVICE = {
+    RefreshFailure.RATE_LIMITED: "The request budget is exhausted. Wait for the existing window before trying refresh again.",
     RefreshFailure.REQUEST_INVALID: "Use the complete packet returned by the issuer's refresh command; do not edit its fields.",
     RefreshFailure.AUTHORIZATION: "Sign this exact refresh packet with the person's current identity key for this approval-service origin and route.",
     RefreshFailure.SITE_CHANGED: "A refresh cannot move an enrollment to a new approval-service origin or RP. Use the documented enrollment procedure.",

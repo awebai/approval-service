@@ -149,10 +149,26 @@ Later statements are signed by the checked current namespace controller. A
 receipt binding may select that controller or the person's actual-parent issuer;
 both come from independently verified public Trust, not the supplied artifact.
 Creation statements keep the actual-parent issuer. Live checks use current keys;
-a controller change requires affected bindings/statements to be re-signed by
-the new issuer. The holder has no automatic rotation/re-signing hook yet; this
-is not a requirement to repeat the person's registration ceremony. Historical
-verification uses explicit as-of authority inputs.
+a controller change requires affected live bindings to be re-signed by the new
+issuer. The person's authenticated holder request obtains a re-signed packet
+from `POST /v1/enrollments/{person}/refresh-binding`, giving the commitment of
+the last live binding. The person carries it to the same approval service at
+`POST /v1/enrollment-bindings/refresh`, using the distinct covering HTTP purpose
+`binding_refresh`. This is not another registration or confirmation ceremony.
+The active service generation fences the update; only issuer/signature and the
+checked current certificate can change. Person, identity key, site and exact
+credential declarations cannot change. Replays of the installed update are
+idempotent; stale generations and changed credentials refuse with next-step
+advice. The person stores the new live B apart from the original evidence.
+
+Historical statements, original bindings and confirmation receipts remain
+unchanged, with their original commitments and explicit as-of authority inputs.
+The operator can inspect who refreshed which old/new binding and issuer with
+`awsign audit-binding-refreshes --after 0 --limit 100`. Apply packaged migrations
+with `awsign migrate` before starting this version; serve refuses an older schema.
+The additive packet and answer definitions are in
+`src/approval_service/data/binding-refresh-v1.json`; shared readers are
+`read_binding_refresh_answer` and Go `ReadBindingRefreshAnswer`.
 
 The development lock pins the reviewed post-deletion AWID source so the service
 starts with its required exact-certificate status reader. This root-only UV

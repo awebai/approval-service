@@ -181,10 +181,12 @@ Unattested registrations still receive passkey grade; an attested key is never
 silently downgraded. Sign-in and approvals continue. Metadata failures cannot
 stop the watcher from installing a later verified replacement.
 
-The bundled initial pin expires on 2026-12-01 (an input CRL may expire earlier).
+The blob's next-update date is not the snapshot expiry: use the earliest
+verified certificate, CRL or blob deadline reported by the loader and health.
 The maintainer's daily metadata-pin workflow verifies upstream changes under
 the existing pinned root and opens the review request. The service maintainer
-reviews/lands the pin; deployment operators install it before the earliest
+checks failed runs and pending proposals daily, reviews and lands each verified
+renewal; deployment operators monitor at least hourly and install it before the earliest
 reported deadline. Runtime does not adopt an unreviewed new pin or fetch vendor
 data per approval. With no external manifest path, the packaged pin remains
 in use until a new deployment installs its replacement.
