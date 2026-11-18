@@ -1,0 +1,216 @@
+{
+  "profile": "aweb.awsign.binding-refresh@1",
+  "cases": [
+    {
+      "id": "exact-binding",
+      "binding": {
+        "binding": {
+          "version": 1,
+          "organisation": "customer.example",
+          "person": "did:aw:person-p",
+          "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "identity_key": "identity-key-before",
+          "issuer": "issuer-key",
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "credentials": [
+            {
+              "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "key": "pQECAyYgASFYIKGpyPzGfPmNkT--m6E9PgNsVSbeRQg1X_4vA_r37IP-IlggtubHce8omXpZo1-KmOMJMX5ZAk4fze7yV6ja-8OQGBM",
+              "algorithm": -7,
+              "grade": "passkey_uv",
+              "snapshot": null,
+              "grade_policy": "uv-v1"
+            }
+          ]
+        },
+        "signature": "2SU8SHpogtW9NvkqAbiZ0ypM6MBQ-DZ_X9HdZoRGXskrzoWeztOeRqNLO8Ugh1csQJ_599h5ETF7CV9sNBI2DA"
+      },
+      "answer": {
+        "version": 1,
+        "person": "did:aw:person-p",
+        "state": "active",
+        "binding_commitment": "sha256:dc1fd2c0113a66c6878b7184fa1f522880e79c78c8a48cd22a19d2fc8c84718b"
+      },
+      "status": 200,
+      "accept": true
+    },
+    {
+      "id": "changed-person",
+      "binding": {
+        "binding": {
+          "version": 1,
+          "organisation": "customer.example",
+          "person": "did:aw:person-p",
+          "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "identity_key": "identity-key-before",
+          "issuer": "issuer-key",
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "credentials": [
+            {
+              "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "key": "pQECAyYgASFYIKGpyPzGfPmNkT--m6E9PgNsVSbeRQg1X_4vA_r37IP-IlggtubHce8omXpZo1-KmOMJMX5ZAk4fze7yV6ja-8OQGBM",
+              "algorithm": -7,
+              "grade": "passkey_uv",
+              "snapshot": null,
+              "grade_policy": "uv-v1"
+            }
+          ]
+        },
+        "signature": "2SU8SHpogtW9NvkqAbiZ0ypM6MBQ-DZ_X9HdZoRGXskrzoWeztOeRqNLO8Ugh1csQJ_599h5ETF7CV9sNBI2DA"
+      },
+      "answer": {
+        "version": 1,
+        "person": "did:aw:another-person",
+        "state": "active",
+        "binding_commitment": "sha256:dc1fd2c0113a66c6878b7184fa1f522880e79c78c8a48cd22a19d2fc8c84718b"
+      },
+      "status": 200,
+      "accept": false,
+      "code": "person_mismatch"
+    },
+    {
+      "id": "changed-binding_commitment",
+      "binding": {
+        "binding": {
+          "version": 1,
+          "organisation": "customer.example",
+          "person": "did:aw:person-p",
+          "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "identity_key": "identity-key-before",
+          "issuer": "issuer-key",
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "credentials": [
+            {
+              "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "key": "pQECAyYgASFYIKGpyPzGfPmNkT--m6E9PgNsVSbeRQg1X_4vA_r37IP-IlggtubHce8omXpZo1-KmOMJMX5ZAk4fze7yV6ja-8OQGBM",
+              "algorithm": -7,
+              "grade": "passkey_uv",
+              "snapshot": null,
+              "grade_policy": "uv-v1"
+            }
+          ]
+        },
+        "signature": "2SU8SHpogtW9NvkqAbiZ0ypM6MBQ-DZ_X9HdZoRGXskrzoWeztOeRqNLO8Ugh1csQJ_599h5ETF7CV9sNBI2DA"
+      },
+      "answer": {
+        "version": 1,
+        "person": "did:aw:person-p",
+        "state": "active",
+        "binding_commitment": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      "status": 200,
+      "accept": false,
+      "code": "binding_mismatch"
+    },
+    {
+      "id": "changed-state",
+      "binding": {
+        "binding": {
+          "version": 1,
+          "organisation": "customer.example",
+          "person": "did:aw:person-p",
+          "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "identity_key": "identity-key-before",
+          "issuer": "issuer-key",
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "credentials": [
+            {
+              "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "key": "pQECAyYgASFYIKGpyPzGfPmNkT--m6E9PgNsVSbeRQg1X_4vA_r37IP-IlggtubHce8omXpZo1-KmOMJMX5ZAk4fze7yV6ja-8OQGBM",
+              "algorithm": -7,
+              "grade": "passkey_uv",
+              "snapshot": null,
+              "grade_policy": "uv-v1"
+            }
+          ]
+        },
+        "signature": "2SU8SHpogtW9NvkqAbiZ0ypM6MBQ-DZ_X9HdZoRGXskrzoWeztOeRqNLO8Ugh1csQJ_599h5ETF7CV9sNBI2DA"
+      },
+      "answer": {
+        "version": 1,
+        "person": "did:aw:person-p",
+        "state": "pending",
+        "binding_commitment": "sha256:dc1fd2c0113a66c6878b7184fa1f522880e79c78c8a48cd22a19d2fc8c84718b"
+      },
+      "status": 200,
+      "accept": false,
+      "code": "service_response_invalid"
+    },
+    {
+      "id": "changed-extra",
+      "binding": {
+        "binding": {
+          "version": 1,
+          "organisation": "customer.example",
+          "person": "did:aw:person-p",
+          "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "identity_key": "identity-key-before",
+          "issuer": "issuer-key",
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "credentials": [
+            {
+              "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "key": "pQECAyYgASFYIKGpyPzGfPmNkT--m6E9PgNsVSbeRQg1X_4vA_r37IP-IlggtubHce8omXpZo1-KmOMJMX5ZAk4fze7yV6ja-8OQGBM",
+              "algorithm": -7,
+              "grade": "passkey_uv",
+              "snapshot": null,
+              "grade_policy": "uv-v1"
+            }
+          ]
+        },
+        "signature": "2SU8SHpogtW9NvkqAbiZ0ypM6MBQ-DZ_X9HdZoRGXskrzoWeztOeRqNLO8Ugh1csQJ_599h5ETF7CV9sNBI2DA"
+      },
+      "answer": {
+        "version": 1,
+        "person": "did:aw:person-p",
+        "state": "active",
+        "binding_commitment": "sha256:dc1fd2c0113a66c6878b7184fa1f522880e79c78c8a48cd22a19d2fc8c84718b",
+        "extra": true
+      },
+      "status": 200,
+      "accept": false,
+      "code": "service_response_invalid"
+    },
+    {
+      "id": "actionable-refusal",
+      "binding": {
+        "binding": {
+          "version": 1,
+          "organisation": "customer.example",
+          "person": "did:aw:person-p",
+          "certificate": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "identity_key": "identity-key-before",
+          "issuer": "issuer-key",
+          "origin": "https://approval.example.test",
+          "rp_id": "approval.example.test",
+          "credentials": [
+            {
+              "id": "Y3JlZGVudGlhbC1mb3ItcGVyc29uLXA",
+              "key": "pQECAyYgASFYIKGpyPzGfPmNkT--m6E9PgNsVSbeRQg1X_4vA_r37IP-IlggtubHce8omXpZo1-KmOMJMX5ZAk4fze7yV6ja-8OQGBM",
+              "algorithm": -7,
+              "grade": "passkey_uv",
+              "snapshot": null,
+              "grade_policy": "uv-v1"
+            }
+          ]
+        },
+        "signature": "2SU8SHpogtW9NvkqAbiZ0ypM6MBQ-DZ_X9HdZoRGXskrzoWeztOeRqNLO8Ugh1csQJ_599h5ETF7CV9sNBI2DA"
+      },
+      "answer": {
+        "version": 1,
+        "error": {
+          "code": "binding_refresh_state_changed",
+          "message": "Use the last successful binding."
+        }
+      },
+      "status": 400,
+      "accept": false,
+      "code": "binding_refresh_state_changed"
+    }
+  ]
+}
