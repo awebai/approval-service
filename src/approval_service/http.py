@@ -28,6 +28,7 @@ from .definitions import check_definition
 from .encoding import decode
 from .enrollment import Enrollments, PublicIssuer
 from .grading import watch_metadata
+from .http_errors import refusal_response
 from .http_io import read_json_body
 from .http_routes import mount_requester_routes
 from .requester import AdmittedRequester
@@ -84,28 +85,7 @@ def create_app(store, *, public, origin, rp_id, grading, requests_per_ip=600):
                 rates.take(("requester_ip", peer), requests_per_ip)
             response = await call_next(request)
         except (Refused, StoreRefused) as exc:
-            code = exc.code
-            status = (
-                429
-                if code == "rate_limited"
-                else 503
-                if code.endswith("_unavailable")
-                else 403
-                if code
-                in (
-                    "origin_invalid",
-                    "csrf_invalid",
-                    "session_invalid",
-                    "session_expired",
-                )
-                or code.startswith("requester_")
-                else 404
-                if code.endswith("_not_found")
-                else 400
-            )
-            response = JSONResponse(
-                {"version": 1, "error": {"code": code}}, status_code=status
-            )
+            response = refusal_response(exc)
         except UniqueViolationError:
             response = JSONResponse(
                 {"version": 1, "error": {"code": "credential_conflict"}},
