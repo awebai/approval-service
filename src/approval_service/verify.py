@@ -145,34 +145,14 @@ def _key(raw, algorithm):
         raise Refused("credential_key_invalid")
 
 
-def _verify(receipt, *, expected_request, trust, sign_count: int = 0) -> CheckedReceipt:
-    canonical(receipt)
-    validate("receipt", receipt)
-    if receipt["version"] != 1 or not isinstance(receipt["id_chain"], list):
-        raise Refused("version_invalid")
-    raw = decode(receipt["request_bytes"])
-    request = parse(raw)
-    if raw != canonical(request) or raw != canonical(expected_request):
-        raise Refused("request_mismatch")
-    validate("request", request)
-    if request["version"] != 1 or request["purpose"] not in (
-        "act_approval",
-        "enrollment_confirmation",
-    ):
-        raise Refused("purpose_invalid")
-    if (
-        request["approver"] != trust.person
-        or request["organisation"] != trust.organisation
-    ):
-        raise Refused("person_mismatch")
-    if (
-        not _integer(request["not_before"])
-        or not _integer(request["deadline"])
-        or request["deadline"] <= request["not_before"]
-    ):
-        raise Refused("deadline_invalid")
-    _closed(receipt["binding"], "binding signature")
-    b = receipt["binding"]["binding"]
+def verify_binding(signed_binding: dict, *, trust: Trust) -> dict:
+    """Check current issuer authority and exact person binding, without an assertion.
+
+    README.md:30-34,148-155 and protocol.md:900-908 select the issuer from checked
+    public authority, including the namespace controller for later enrollment.
+    """
+    _closed(signed_binding, "binding signature")
+    b = signed_binding["binding"]
     _closed(
         b,
         "version organisation person certificate identity_key issuer origin rp_id credentials",
@@ -203,7 +183,7 @@ def _verify(receipt, *, expected_request, trust, sign_count: int = 0) -> Checked
         raise Refused("issuer_key_invalid")
     try:
         Ed25519PublicKey.from_public_bytes(issuer_public_key).verify(
-            decode(receipt["binding"]["signature"]), BINDING_PREFIX + canonical(b)
+            decode(signed_binding["signature"]), BINDING_PREFIX + canonical(b)
         )
     except (InvalidSignature, ValueError) as exc:
         raise Refused("issuer_signature_invalid") from exc
@@ -211,6 +191,36 @@ def _verify(receipt, *, expected_request, trust, sign_count: int = 0) -> Checked
         validate_site(b["origin"], b["rp_id"])
     except ValidationError as exc:
         raise Refused("origin_invalid") from exc
+    return b
+
+
+def _verify(receipt, *, expected_request, trust, sign_count: int = 0) -> CheckedReceipt:
+    canonical(receipt)
+    validate("receipt", receipt)
+    if receipt["version"] != 1 or not isinstance(receipt["id_chain"], list):
+        raise Refused("version_invalid")
+    raw = decode(receipt["request_bytes"])
+    request = parse(raw)
+    if raw != canonical(request) or raw != canonical(expected_request):
+        raise Refused("request_mismatch")
+    validate("request", request)
+    if request["version"] != 1 or request["purpose"] not in (
+        "act_approval",
+        "enrollment_confirmation",
+    ):
+        raise Refused("purpose_invalid")
+    if (
+        request["approver"] != trust.person
+        or request["organisation"] != trust.organisation
+    ):
+        raise Refused("person_mismatch")
+    if (
+        not _integer(request["not_before"])
+        or not _integer(request["deadline"])
+        or request["deadline"] <= request["not_before"]
+    ):
+        raise Refused("deadline_invalid")
+    b = verify_binding(receipt["binding"], trust=trust)
     a = receipt["assertion"]
     _closed(a, "id client_data_json authenticator_data signature")
     selected = None
