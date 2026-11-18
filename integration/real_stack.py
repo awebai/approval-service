@@ -12,10 +12,13 @@ import socket
 import ssl
 import subprocess
 from contextlib import asynccontextmanager
+from enum import StrEnum
 from pathlib import Path
+from urllib.parse import urlsplit
 from uuid import uuid4
 
 import dns.asyncresolver
+import httpx
 import uvicorn
 from awid.db_config import build_database_config
 from awid.did import did_from_public_key
@@ -31,7 +34,7 @@ from .test_requester_registry import listener
 
 
 @asynccontextmanager
-async def dns_zone(directory, controllers):
+async def dns_zone(directory, controllers, *, registry_origins=None):
     binary = Path(os.environ["APPROVAL_TEST_COREDNS_BINARY"]).resolve()
     version = await asyncio.to_thread(
         subprocess.check_output, [str(binary), "-version"], text=True
@@ -39,10 +42,17 @@ async def dns_zone(directory, controllers):
     assert version.startswith("CoreDNS-1.12.0")
     directory.mkdir()
     zone = directory / "example.test.zone"
+    registry_origins = registry_origins or {}
     zone.write_text(
         "$ORIGIN example.test.\n@ 1 IN SOA ns.example.test. hostmaster.example.test. (1 60 60 60 1)\n@ 1 IN NS ns.example.test.\nns 1 IN A 127.0.0.1\n"
         + "".join(
-            f'_awid.{domain}. 1 IN TXT "awid=v1; controller={did_from_public_key(public)};"\n'
+            f'_awid.{domain}. 1 IN TXT "awid=v1; controller={did_from_public_key(public)};'
+            + (
+                f"registry={registry_origins[domain]};"
+                if domain in registry_origins
+                else ""
+            )
+            + '"\n'
             for domain, (_private, public) in controllers.items()
         )
     )
@@ -90,8 +100,19 @@ async def dns_zone(directory, controllers):
         log.close()
 
 
+class RegistryTransport(StrEnum):
+    HTTP = "http"
+    HTTPS = "https"
+
+
 @asynccontextmanager
-async def registry_stack(directory, controllers):
+async def registry_stack(
+    directory: Path,
+    controllers,
+    *,
+    transport: RegistryTransport = RegistryTransport.HTTP,
+    advertised_registry_host: str | None = None,
+):
     assert not os.environ.get("AWID_SKIP_DNS_VERIFY")
     assert not os.environ.get("AWID_SERVICE_TOKEN")
     config = build_database_config(
@@ -107,17 +128,34 @@ async def registry_stack(directory, controllers):
         await redis.ping()
         await infra.initialize(shared_pool=pool)
         app = create_app(db_infra=infra, redis=redis)
-        async with (
-            dns_zone(directory / "dns", controllers),
-            listener(app, registry_public_origin=True) as (origin, _server),
+        config = None
+        client_transport = None
+        if transport is RegistryTransport.HTTPS:
+            config, context = tls_config(app, directory)
+            client_transport = httpx.AsyncHTTPTransport(verify=context)
+        async with listener(app, config=config, registry_public_origin=True) as (
+            origin,
+            _server,
         ):
-            registry = RegistryClient(registry_url=origin)
-            assert registry._domain_verifier is None
-            for domain, (private, public) in controllers.items():
-                await registry.register_namespace(
-                    domain, did_from_public_key(public), private
+            registry_origins = {}
+            if advertised_registry_host is not None:
+                advertised = f"{transport.value}://{advertised_registry_host}:{urlsplit(origin).port}"
+                registry_origins = {domain: advertised for domain in controllers}
+            async with dns_zone(
+                directory / "dns", controllers, registry_origins=registry_origins
+            ):
+                registry = RegistryClient(
+                    registry_url=origin, transport=client_transport
                 )
-            yield registry
+                assert registry._domain_verifier is None
+                for domain, (private, public) in controllers.items():
+                    await registry.register_namespace(
+                        domain, did_from_public_key(public), private
+                    )
+                try:
+                    yield registry
+                finally:
+                    await registry.aclose()
     finally:
         await redis.aclose()
         manager = AsyncDatabaseManager(pool=pool, schema=schema)
