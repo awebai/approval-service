@@ -2,9 +2,11 @@
 
 import argparse
 import asyncio
+import json
 import logging
 import os
 import time
+from enum import StrEnum
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -12,10 +14,17 @@ logger = logging.getLogger(__name__)
 import uvicorn
 from awid.registry import RegistryClient
 
+from .binding_refresh import BindingRefresher
 from .grading import EnrollmentGrading
 from .http import create_app
 from .public import PublicReader
 from .store import Store
+
+
+class OperatorCommand(StrEnum):
+    MIGRATE = "migrate"
+    SERVE = "serve"
+    AUDIT_BINDING_REFRESHES = "audit-binding-refreshes"
 
 
 def server_config(app, *, bind, port, trusted_proxy_ips):
@@ -39,11 +48,18 @@ async def operate(args):
     )
     await store.connect()
     try:
-        if args.command == "migrate":
+        if args.command == OperatorCommand.MIGRATE:
             await store.migrate()
             return
         # Refuse startup without the current schema; a server never applies it.
         await store.require_current_schema()
+        if args.command == OperatorCommand.AUDIT_BINDING_REFRESHES:
+            rows = await BindingRefresher(store).audit(
+                after=0 if args.after is None else args.after,
+                limit=100 if args.limit is None else args.limit,
+            )
+            print(json.dumps(rows))
+            return
         origin = os.environ.get("AWSIGN_ORIGIN", "https://awsign.com")
         rp_id = os.environ.get("AWSIGN_RP_ID", "awsign.com")
         grading = await asyncio.to_thread(
@@ -107,7 +123,22 @@ async def operate(args):
 
 def main():
     parser = argparse.ArgumentParser(prog="awsign")
-    parser.add_argument("command", choices=["migrate", "serve"])
+    parser.add_argument("command", type=OperatorCommand, choices=list(OperatorCommand))
     parser.add_argument("--bind", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8030)
-    asyncio.run(operate(parser.parse_args()))
+    parser.add_argument(
+        "--after", type=int, help="audit-binding-refreshes: last audit ID"
+    )
+    parser.add_argument(
+        "--limit", type=int, help="audit-binding-refreshes: maximum rows (1..1000)"
+    )
+    args = parser.parse_args()
+    if args.command is not OperatorCommand.AUDIT_BINDING_REFRESHES and (
+        args.after is not None or args.limit is not None
+    ):
+        parser.error("--after and --limit belong to audit-binding-refreshes")
+    if args.after is not None and args.after < 0:
+        parser.error("--after must be nonnegative")
+    if args.limit is not None and not 1 <= args.limit <= 1000:
+        parser.error("--limit must be between 1 and 1000")
+    asyncio.run(operate(args))

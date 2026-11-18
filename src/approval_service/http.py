@@ -21,6 +21,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 from jsonschema import ValidationError
 
+from .binding_refresh_http import BindingRefreshEndpoint
 from .canonical import canonical, parse
 from .ceremonies import Ceremonies
 from .ceremonies import commitment as token_commitment
@@ -30,6 +31,7 @@ from .enrollment import Enrollments, PublicIssuer
 from .grading import watch_metadata
 from .http_errors import refusal_response
 from .http_io import read_json_body
+from .http_purpose import HTTPPurpose
 from .http_routes import mount_requester_routes
 from .requester import AdmittedRequester
 from .seams import check_activation_carrier, check_http, commitment
@@ -415,6 +417,11 @@ def create_app(store, *, public, origin, rp_id, grading, requests_per_ip=600):
         }
 
     def route(purpose):
+        if purpose is HTTPPurpose.BINDING_REFRESH:
+            return BindingRefreshEndpoint(
+                store=store, public=public, origin=origin, rp_id=rp_id, rates=rates
+            ).handle
+
         async def handle(request: Request):
             return await requester_route(request, purpose)
 

@@ -1,15 +1,14 @@
 """One reviewed closed schema shared by generated Go and Python consumers."""
 
-import json
 import re
 from importlib.resources import files
 from urllib.parse import urlsplit
 
 from jsonschema import Draft202012Validator, ValidationError, validators
 
-SCHEMA = json.loads(
-    files("approval_service").joinpath("data/format-v1.json").read_text()
-)
+from .schema_projection import load_wire_schema
+
+SCHEMA = load_wire_schema(files("approval_service").joinpath("data"))
 
 
 def _whole_pattern(validator, pattern, instance, schema):

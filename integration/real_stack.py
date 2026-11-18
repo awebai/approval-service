@@ -148,11 +148,11 @@ async def registry_stack(
                     registry_url=origin, transport=client_transport
                 )
                 assert registry._domain_verifier is None
-                for domain, (private, public) in controllers.items():
-                    await registry.register_namespace(
-                        domain, did_from_public_key(public), private
-                    )
                 try:
+                    for domain, (private, public) in controllers.items():
+                        await registry.register_namespace(
+                            domain, did_from_public_key(public), private
+                        )
                     yield registry
                 finally:
                     await registry.aclose()

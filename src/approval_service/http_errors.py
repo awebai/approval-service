@@ -20,6 +20,15 @@ class RateFailure(StrEnum):
     LIMITED = "rate_limited"
 
 
+class AdvisedRefused(Refused):
+    """A refusal with controlled next-step text, never an echoed request body."""
+
+    def __init__(self, *, reason: StrEnum, advice: str):
+        self.reason = reason
+        self.message = advice
+        super().__init__(reason.value)
+
+
 def refusal_response(error: Refused | StoreRefused) -> JSONResponse:
     """Keep requester, unavailable and absence outcomes distinct and closed."""
     code = error.code
@@ -34,4 +43,7 @@ def refusal_response(error: Refused | StoreRefused) -> JSONResponse:
         if code.endswith("_not_found")
         else HTTPStatus.BAD_REQUEST
     )
-    return JSONResponse({"version": 1, "error": {"code": code}}, status_code=status)
+    details = {"code": code}
+    if isinstance(error, AdvisedRefused):
+        details["message"] = error.message
+    return JSONResponse({"version": 1, "error": details}, status_code=status)

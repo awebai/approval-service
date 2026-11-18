@@ -2,10 +2,16 @@
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
-schema = json.loads((root / "src/approval_service/data/format-v1.json").read_text())
+# Generation reads the source package's pure schema projection, not runtime
+# verifier state or a separately copied schema-composition implementation.
+sys.path.insert(0, str(root / "src"))
+from approval_service.schema_projection import load_wire_schema
+
+schema = load_wire_schema(root / "src/approval_service/data")
 raw = json.dumps(schema, sort_keys=True, separators=(",", ":"))
 assert "`" not in raw
 output = (
