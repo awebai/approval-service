@@ -4,7 +4,7 @@ requires-python = ">=3.12"
 
 [manifest]
 overrides = [
-    { name = "aweb-naapp", extras = ["webauthn"], git = "https://github.com/awebai/aweb.git?subdirectory=naapp-lib&rev=b0a33024e2e8ef3fb47da84b245cb3064e892183" },
+    { name = "aweb-naapp", extras = ["webauthn"], git = "https://github.com/awebai/aweb.git?subdirectory=naapp-lib&rev=1876479256390d6ac97fdd9670ecbeea91c3ae62" },
     { name = "awid-service", git = "https://github.com/awebai/aweb.git?subdirectory=awid&rev=429eb19c510a2742d4f58f437c501a1024510fb9" },
 ]
 
@@ -166,7 +166,7 @@ dev = [
 [[package]]
 name = "aweb-naapp"
 version = "0.5.2rc3"
-source = { git = "https://github.com/awebai/aweb.git?subdirectory=naapp-lib&rev=b0a33024e2e8ef3fb47da84b245cb3064e892183#b0a33024e2e8ef3fb47da84b245cb3064e892183" }
+source = { git = "https://github.com/awebai/aweb.git?subdirectory=naapp-lib&rev=1876479256390d6ac97fdd9670ecbeea91c3ae62#1876479256390d6ac97fdd9670ecbeea91c3ae62" }
 
 [package.optional-dependencies]
 webauthn = [

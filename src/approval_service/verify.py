@@ -14,6 +14,7 @@ from enum import StrEnum
 
 import cbor2
 from aweb_naapp.webauthn import (
+    AssertionFailure,
     AssertionRefused,
     BackupPolicy,
     VerifiedAssertion,
@@ -276,6 +277,8 @@ def _verify(receipt, *, expected_request, trust, sign_count: int = 0) -> Checked
             ),
         )
     except AssertionRefused as error:
+        if error.reason is AssertionFailure.COUNTER_NOT_ADVANCED:
+            raise Refused("approval_assertion_invalid") from error
         raise Refused(error.reason.value) from error
     approval = CheckedApproval(
         person=trust.person,

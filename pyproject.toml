@@ -48,5 +48,5 @@ asyncio_default_fixture_loop_scope = "function"
 # aweb_naapp.webauthn.verify_assertion; the release owner sets it at the cut.
 override-dependencies = [
     "awid-service @ git+https://github.com/awebai/aweb.git@429eb19c510a2742d4f58f437c501a1024510fb9#subdirectory=awid",
-    "aweb-naapp[webauthn] @ git+https://github.com/awebai/aweb.git@b0a33024e2e8ef3fb47da84b245cb3064e892183#subdirectory=naapp-lib",
+    "aweb-naapp[webauthn] @ git+https://github.com/awebai/aweb.git@1876479256390d6ac97fdd9670ecbeea91c3ae62#subdirectory=naapp-lib",
 ]
