@@ -6,7 +6,7 @@ import time
 import httpx
 import pytest
 from awid.controller_signing import ControllerDescriptor, parse_controller_request
-from awid.did import did_from_public_key, generate_keypair
+from awid.did import did_from_public_key, generate_keypair, stable_id_from_did_key
 from nacl.signing import SigningKey
 from receipts import assertion
 
@@ -22,8 +22,10 @@ from approval_service.trust import read_trust
 from approval_service.verify import Refused, verify_historical
 from approval_service.wire import domain
 
-from .real_stack import dns_zone
+from .real_stack import dns_zone, tls_config
+from .test_binding_refresh import enrollment_snapshot
 from .test_enrollment import ORIGIN, RP
+from .test_requester_registry import listener
 from .test_signed_existing import EnrollmentMoment, signed_enrollment_world
 from .test_signed_journey import exchange
 
@@ -217,4 +219,86 @@ async def test_revoked_identity_gets_public_standing_advice_instead_of_signing_a
                 "message": "This person does not have a currently valid human ID. Ask the operator to check its revocation, certificate and current standing before retrying.",
             },
         }
+        assert await BindingRefresher(store).audit() == []
+
+
+@pytest.mark.asyncio
+async def test_refresh_budget_follows_the_signing_key_across_changed_identity_claims(
+    store, tmp_path
+):
+    async with signed_enrollment_world(
+        store=store, tmp_path=tmp_path, moment=EnrollmentMoment.LATER
+    ) as enrolled:
+        before = await enrollment_snapshot(store, trust=enrolled.trust)
+        app = create_app(
+            store,
+            public=PublicReader(enrolled.registry),
+            origin=ORIGIN,
+            rp_id=RP,
+            grading=EnrollmentGrading("passkey_only", None),
+        )
+        config, tls = tls_config(app, tmp_path)
+        packet = {
+            "version": 1,
+            "requester": enrolled.requester,
+            "previous_binding_commitment": commitment(
+                "binding_commitment", enrolled.binding
+            ),
+            "binding": enrolled.binding,
+            "id_chain": [enrolled.certificate],
+        }
+        outsider_seed, outsider_public = generate_keypair()
+        outsider_key = did_from_public_key(outsider_public)
+        async with (
+            listener(app, config=config) as (origin, _server),
+            httpx.AsyncClient(base_url=origin, verify=tls) as client,
+        ):
+            # Every request carries a real covering signature by the same key;
+            # changing its claimed ID must not obtain another request budget.
+            for index in range(33):
+                _, claimed_public = generate_keypair()
+                requester = {
+                    "kind": "identity",
+                    "id": stable_id_from_did_key(did_from_public_key(claimed_public)),
+                    "key": outsider_key,
+                }
+                response = await exchange(
+                    client,
+                    "binding_refresh",
+                    {**packet, "requester": requester},
+                    outsider_seed,
+                    requester,
+                )
+                if index < 32:
+                    assert response.status_code == 403, response.text
+                    assert response.json() == {
+                        "version": 1,
+                        "error": {
+                            "code": "requester_mismatch",
+                            "message": "Run binding refresh with this person's own current identity key.",
+                        },
+                    }
+                else:
+                    assert response.status_code == 429, response.text
+                    assert response.json() == {
+                        "version": 1,
+                        "error": {
+                            "code": "rate_limited",
+                            "message": "The request budget is exhausted. Wait for the existing window before trying refresh again.",
+                        },
+                    }
+            # Another signing key still reaches real registry standing and the
+            # locked enrollment decision; the blocked key did not exhaust it.
+            current_person = await exchange(
+                client, "binding_refresh", packet, enrolled.seed, enrolled.requester
+            )
+            assert current_person.status_code == 400, current_person.text
+            assert current_person.json() == {
+                "version": 1,
+                "error": {
+                    "code": "binding_refresh_nothing_to_refresh",
+                    "message": "Nothing to refresh: the submitted binding is already current. Keep using the saved live binding; request a refresh only after the issuer or certificate changes.",
+                },
+            }
+        assert await enrollment_snapshot(store, trust=enrolled.trust) == before
         assert await BindingRefresher(store).audit() == []
