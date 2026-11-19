@@ -1,7 +1,7 @@
 {
   "version": 1,
   "minimum_sequence": 302,
-  "retrieved_at": "2026-11-18T15:40:19.491548+00:00",
+  "retrieved_at": "2026-11-19T15:44:34.997283+00:00",
   "next_update": "2026-12-01",
   "artifacts": {
     "blob": {
@@ -17,7 +17,7 @@
     "crls": [
       {
         "url": "https://crl.globalsign.com/gsgccr46evtlsca2025.crl",
-        "sha256": "250f47adf8d66d2985edf97d4eae1d9bf2daf1c06ac81c5c704e71d0bbbb1dfe",
+        "sha256": "cd7742ad72f06efff0b9966dead05ff6f8b72b25884a328e2f9142fbc0aee4b6",
         "max_bytes": 1048576
       },
       {
