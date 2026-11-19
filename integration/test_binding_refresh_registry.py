@@ -176,13 +176,14 @@ async def test_revoked_identity_gets_public_standing_advice_instead_of_signing_a
     async with signed_enrollment_world(
         store=store, tmp_path=tmp_path, moment=EnrollmentMoment.LATER
     ) as enrolled:
+
+        def sign_subject_revocation(payload: bytes) -> tuple[str, bytes]:
+            return enrolled.key, SigningKey(enrolled.seed).sign(payload).signature
+
         await enrolled.registry.revoke_id_certificate(
             enrolled.organisation,
             enrolled.person,
-            signer=lambda payload: (
-                enrolled.key,
-                encode(SigningKey(enrolled.seed).sign(payload).signature),
-            ),
+            signer=sign_subject_revocation,
             expected_head=id_certificate_id(enrolled.certificate["certificate"]),
         )
         packet = {
