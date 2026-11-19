@@ -190,3 +190,13 @@ renewal; deployment operators monitor at least hourly and install it before the 
 reported deadline. Runtime does not adopt an unreviewed new pin or fetch vendor
 data per approval. With no external manifest path, the packaged pin remains
 in use until a new deployment installs its replacement.
+
+### Disposable native test hostname
+
+The isolated integration runner must configure its normal OS resolver so
+`signer.example.com` resolves only to `127.0.0.1` (for example, in the disposable
+host's `/etc/hosts`). This is a prerequisite for the actual DNS-selected private
+hostname refusal test; it is not a bypass of the production guard.
+`scripts/run_integration.py` verifies this mapping before starting tests. The
+runner also supplies private PostgreSQL/Redis through the existing
+`APPROVAL_TEST_DATABASE_URL` and `APPROVAL_TEST_REDIS_URL` settings.

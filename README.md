@@ -210,3 +210,13 @@ registry or signing fixture:
 uv run --frozen --group browser playwright install chromium
 uv run --frozen --group browser pytest -q browser_tests
 ```
+
+The native integration runner needs `signer.example.com` mapped only to
+`127.0.0.1` by its normal OS resolver. `scripts/run_integration.py` checks the
+prerequisite before running the real private-hostname guard case; see
+`docs/deployment.md` for the disposable runner configuration.
+
+The published service requires `aweb-naapp[webauthn]>=0.5.2rc4`, the first
+release containing the shared `aweb_naapp.webauthn.verify_assertion` owner.
+The root-only development override selects reviewed source; downstream
+installations must meet this published floor.

@@ -15,6 +15,7 @@ from dataclasses import dataclass, field
 
 import cbor2
 from aweb_naapp.webauthn import ClientDataType, verify_client_data
+from aweb_naapp.webauthn_cbor import read_cbor_item
 from cryptography import x509
 from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm
 from cryptography.x509.oid import NameOID, ObjectIdentifier
@@ -28,7 +29,6 @@ from webauthn import verify_registration_response
 from webauthn.helpers.exceptions import WebAuthnException
 from webauthn.helpers.structs import COSEAlgorithmIdentifier
 
-from .cbor import read as read_cbor
 from .encoding import decode, encode
 from .metadata import POLICY
 from .verify import Refused, _key
@@ -88,7 +88,7 @@ def _authenticator(raw, credential_id):
     if not length or end >= len(raw) or raw[55:end] != decode(credential_id):
         raise Refused("registration_credential_mismatch")
     stream = io.BytesIO(raw[end:])
-    value = read_cbor(stream)
+    value = read_cbor_item(stream)
     consumed = stream.tell()
     if not isinstance(value, dict) or type(value.get(3)) is not int:
         raise Refused("credential_key_invalid")
@@ -96,7 +96,7 @@ def _authenticator(raw, credential_id):
     key = raw[end : end + consumed]
     _key(key, algorithm)
     if flags & 0x80:
-        extensions = read_cbor(stream)
+        extensions = read_cbor_item(stream)
         if not isinstance(extensions, dict):
             raise Refused("registration_extensions_invalid")
     if stream.tell() != len(raw) - end:
@@ -244,7 +244,7 @@ def check_registration(
             expected_origin=origin,
         )
         stream = io.BytesIO(raw)
-        obj = read_cbor(stream)
+        obj = read_cbor_item(stream)
         if (
             stream.tell() != len(raw)
             or not isinstance(obj, dict)

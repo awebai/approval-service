@@ -9,16 +9,16 @@ import time
 from enum import StrEnum
 from pathlib import Path
 
-logger = logging.getLogger(__name__)
-
 import uvicorn
 from awid.registry import RegistryClient
 
-from .binding_refresh import BindingRefresher
+from .binding_refresh import AuditPage, BindingRefresher
 from .grading import EnrollmentGrading
 from .http import create_app
 from .public import PublicReader
 from .store import Store
+
+logger = logging.getLogger(__name__)
 
 AUDIT_RETRY = "Next: run awsign audit-binding-refreshes --after 0 --limit 100."
 
@@ -141,8 +141,11 @@ def main():
         parser.error(
             f"--after and --limit belong to audit-binding-refreshes. {AUDIT_RETRY}"
         )
-    if args.after is not None and args.after < 0:
-        parser.error(f"--after must be nonnegative. {AUDIT_RETRY}")
-    if args.limit is not None and not 1 <= args.limit <= 1000:
-        parser.error(f"--limit must be between 1 and 1000. {AUDIT_RETRY}")
+    try:
+        AuditPage(
+            after=0 if args.after is None else args.after,
+            limit=100 if args.limit is None else args.limit,
+        )
+    except ValueError as error:
+        parser.error(f"{error} {AUDIT_RETRY}")
     asyncio.run(operate(args))

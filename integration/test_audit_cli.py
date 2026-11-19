@@ -95,7 +95,9 @@ async def test_installed_audit_command_returns_bounded_json_from_actual_refreshe
 
 
 @pytest.mark.asyncio
-async def test_audit_command_refuses_database_at_003_without_applying_004(tmp_path):
+async def test_audit_command_refuses_database_at_003_without_applying_pending_migrations(
+    tmp_path,
+):
     packaged = files("approval_service").joinpath("migrations")
     names = sorted(
         item.name for item in packaged.iterdir() if item.name.endswith(".sql")

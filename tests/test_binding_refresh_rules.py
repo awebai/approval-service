@@ -74,3 +74,12 @@ def test_an_unrelated_signer_is_not_current_issuer_authority():
     with pytest.raises(RefreshRefused) as refusal:
         check_refresh_replacement(previous, candidate, trust=trust)
     assert refusal.value.reason is RefreshFailure.PROOF_INVALID
+
+
+def test_python_cbor_profile_implements_the_frozen_cross_language_limits():
+    from aweb_naapp.webauthn_cbor import LIMITS
+
+    from approval_service.wire import SCHEMA
+
+    # format-v1's x-cbor-limits is the contract read by the Go verifier too.
+    assert LIMITS == SCHEMA["x-cbor-limits"]

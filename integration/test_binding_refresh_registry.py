@@ -165,3 +165,55 @@ async def test_controller_rotation_refreshes_the_binding_without_another_ceremon
                 assert enrolled.statement["evidence"][
                     "binding_commitment"
                 ] == commitment("binding_commitment", enrolled.binding)
+
+
+@pytest.mark.asyncio
+async def test_revoked_identity_gets_public_standing_advice_instead_of_signing_advice(
+    store, tmp_path
+):
+    from awid.id_certificates import id_certificate_id
+
+    async with signed_enrollment_world(
+        store=store, tmp_path=tmp_path, moment=EnrollmentMoment.LATER
+    ) as enrolled:
+        await enrolled.registry.revoke_id_certificate(
+            enrolled.organisation,
+            enrolled.person,
+            signer=lambda payload: (
+                enrolled.key,
+                encode(SigningKey(enrolled.seed).sign(payload).signature),
+            ),
+            expected_head=id_certificate_id(enrolled.certificate["certificate"]),
+        )
+        packet = {
+            "version": 1,
+            "requester": enrolled.requester,
+            "previous_binding_commitment": commitment(
+                "binding_commitment", enrolled.binding
+            ),
+            "binding": enrolled.binding,
+            "id_chain": [enrolled.certificate],
+        }
+        # A new process reads current authority; no stored cache age is reset.
+        app = create_app(
+            store,
+            public=PublicReader(enrolled.registry),
+            origin=ORIGIN,
+            rp_id=RP,
+            grading=EnrollmentGrading("passkey_only", None),
+        )
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app), base_url=ORIGIN
+        ) as client:
+            response = await exchange(
+                client, "binding_refresh", packet, enrolled.seed, enrolled.requester
+            )
+        assert response.status_code == 400, response.text
+        assert response.json() == {
+            "version": 1,
+            "error": {
+                "code": "binding_refresh_identity_invalid",
+                "message": "This person does not have a currently valid human ID. Ask the operator to check its revocation, certificate and current standing before retrying.",
+            },
+        }
+        assert await BindingRefresher(store).audit() == []

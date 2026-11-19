@@ -20,6 +20,7 @@ from aweb_naapp.webauthn import (
     VerifiedAssertion,
     verify_assertion,
 )
+from aweb_naapp.webauthn_cbor import decode_cbor_map
 from awid.did import public_key_from_did
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric import ec
@@ -28,7 +29,6 @@ from jsonschema import ValidationError
 from nacl.bindings import crypto_core_ed25519_is_valid_point
 
 from .canonical import InvalidJSON, canonical, parse
-from .cbor import decode_map
 from .encoding import EncodingError, decode
 from .wire import domain, validate, validate_site
 
@@ -92,7 +92,7 @@ def _integer(value):
 
 def _key(raw, algorithm):
     try:
-        key = decode_map(raw)
+        key = decode_cbor_map(raw)
     except (cbor2.CBORDecodeError, ValueError) as exc:
         raise Refused("credential_key_invalid") from exc
     if (
@@ -149,7 +149,7 @@ def _key(raw, algorithm):
 def verify_binding(signed_binding: dict, *, trust: Trust) -> dict:
     """Check current issuer authority and exact person binding, without an assertion.
 
-    README.md:30-34,148-155 and protocol.md:900-908 select the issuer from checked
+    README.md:157-180 and protocol.md:928-970 select the issuer from checked
     public authority, including the namespace controller for later enrollment.
     """
     _closed(signed_binding, "binding signature")
@@ -236,7 +236,7 @@ def _verify(receipt, *, expected_request, trust, sign_count: int = 0) -> Checked
         ids.add(cid)
         if credential["grade"] not in GRADES:
             raise Refused("grade_invalid")
-        if credential["grade"] == "certified_hardware" and (
+        if credential["grade"] == CredentialGrade.HARDWARE and (
             not isinstance(credential["snapshot"], str)
             or not credential["snapshot"].startswith("sha256:")
             or len(credential["snapshot"]) != 71

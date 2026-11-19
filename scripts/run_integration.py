@@ -5,12 +5,26 @@ PostgreSQL/Redis, the frozen AWID checkout and the environment below.
 """
 
 import argparse
+import asyncio
 import os
 import subprocess
 import sys
 from pathlib import Path
 
+from awid.external_registry import SystemHostResolver
+
 AWEB_REVISION = "686abcfc971bebe5de34674e7a61bcf0b6d7bb6a"
+
+
+async def require_private_test_hostname() -> None:
+    """The real private-hostname guard requires the runner's normal OS mapping."""
+    addresses = set(await SystemHostResolver().resolve_all("signer.example.com"))
+    if addresses != {"127.0.0.1"}:
+        raise RuntimeError(
+            "Configure the disposable runner's normal resolver so signer.example.com "
+            "resolves only to 127.0.0.1 before running integration; "
+            "the private-hostname guard must not be bypassed."
+        )
 
 
 def main():
@@ -35,6 +49,7 @@ def main():
     ).strip():
         raise RuntimeError("Frozen AWID source has tracked modifications")
     if not args.collect_only:
+        asyncio.run(require_private_test_hostname())
         for name in ("APPROVAL_TEST_DATABASE_URL", "APPROVAL_TEST_REDIS_URL"):
             if not os.environ.get(name):
                 raise RuntimeError("Missing disposable integration resource: " + name)

@@ -17,6 +17,7 @@ from .binding_refresh import (
     RequesterKind,
 )
 from .canonical import canonical
+from .http_errors import RateFailure
 from .http_io import read_json_body
 from .http_purpose import HTTPPurpose
 from .public import PublicReader
@@ -51,8 +52,8 @@ class BindingRefreshEndpoint:
             raise RefreshRefused(RefreshFailure.REQUEST_INVALID) from error
         except Refused as error:
             logger.info("binding refresh refused (%s)", error.code)
-            if error.code == RefreshFailure.RATE_LIMITED:
-                raise RefreshRefused(RefreshFailure.RATE_LIMITED) from error
+            if error.code == RateFailure.LIMITED:
+                raise RefreshRefused(RateFailure.LIMITED) from error
             if error.code.endswith("_unavailable"):
                 raise RefreshRefused(RefreshFailure.UNAVAILABLE) from error
             if error.code.startswith("body_"):
@@ -91,12 +92,20 @@ class BindingRefreshEndpoint:
             raise RefreshRefused(RefreshFailure.REQUESTER)
         if binding["origin"] != self.origin or binding["rp_id"] != self.rp_id:
             raise RefreshRefused(RefreshFailure.SITE_CHANGED)
-        trust = await self.public.person(
-            packet["id_chain"],
-            person=binding["person"],
-            identity_key=binding["identity_key"],
-            organisation=binding["organisation"],
-        )
+        try:
+            trust = await self.public.person(
+                packet["id_chain"],
+                person=binding["person"],
+                identity_key=binding["identity_key"],
+                organisation=binding["organisation"],
+            )
+        except Refused as error:
+            reason = (
+                RefreshFailure.UNAVAILABLE
+                if error.code.endswith("_unavailable")
+                else RefreshFailure.IDENTITY_INVALID
+            )
+            raise RefreshRefused(reason) from error
         carrier = AdmittedRequester(
             canonical(descriptor), trust.identity_key, trust.observed_at
         )

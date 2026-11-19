@@ -111,9 +111,10 @@ async def test_current_issuer_refresh_restores_approval_without_registration_or_
     assert answers[0] == answers[1]
     after, unchanged_credentials = await enrollment_snapshot(store, trust=trust)
     assert unchanged_credentials == credentials
-    assert {k: v for k, v in after.items() if k != "binding_ref"} == {
-        k: v for k, v in before.items() if k != "binding_ref"
+    assert {k: v for k, v in after.items() if k not in {"binding_ref", "issuer"}} == {
+        k: v for k, v in before.items() if k not in {"binding_ref", "issuer"}
     }
+    assert after["issuer"] == packet["binding"]["binding"]["issuer"]
     retained = await store.db.fetch_one(
         "SELECT binding FROM {{tables.approval_binding_versions}} WHERE digest=$1",
         before["binding_ref"],

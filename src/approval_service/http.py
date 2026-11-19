@@ -29,7 +29,7 @@ from .definitions import check_definition
 from .encoding import decode
 from .enrollment import Enrollments, PublicIssuer
 from .grading import watch_metadata
-from .http_errors import refusal_response
+from .http_errors import RateFailure, refusal_response
 from .http_io import read_json_body
 from .http_purpose import HTTPPurpose
 from .http_routes import mount_requester_routes
@@ -55,7 +55,7 @@ class RateWindow:
         old, count = self.rows.get(key, (minute, 0))
         count = count + 1 if old == minute else 1
         if count > limit:
-            raise Refused("rate_limited")
+            raise Refused(RateFailure.LIMITED.value)
         self.rows[key] = (minute, count)
         self.rows.move_to_end(key)
         while len(self.rows) > self.capacity:

@@ -1,4 +1,4 @@
-"""Consume R13's exact published fixtures; approval artifacts keep their codec."""
+"""Consume the exact shared published fixtures; approval artifacts keep their codec."""
 
 import base64
 import hashlib

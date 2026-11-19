@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestR13CanonicalAndKeyOrderVectors(t *testing.T) {
+func TestSharedCanonicalAndKeyOrderVectors(t *testing.T) {
 	raw, err := os.ReadFile("../vectors/shared-primitives/canonical-json-v1.json")
 	if err != nil {
 		t.Fatal(err)
@@ -39,7 +39,7 @@ func TestR13CanonicalAndKeyOrderVectors(t *testing.T) {
 	}
 }
 
-func TestR13Ed25519VectorsThroughApprovalWireAdapter(t *testing.T) {
+func TestSharedEd25519VectorsThroughApprovalWireAdapter(t *testing.T) {
 	raw, err := os.ReadFile("../vectors/shared-primitives/signature-primitives-v1.json")
 	if err != nil {
 		t.Fatal(err)
