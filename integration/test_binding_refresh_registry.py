@@ -96,7 +96,7 @@ async def test_controller_rotation_refreshes_the_binding_without_another_ceremon
                 "assertion": proof,
             }
             with pytest.raises(Refused) as refused:
-                verify_historical(receipt, trust=trust)
+                verify_historical(receipt, expected_request=request, trust=trust)
             assert refused.value.code == "binding_mismatch"
             body = {**enrolled.binding["binding"], "issuer": key}
             binding = {
@@ -149,7 +149,9 @@ async def test_controller_rotation_refreshes_the_binding_without_another_ceremon
                 )
                 assert (
                     verify_historical(
-                        {**receipt, "binding": binding}, trust=trust
+                        {**receipt, "binding": binding},
+                        expected_request=request,
+                        trust=trust,
                     ).person
                     == enrolled.person
                 )

@@ -85,7 +85,10 @@ async def test_current_issuer_refresh_restores_approval_without_registration_or_
         old_binding["binding"]["credentials"][0]["id"],
     )
     assert (
-        verify_historical(world["receipt"], trust=old_trust).person == old_trust.person
+        verify_historical(
+            world["receipt"], expected_request=world["request"], trust=old_trust
+        ).person
+        == old_trust.person
     )
     before, credentials = await enrollment_snapshot(store, trust=old_trust)
     issuer = Ed25519PrivateKey.generate()
@@ -97,7 +100,9 @@ async def test_current_issuer_refresh_restores_approval_without_registration_or_
         observed_at=int(time.time()),
     )
     with pytest.raises(Refused):
-        verify_historical(world["receipt"], trust=trust)
+        verify_historical(
+            world["receipt"], expected_request=world["request"], trust=trust
+        )
     packet, carrier = refresh_packet(old_binding, trust=trust, issuer=issuer)
     refresher = BindingRefresher(store)
     answers = await asyncio.gather(
@@ -122,7 +127,12 @@ async def test_current_issuer_refresh_restores_approval_without_registration_or_
     assert audit[0]["previous_binding_ref"] == before["binding_ref"]
     assert audit[0]["current_binding_ref"] == after["binding_ref"]
     live_receipt = {**world["receipt"], "binding": packet["binding"]}
-    assert verify_historical(live_receipt, trust=trust).person == trust.person
+    assert (
+        verify_historical(
+            live_receipt, expected_request=world["request"], trust=trust
+        ).person
+        == trust.person
+    )
     # A real discoverable login still exercises the enrolled key after refresh.
     service = Ceremonies(store, origin=ORIGIN, rp_id=RP)
     world["receipt"] = live_receipt
