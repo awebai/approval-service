@@ -13,6 +13,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"io"
 	"math/big"
 	"unicode/utf8"
 
@@ -315,6 +316,11 @@ func parseClientData(raw []byte) (clientData, error) {
 	value, err := readValue(d, 0)
 	if err != nil {
 		return out, err
+	}
+	// protocol.md:337-345 keeps the complete original client bytes signed.
+	// Only whitespace may follow the one JSON object; do not reparse a struct.
+	if _, err = d.Token(); err != io.EOF {
+		return out, refuse("client_data_invalid")
 	}
 	obj, ok := value.(map[string]any)
 	if !ok {
