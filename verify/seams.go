@@ -136,7 +136,7 @@ func HTTPAuthorizationWithSigner(body []byte, requester map[string]any, origin, 
 }
 func CheckHTTP(authorization string, body []byte, in HTTPInput) (CheckedHTTP, error) {
 	var out CheckedHTTP
-	bad := func(code string) (CheckedHTTP, error) { return out, refuse(code) }
+	bad := func(code RefusalCode) (CheckedHTTP, error) { return out, refuse(code) }
 	if len(authorization) > int(httpConfig()["max_header_bytes"].(float64)) || !strings.HasPrefix(authorization, "Awsign ") {
 		return bad("http_authorization_invalid")
 	}
@@ -209,7 +209,7 @@ func CheckEnrollmentIntent(signed map[string]any, in EnrollmentInput) (CheckedEn
 
 func checkEnrollmentIntent(signed map[string]any, in EnrollmentInput, live bool) (CheckedEnrollment, error) {
 	var out CheckedEnrollment
-	bad := func(code string) (CheckedEnrollment, error) { return out, refuse(code) }
+	bad := func(code RefusalCode) (CheckedEnrollment, error) { return out, refuse(code) }
 	if validate("enrollment_intent", signed) != nil {
 		return bad("enrollment_invalid")
 	}
@@ -289,7 +289,7 @@ func checkEnrollmentIntent(signed map[string]any, in EnrollmentInput, live bool)
 // renew or repeat the deadline-bound enrollment/confirmation ceremony.
 func CheckActivation(value map[string]any, in EnrollmentInput) (CheckedEnrollment, error) {
 	var out CheckedEnrollment
-	bad := func(code string) (CheckedEnrollment, error) { return out, refuse(code) }
+	bad := func(code RefusalCode) (CheckedEnrollment, error) { return out, refuse(code) }
 	if validate("enrollment_activation", value) != nil {
 		return bad("activation_invalid")
 	}
@@ -475,7 +475,9 @@ func MakeNeedsHuman(request map[string]any, origin string) (int, map[string]any,
 
 func creationAssertion(receipt map[string]any, in EnrollmentInput, live bool) (CheckedApproval, string, map[string]any, error) {
 	var out CheckedApproval
-	bad := func(code string) (CheckedApproval, string, map[string]any, error) { return out, "", nil, refuse(code) }
+	bad := func(code RefusalCode) (CheckedApproval, string, map[string]any, error) {
+		return out, "", nil, refuse(code)
+	}
 	if validate("receipt", receipt) != nil {
 		return bad("creation_invalid")
 	}

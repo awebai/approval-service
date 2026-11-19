@@ -12,7 +12,6 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"io"
 	"math/big"
 	"unicode/utf8"
@@ -41,7 +40,6 @@ type EffectInputs struct {
 	NonceKeys       map[string][]byte
 }
 
-func refuse(code string) error { return errors.New(code) }
 func decode(s string) ([]byte, error) {
 	b, e := base64.RawURLEncoding.Strict().DecodeString(s)
 	if e != nil || len(b) == 0 || base64.RawURLEncoding.EncodeToString(b) != s {
@@ -137,7 +135,7 @@ func credentialKey(raw []byte, algorithm int64) (crypto.PublicKey, error) {
 }
 func rawVerify(receipt, expected map[string]any, trust Trust) (map[string]any, CheckedApproval, error) {
 	var out CheckedApproval
-	fail := func(code string) (map[string]any, CheckedApproval, error) { return nil, out, refuse(code) }
+	fail := func(code RefusalCode) (map[string]any, CheckedApproval, error) { return nil, out, refuse(code) }
 	if e := validate("receipt", receipt); e != nil {
 		return fail("invalid_shape")
 	}

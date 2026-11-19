@@ -42,18 +42,18 @@ func checkEnrollmentStatement(statement map[string]any, trust Trust) (map[string
 	}
 	e, ok := statement["evidence"].(map[string]any)
 	if !ok {
-		return nil, refuse("enrollment_evidence_invalid")
+		return nil, refuse(EnrollmentEvidenceInvalid)
 	}
 	version, ok := e["version"].(json.Number)
 	if !ok {
-		return nil, refuse("enrollment_evidence_invalid")
+		return nil, refuse(EnrollmentEvidenceInvalid)
 	}
 	kind, _ := e["kind"].(string)
 	if version != "1" || kind != "human_enrolled_later" {
-		return nil, refuse("enrollment_evidence_unsupported")
+		return nil, refuse(EnrollmentEvidenceUnsupported)
 	}
 	if validate("later_enrollment_evidence", statement) != nil {
-		return nil, refuse("enrollment_evidence_invalid")
+		return nil, refuse(EnrollmentEvidenceInvalid)
 	}
 	raw, err := preimage("later_enrollment_evidence", e)
 	if err != nil {

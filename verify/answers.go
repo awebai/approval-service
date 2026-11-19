@@ -23,7 +23,7 @@ type AnswerInput struct {
 }
 
 func ReadAnswer(kind string, body map[string]any, in AnswerInput) (map[string]any, error) {
-	bad := func(code string) (map[string]any, error) { return nil, refuse(code) }
+	bad := func(code RefusalCode) (map[string]any, error) { return nil, refuse(code) }
 	if in.Status >= 400 {
 		if validate("service_error", body) != nil {
 			return bad("service_response_invalid")
@@ -126,7 +126,7 @@ func AssembleReceipt(requestBytes []byte, answer map[string]any, in AnswerInput)
 	}
 	state := text(answer, "state")
 	if state != "approved" {
-		code := map[string]string{"pending": "approval_pending", "denied": "approval_denied", "cancelled": "approval_cancelled", "expired": "request_expired"}[state]
+		code := map[string]RefusalCode{"pending": "approval_pending", "denied": "approval_denied", "cancelled": "approval_cancelled", "expired": "request_expired"}[state]
 		return nil, refuse(code)
 	}
 	if answer["approval"] == nil {
@@ -149,7 +149,7 @@ func ReadAnswerJSON(kind string, raw []byte, in AnswerInput) (map[string]any, er
 }
 func ReadEnrollmentRequest(kind string, body, intent map[string]any, in EnrollmentInput) (CheckedEnrollment, error) {
 	var out CheckedEnrollment
-	bad := func(code string) (CheckedEnrollment, error) { return out, refuse(code) }
+	bad := func(code RefusalCode) (CheckedEnrollment, error) { return out, refuse(code) }
 	if kind != "enrollment_material" && kind != "enrollment_confirm" {
 		return bad("enrollment_request_invalid")
 	}

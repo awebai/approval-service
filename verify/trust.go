@@ -18,7 +18,7 @@ type PublicObservation struct {
 }
 
 func DeriveTrust(chain []any, person, identityKey, organisation string, observation PublicObservation, now int64) (Trust, error) {
-	bad := func(code string) (Trust, error) { return Trust{}, refuse(code) }
+	bad := func(code RefusalCode) (Trust, error) { return Trust{}, refuse(code) }
 	if now < 0 || observation.AcquiredAt < 0 || now < observation.AcquiredAt || observation.AgeSeconds == nil {
 		return bad("status_unavailable")
 	}
@@ -37,7 +37,8 @@ func DeriveTrust(chain []any, person, identityKey, organisation string, observat
 	evidence := &awid.IDChainEvidence{Status: observation.Status, NamespaceAuthority: observation.NamespaceAuthority, AgeSeconds: &totalAge}
 	checked := awid.VerifyIDChain(bundle, awid.IDChainSubject{ID: person, DIDKey: identityKey}, evidence, organisation)
 	if checked.IdentityValid == nil || !*checked.IdentityValid {
-		return bad("identity_" + checked.Reason)
+		// Reason is produced by the checked AWID verifier, not carried in input JSON.
+		return bad(RefusalCode("identity_" + checked.Reason))
 	}
 	if checked.Kind == nil || *checked.Kind != "human" || checked.HumanID == nil || *checked.HumanID != person {
 		return bad("approver_not_person")

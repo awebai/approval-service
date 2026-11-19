@@ -47,7 +47,7 @@ func TestEnrollmentEvidenceRefusalsExposeTheirCodeWithoutChangingText(t *testing
 }
 
 func TestHTTPServiceErrorDoesNotBecomeAVerifierRefusal(t *testing.T) {
-	_, err := ReadAnswer("poll", map[string]any{"error": map[string]any{"code": "requester_invalid"}}, AnswerInput{Status: 403})
+	_, err := ReadAnswerJSON("poll", []byte(`{"version":1,"error":{"code":"requester_invalid"}}`), AnswerInput{Status: 403})
 	var service *ServiceError
 	if !errors.As(err, &service) || service.HTTPStatus != 403 || service.Code != "requester_invalid" {
 		t.Fatalf("HTTP refusal lost its status/code: %v", err)

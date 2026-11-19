@@ -8,6 +8,10 @@ RP ID is `awsign.com`. The repository remains `awebai/approval-service`.
 
 Any origin/RP change after enrollment requires reenrollment.
 
+Go pure-verifier failures expose `*verify.RefusalError` and its `Code`; `Error()`
+keeps the existing machine-code text. `ServiceError` remains the separate HTTP
+response failure with its status.
+
 Receipt verifiers take independently checked `Trust`; a binding carried in a
 receipt is not its own trust anchor. Python `approval_service.trust.read_trust`
 and Go `verify.ReadTrust` obtain public ID status and DNS authority through the
