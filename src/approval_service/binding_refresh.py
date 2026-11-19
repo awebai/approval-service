@@ -7,6 +7,8 @@ import time
 from dataclasses import dataclass
 from enum import StrEnum
 
+from pgdbm import TransactionManager
+
 from .canonical import canonical
 from .http_errors import AdvisedRefused, RateFailure
 from .requester import AdmittedRequester
@@ -53,7 +55,7 @@ REFRESH_ADVICE = {
 
 
 class RefreshRefused(AdvisedRefused):
-    def __init__(self, reason: RefreshFailure | RateFailure):
+    def __init__(self, reason: RefreshFailure | RateFailure) -> None:
         super().__init__(reason=reason, advice=REFRESH_ADVICE[reason])
 
 
@@ -182,7 +184,7 @@ class BindingRefresher:
 
     async def _install(
         self,
-        connection,
+        connection: TransactionManager,
         *,
         row: dict,
         packet: dict,
