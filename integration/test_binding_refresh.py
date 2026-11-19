@@ -290,14 +290,22 @@ async def test_every_installed_change_is_audited_when_an_issuer_returns_to_a_pri
 
 
 @pytest.mark.asyncio
-async def test_an_unchanged_binding_refresh_replays_without_duplicate_audit(store):
+async def test_an_unchanged_binding_refresh_refuses_without_writing_an_event(store):
     world, trust, _ = await active_port(store)
     issuer = Ed25519PrivateKey.from_private_bytes(bytes([1]) * 32)
     packet, carrier = refresh_packet(
         world["receipt"]["binding"], trust=trust, issuer=issuer
     )
+    assert packet["binding"] == world["receipt"]["binding"]
+    before = await enrollment_snapshot(store, trust=trust)
     refresher = BindingRefresher(store)
-    first = await refresher.refresh(packet, trust=trust, carrier=carrier)
-    second = await refresher.refresh(packet, trust=trust, carrier=carrier)
-    assert first == second
-    assert len(await refresher.audit()) == 1
+    for _ in range(2):
+        with pytest.raises(RefreshRefused) as refused:
+            await refresher.refresh(packet, trust=trust, carrier=carrier)
+        assert refused.value.code == "binding_refresh_nothing_to_refresh"
+        assert refused.value.message == (
+            "Nothing to refresh: the submitted binding is already current. "
+            "Keep using the saved live binding; request a refresh only after the issuer or certificate changes."
+        )
+        assert await enrollment_snapshot(store, trust=trust) == before
+        assert await refresher.audit() == []

@@ -968,3 +968,8 @@ original historical artifacts. It appends an operator-visible record of the
 carrier key, old/new binding commitments, old/new issuer keys and service time.
 The person keeps the new live binding separately from original statements and
 confirmation receipts, whose commitments are never rewritten by this operation.
+
+A request whose previous and candidate commitments both equal the current binding
+refuses with `binding_refresh_nothing_to_refresh` and appends no event. Exact replay
+of an earlier successful old-to-new change still succeeds idempotently; it names a
+different previous commitment and the recorded installed binding.

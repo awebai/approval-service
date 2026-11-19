@@ -35,6 +35,7 @@ class RefreshFailure(StrEnum):
     IDENTITY_INVALID = "binding_refresh_identity_invalid"
     NOT_ACTIVE = "binding_refresh_enrollment_not_found"
     PREVIOUS_CHANGED = "binding_refresh_state_changed"
+    NOTHING_TO_REFRESH = "binding_refresh_nothing_to_refresh"
     CREDENTIAL_CHANGED = "binding_refresh_credential_changed"
     PROOF_INVALID = "binding_refresh_proof_invalid"
 
@@ -49,6 +50,7 @@ REFRESH_ADVICE = {
     RefreshFailure.IDENTITY_INVALID: "This person does not have a currently valid human ID. Ask the operator to check its revocation, certificate and current standing before retrying.",
     RefreshFailure.NOT_ACTIVE: "There is no active enrollment to refresh. Use the enrollment command for this ID.",
     RefreshFailure.PREVIOUS_CHANGED: "Use the current binding from the last successful refresh, then ask the issuer to refresh again.",
+    RefreshFailure.NOTHING_TO_REFRESH: "Nothing to refresh: the submitted binding is already current. Keep using the saved live binding; request a refresh only after the issuer or certificate changes.",
     RefreshFailure.CREDENTIAL_CHANGED: "A refresh cannot replace keys or change their grade or site. Keep the existing enrollment; use the documented recovery procedure if keys were lost.",
     RefreshFailure.PROOF_INVALID: "Ask the person's current certificate issuer or namespace controller to re-sign the existing binding; do not register new approval keys.",
 }
@@ -155,6 +157,8 @@ class BindingRefresher:
             old = json.loads(version["binding"])
             candidate = check_refresh_replacement(old, packet["binding"], trust=trust)
             if row["binding_ref"] == new_ref:
+                if previous_ref == new_ref:
+                    raise RefreshRefused(RefreshFailure.NOTHING_TO_REFRESH)
                 recorded = await connection.fetch_one(
                     """SELECT actor_key FROM {{tables.approval_binding_refresh_audit}}
                     WHERE organisation=$1 AND person_id=$2 AND previous_binding_ref=$3
