@@ -943,7 +943,11 @@ carrier exception remains the original requester or the exact committed target.
 
 ## Current-issuer binding refresh
 
-`data/binding-refresh-v1.json` is an additive transport profile; it does not
+`data/binding-refresh-v1.json` is provisional and unfrozen in this release. Its
+canonical SHA256 is
+`7431cf776be61e7691c390af2ec04c18dce3fe0d4453bec7445ac315f421d64e`.
+A separate reviewed head may freeze it after use across a real issuer change.
+It is an additive transport profile; it does not
 change the frozen v1 binding, request, receipt or statement bytes. A committed,
 currently valid person covers the exact refresh packet with their current
 identity key and HTTP purpose `binding_refresh`, for the same service origin

@@ -18,7 +18,6 @@ from pgdbm import AsyncMigrationManager
 from approval_service.binding_refresh import BindingRefresher
 from approval_service.store import Store
 
-from .test_binding_refresh import refresh_packet
 from .test_ceremonies import active_port
 
 
@@ -63,6 +62,8 @@ async def applied_migrations(store):
 async def test_installed_audit_command_returns_bounded_json_from_actual_refreshes(
     store,
 ):
+    from .test_binding_refresh import refresh_packet
+
     world, trust, _ = await active_port(store)
     binding = world["receipt"]["binding"]
     refresher = BindingRefresher(store)

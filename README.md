@@ -27,6 +27,11 @@ The Python and Go trust tests share real ID certificate/log signatures from the
 public AWID conformance corpus. They exercise cryptography and supplied public
 observation ports; they are not live registry, service or hardware tests.
 
+The binding-refresh transport profile is provisional and unfrozen in this release,
+with canonical SHA256
+`7431cf776be61e7691c390af2ec04c18dce3fe0d4453bec7445ac315f421d64e`.
+It requires a separate freeze decision after use across a real issuer change.
+
 The issuer is always its CURRENT key. After a namespace controller rotation or
 an issuing person's key change, that issuer must sign the affected person's
 binding again; bindings signed by the superseded issuer key no longer verify.

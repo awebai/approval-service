@@ -20,7 +20,6 @@ from .http import create_app
 from .public import PublicReader
 from .store import Store
 
-
 AUDIT_RETRY = "Next: run awsign audit-binding-refreshes --after 0 --limit 100."
 
 
