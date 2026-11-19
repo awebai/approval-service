@@ -8,9 +8,14 @@ import pytest
 from approval_service.encoding import decode
 from approval_service.verify import Refused, Trust, verify_for_effect
 
-CASES = json.loads(
-    (Path(__file__).parents[1] / "vectors/client-data-members.json").read_text()
-)["cases"]
+CASES = (
+    json.loads(
+        (Path(__file__).parents[1] / "vectors/client-data-members.json").read_text()
+    )["cases"]
+    + json.loads(
+        (Path(__file__).parents[1] / "vectors/client-data-eof.json").read_text()
+    )["cases"]
+)
 
 
 @pytest.mark.parametrize("case", CASES, ids=lambda case: case["id"])
