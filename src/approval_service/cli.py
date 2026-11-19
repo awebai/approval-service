@@ -21,6 +21,9 @@ from .public import PublicReader
 from .store import Store
 
 
+AUDIT_RETRY = "Next: run awsign audit-binding-refreshes --after 0 --limit 100."
+
+
 class OperatorCommand(StrEnum):
     MIGRATE = "migrate"
     SERVE = "serve"
@@ -136,9 +139,11 @@ def main():
     if args.command is not OperatorCommand.AUDIT_BINDING_REFRESHES and (
         args.after is not None or args.limit is not None
     ):
-        parser.error("--after and --limit belong to audit-binding-refreshes")
+        parser.error(
+            f"--after and --limit belong to audit-binding-refreshes. {AUDIT_RETRY}"
+        )
     if args.after is not None and args.after < 0:
-        parser.error("--after must be nonnegative")
+        parser.error(f"--after must be nonnegative. {AUDIT_RETRY}")
     if args.limit is not None and not 1 <= args.limit <= 1000:
-        parser.error("--limit must be between 1 and 1000")
+        parser.error(f"--limit must be between 1 and 1000. {AUDIT_RETRY}")
     asyncio.run(operate(args))
