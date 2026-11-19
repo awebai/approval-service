@@ -7,6 +7,7 @@ No production namespace, service token, DNS bypass or mocked read is used.
 from __future__ import annotations
 
 import asyncio
+import json
 import os
 import socket
 import ssl
@@ -39,7 +40,8 @@ async def dns_zone(directory, controllers, *, registry_origins=None):
     version = await asyncio.to_thread(
         subprocess.check_output, [str(binary), "-version"], text=True
     )
-    assert version.startswith("CoreDNS-1.12.0")
+    release = json.loads(Path(__file__).with_name("coredns-release.json").read_text())
+    assert version.startswith("CoreDNS-" + release["version"])
     directory.mkdir()
     zone = directory / "example.test.zone"
     registry_origins = registry_origins or {}

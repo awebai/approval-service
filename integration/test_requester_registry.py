@@ -1,7 +1,8 @@
-"""Native main-AWID certificate admission. Requires an isolated PG/Redis placement.
+"""Native installed-AWID certificate admission on an isolated PG/Redis placement.
 
-Import main's actual awid/src via PYTHONPATH. SQL creates only the disposable
-team projection; real signed HTTP registers/revokes certificates and reads status.
+Use the frozen installed SDK and registry service without a source overlay.
+SQL creates the disposable team projection; real signed HTTP registers/revokes
+certificates and reads status.
 No domain verifier, auth, status response, rate limiter or HTTP client is replaced.
 """
 

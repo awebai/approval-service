@@ -211,10 +211,40 @@ uv run --frozen --group browser playwright install chromium
 uv run --frozen --group browser pytest -q browser_tests
 ```
 
-The native integration runner needs `signer.example.com` mapped only to
-`127.0.0.1` by its normal OS resolver. `scripts/run_integration.py` checks the
-prerequisite before running the real private-hostname guard case; see
-`docs/deployment.md` for the disposable runner configuration.
+## Complete package tests
+
+The service owns the unit and native selection together. Prepare a complete
+service source checkout at the revision selected by the consuming holder's
+committed lock, then prepare dependencies while online:
+
+```sh
+uv sync --frozen
+go mod download
+```
+
+The normal isolated gate calls `make test` from that service checkout. It runs
+one `pytest -q tests integration`, then Go tests and vet, using frozen prepared
+dependencies with no runtime download. `make collect` uses the same Python
+selection without starting tests or requiring database services. Caller
+`PYTEST_ADDOPTS` remains inherited; `JUNIT_XML` selects the service report path.
+The dependency wheel is not the service-owned tests; do not extract or copy test
+files from the dependency installation.
+
+The placement supplies private PostgreSQL17 (`APPROVAL_TEST_DATABASE_URL`), Redis
+(`APPROVAL_TEST_REDIS_URL`) and the separately prepared CoreDNS binary
+(`APPROVAL_TEST_COREDNS_BINARY`). `integration/coredns-release.json` owns the
+Linux architecture-specific download URLs, archive SHA256 pins and expected
+version. Verify the selected archive before extracting its `coredns` executable;
+the real DNS fixture verifies that executable's version. This pin is independent
+of any other journey's DNS binary.
+
+The normal OS resolver must map `signer.example.com` only to `127.0.0.1`.
+`scripts/run_integration.py` checks that prerequisite and requires the private
+resources before running tests. AWID comes from this service's normal frozen
+installed dependencies; no historical checkout, `PYTHONPATH` overlay or trusted
+service token is used. The runner sets its native provenance path from those
+installed modules and passes the same private PG/Redis settings to library-mode
+AWID. See `docs/deployment.md` for the disposable runner configuration.
 
 The published service requires `aweb-naapp[webauthn]>=0.5.2rc4`, the first
 release containing the shared `aweb_naapp.webauthn.verify_assertion` owner.
