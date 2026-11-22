@@ -1,12 +1,12 @@
 {
   "version": 1,
-  "minimum_sequence": 302,
-  "retrieved_at": "2026-11-18T15:40:19.491548+00:00",
+  "minimum_sequence": 303,
+  "retrieved_at": "2026-11-22T14:34:59.540383+00:00",
   "next_update": "2026-12-01",
   "artifacts": {
     "blob": {
       "url": "https://mds.fidoalliance.org/",
-      "sha256": "d2ad4e42a8afbd74a34b3e997ae46d43df9e046f8a5bf1feda97206d8c84e0bb",
+      "sha256": "249feb898909acb807bb035641bea72b159900d9385f13bcad5a08f8d5691710",
       "max_bytes": 33554432
     },
     "root": {
@@ -17,7 +17,7 @@
     "crls": [
       {
         "url": "https://crl.globalsign.com/gsgccr46evtlsca2025.crl",
-        "sha256": "250f47adf8d66d2985edf97d4eae1d9bf2daf1c06ac81c5c704e71d0bbbb1dfe",
+        "sha256": "90aa437bf85685683ad8415cbb85b66c8d036df84ccf5704fda310219c0a38db",
         "max_bytes": 1048576
       },
       {
