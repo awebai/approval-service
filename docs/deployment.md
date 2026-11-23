@@ -31,7 +31,12 @@ vendor data or follows a root/CRL URL discovered in the new blob. A root change,
 new CRL route, rollback, verification failure or unavailable upstream stops the
 job and needs the maintainer's attention. The repository owner must enable
 scheduled Actions and allow its token to open PRs; otherwise this mechanism is
-not running. The maintainer watches failed runs and pending pin PRs.
+not running. The maintainer watches failed runs and pending pin PRs. The run
+summary records the earliest cutoff from the verified proposal. Each proposal
+also records that verified deadline as `valid_until` beside its artifact pins.
+The run fails if the cutoff of the pin on main is under 72 hours away and a
+renewal PR is still open. Runtime still verifies the pinned artifacts at its
+own clock.
 
 A pin to FIDO's live URL cannot bootstrap an empty cache after FIDO replaces that
 file. Keep the exact verified artifacts in a persistent external cache; their

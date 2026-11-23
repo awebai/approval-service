@@ -51,10 +51,12 @@ def propose_pin(current, *, cache_dir, now=None):
             spec["sha256"] = hashlib.sha256(raw).hexdigest()
         proposed["minimum_sequence"] = snapshot.sequence
         proposed["next_update"] = snapshot.next_update.strftime("%Y-%m-%d")
+        proposed["valid_until"] = snapshot.valid_until.strftime("%Y-%m-%dT%H:%M:%SZ")
         unchanged = (
             proposed["artifacts"] == current["artifacts"]
             and proposed["minimum_sequence"] == current["minimum_sequence"]
             and proposed["next_update"] == current.get("next_update")
+            and proposed["valid_until"] == current.get("valid_until")
         )
         if unchanged:
             return copy.deepcopy(current)

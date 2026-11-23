@@ -1,6 +1,7 @@
 """The pin publisher verifies actual signatures before proposing any hashes."""
 
 import copy
+from datetime import timedelta
 
 import pytest
 from test_metadata_cache import manifest
@@ -12,7 +13,11 @@ from approval_service.metadata_update import propose_pin
 
 def test_unchanged_upstream_does_not_create_a_daily_pin_diff(transport, tmp_path):
     current = manifest(transport)
-    current.update(retrieved_at=NOW.isoformat(), next_update="2026-11-16")
+    current.update(
+        retrieved_at=NOW.isoformat(),
+        next_update="2026-11-16",
+        valid_until="2026-11-16T00:00:00Z",
+    )
     assert propose_pin(current, cache_dir=tmp_path / "cache", now=NOW) == current
 
 
@@ -21,14 +26,17 @@ def test_new_signed_blob_is_verified_and_proposed_without_changing_root(
 ):
     current = manifest(transport)
     before = copy.deepcopy(current)
-    new = signed_metadata([Vendor().entry()], sequence=2)
+    new = signed_metadata(
+        [Vendor().entry()], sequence=2, next_update=NOW + timedelta(days=10)
+    )
     transport[1]["/1/blob"] = new["blob"]
     proposed = propose_pin(current, cache_dir=tmp_path / "cache", now=NOW)
     assert current == before
     assert proposed["minimum_sequence"] == 2
     assert proposed["artifacts"]["blob"]["sha256"] == new["blob_sha256"]
     assert proposed["artifacts"]["root"] == current["artifacts"]["root"]
-    assert proposed["next_update"] == "2026-11-16"
+    assert proposed["next_update"] == "2026-11-25"
+    assert proposed["valid_until"] == "2026-11-22T21:00:00Z"
     assert proposed["retrieved_at"] == NOW.isoformat()
 
 

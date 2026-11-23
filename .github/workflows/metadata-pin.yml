@@ -15,6 +15,7 @@ jobs:
     timeout-minutes: 10
     env:
       PIN_BRANCH: automation/metadata-pin
+      PIN_FILE: src/approval_service/data/mds-pin-v1.json
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -24,18 +25,24 @@ jobs:
       - uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
       - run: uv sync --frozen --python 3.13
       - name: Verify the current upstream against the existing pinned root
+        shell: bash
         run: |
+          # Capture main before updating the manifest or switching branches.
+          main_cutoff=$(git show "HEAD:$PIN_FILE" | jq -er '.valid_until | fromdateiso8601')
+          printf '%s\n' "$main_cutoff" > "$RUNNER_TEMP/main-metadata-cutoff"
           uv run python -m approval_service.metadata_update \
-            --manifest src/approval_service/data/mds-pin-v1.json \
+            --manifest "$PIN_FILE" \
             --cache-dir "$RUNNER_TEMP/verified-metadata"
-          uv run python -m approval_service.metadata_cache \
-            --manifest src/approval_service/data/mds-pin-v1.json \
-            --cache-dir "$RUNNER_TEMP/verified-metadata"
+          receipt=$(uv run python -m approval_service.metadata_cache \
+            --manifest "$PIN_FILE" \
+            --cache-dir "$RUNNER_TEMP/verified-metadata")
+          printf '%s\n' "$receipt"
+          cutoff=$(jq -er '.valid_until | strings | select(length > 0)' <<< "$receipt")
+          printf 'Verified FIDO metadata cutoff (UTC): `%s`\n' "$cutoff" >> "$GITHUB_STEP_SUMMARY"
       - name: Open or update the review request; never merge or deploy
         shell: bash
         run: |
           set -euo pipefail
-          PIN_FILE=src/approval_service/data/mds-pin-v1.json
           if git diff --quiet -- "$PIN_FILE"; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -64,4 +71,17 @@ jobs:
           automation run can replace this branch; review the latest head.
           BODY
             gh pr create --head "$PIN_BRANCH" --base main --title 'Renew verified FIDO metadata pins' --body-file "$RUNNER_TEMP/metadata-pr.md"
+          fi
+      - name: Fail when a near-expiry renewal still awaits review
+        shell: bash
+        run: |
+          read -r main_cutoff < "$RUNNER_TEMP/main-metadata-cutoff"
+          now=$(date -u +%s)
+          if (( main_cutoff - now < 72 * 60 * 60 )); then
+            pending=$(gh pr list --head "$PIN_BRANCH" --base main --state open --json number --jq '.[0].number // empty')
+            if [ -n "$pending" ]; then
+              cutoff=$(jq -ner --argjson epoch "$main_cutoff" '$epoch | todateiso8601')
+              printf '::error::FIDO metadata on main cuts off at %s and renewal PR #%s is still open.\n' "$cutoff" "$pending"
+              exit 1
+            fi
           fi

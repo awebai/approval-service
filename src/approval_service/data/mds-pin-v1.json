@@ -3,6 +3,7 @@
   "minimum_sequence": 303,
   "retrieved_at": "2026-11-22T14:34:59.540383+00:00",
   "next_update": "2026-12-01",
+  "valid_until": "2026-11-29T11:49:13Z",
   "artifacts": {
     "blob": {
       "url": "https://mds.fidoalliance.org/",
