@@ -10,6 +10,7 @@ import pytest
 from awid.registry import RegistryClient
 
 from approval_service.canonical import canonical, parse
+from approval_service.definitions import definition, definition_ref
 from approval_service.encoding import decode, encode
 from approval_service.grading import EnrollmentGrading
 from approval_service.http import create_app
@@ -61,6 +62,48 @@ async def test_profile_is_checked_before_public_admission(field, value, code):
         request["deadline"] = request["not_before"] + value
     elif field:
         request["act"]["target"][field] = value
+    await assert_submit_error(case, body, request, code)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "operation", ["human.add", "enrollment.confirm", "human.enrollment.replace"]
+)
+@pytest.mark.parametrize(
+    "leading,trailing,code",
+    [
+        ("", "", "identity_chain_required"),
+        (" ", "", "act_identifier_invalid"),
+        ("", " ", "act_identifier_invalid"),
+    ],
+    ids=["canonical", "leading-space", "trailing-space"],
+)
+async def test_submit_requires_canonical_act_person(operation, leading, trailing, code):
+    case, body, request = packet()
+    act = request["act"]
+    person = act["target"]["person"]
+    binding = {
+        "certificate": act["target"]["certificate"],
+        "identity_key": act["target"]["identity_key"],
+        "binding_commitment": "sha256:" + "1" * 64,
+    }
+    targets = {
+        "human.add": act["target"],
+        "enrollment.confirm": binding,
+        "human.enrollment.replace": {
+            "before": binding,
+            "after": {**binding, "binding_commitment": "sha256:" + "2" * 64},
+            "continuity": "unbroken",
+        },
+    }
+    act["operation"] = operation
+    act["target"] = {**targets[operation], "person": leading + person + trailing}
+    request["definition"] = definition_ref(operation)
+    request["purpose"] = definition(operation)["purpose"]
+    await assert_submit_error(case, body, request, code)
+
+
+async def assert_submit_error(case, body, request, code):
     body["request_bytes"] = encode(canonical(request))
     raw = canonical(body)
     authorization = http_authorization(
