@@ -13,21 +13,15 @@ from approval_service.verify import Refused
 
 
 def assessments():
-    vendor = Vendor()
     now = datetime.now(UTC)
+    vendor = Vendor(now=now)
     first = load_snapshot(
-        **{
-            **signed_metadata([vendor.entry()], next_update=now + timedelta(days=7)),
-            "now": now,
-        }
+        **signed_metadata([vendor.entry()], next_update=now + timedelta(days=7), now=now)
     )
     second = load_snapshot(
-        **{
-            **signed_metadata(
-                [vendor.entry()], sequence=2, next_update=now + timedelta(days=8)
-            ),
-            "now": now,
-        }
+        **signed_metadata(
+            [vendor.entry()], sequence=2, next_update=now + timedelta(days=8), now=now
+        )
     )
     raw, challenge = vendor.registration()
 

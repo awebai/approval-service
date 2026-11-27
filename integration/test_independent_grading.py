@@ -18,22 +18,16 @@ async def test_independent_grading_can_activate_a_weaker_or_different_snapshot(
 ):
     from vendor import Vendor, signed_metadata
 
-    vendor = Vendor()
     now = datetime.now(UTC)
+    vendor = Vendor(now=now)
     service_snapshot = load_snapshot(
-        **{
-            **signed_metadata([vendor.entry()], next_update=now + timedelta(days=7)),
-            "now": now,
-        }
+        **signed_metadata([vendor.entry()], next_update=now + timedelta(days=7), now=now)
     )
     issuer_snapshot = (
         load_snapshot(
-            **{
-                **signed_metadata(
-                    [vendor.entry()], sequence=2, next_update=now + timedelta(days=8)
-                ),
-                "now": now,
-            }
+            **signed_metadata(
+                [vendor.entry()], sequence=2, next_update=now + timedelta(days=8), now=now
+            )
         )
         if issuer_hardware
         else None
@@ -58,13 +52,10 @@ async def test_independent_grading_can_activate_a_weaker_or_different_snapshot(
 async def test_issuer_cannot_upgrade_beyond_the_services_assessment(store):
     from vendor import Vendor, signed_metadata
 
-    vendor = Vendor()
     now = datetime.now(UTC)
+    vendor = Vendor(now=now)
     issuer_snapshot = load_snapshot(
-        **{
-            **signed_metadata([vendor.entry()], next_update=now + timedelta(days=7)),
-            "now": now,
-        }
+        **signed_metadata([vendor.entry()], next_update=now + timedelta(days=7), now=now)
     )
     with pytest.raises(Refused, match="binding_credential_mismatch"):
         await confirmed_person(store, vendor=vendor, issuer_grading=issuer_snapshot)

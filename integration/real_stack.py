@@ -12,6 +12,7 @@ import socket
 import ssl
 import subprocess
 from contextlib import asynccontextmanager
+from datetime import UTC, datetime
 from pathlib import Path
 from uuid import uuid4
 
@@ -130,7 +131,8 @@ def tls_config(app, directory):
     """Actual HTTPS for secure session cookies; the browser journey pins its RP."""
     from vendor import Vendor, certificate
 
-    vendor = Vendor()
+    now = datetime.now(UTC)
+    vendor = Vendor(now=now)
     key = vendor.batch_key
     leaf = certificate(
         x509.Name([x509.NameAttribute(x509.NameOID.COMMON_NAME, "localhost")]),
@@ -138,6 +140,7 @@ def tls_config(app, directory):
         issuer=vendor.root.subject,
         issuer_key=vendor.root_key,
         san="localhost",
+        now=now,
     )
     certfile = directory / "tls-cert.pem"
     keyfile = directory / "tls-key.pem"
