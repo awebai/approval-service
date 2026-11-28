@@ -462,9 +462,11 @@ snapshots for historical verification without letting them restore current
 eligibility after a trust withdrawal. The actual initial snapshot/hash and
 status/refresh policy are review inputs still to select; there is no fabricated
 snapshot in this document. Raw attestation remains private and scoped per
-enrollment. Accept only attestation profiles whose privacy can be established;
-never publish a unique device certificate or import enterprise-identifying
-attestation under a different name.
+enrollment. The v1 format source permits `none`, `packed` and `fido-u2f`.
+Other profiles, including `tpm` and `apple`, receive
+`attestation_profile_unsupported` before hardware grading. A client can use an
+authenticator that presents a supported profile. Unique device certificates
+stay private, and enterprise-identifying attestation is refused.
 
 The grade is an issuer-signed enrollment claim anchored to that evidence. A
 public verifier authenticates the trusted issuer's claim and raw act assertion,

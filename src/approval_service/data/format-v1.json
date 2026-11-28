@@ -1840,9 +1840,7 @@
   "x-registration-attestation-formats": [
     "none",
     "packed",
-    "fido-u2f",
-    "tpm",
-    "apple"
+    "fido-u2f"
   ],
   "x-http": {
     "freshness_seconds": 60,
