@@ -11,7 +11,7 @@ from __future__ import annotations
 import base64
 import io
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import InitVar, dataclass, field
 
 import cbor2
 from cryptography import x509
@@ -57,6 +57,16 @@ def require_supported_entry(assessed, declared):
 
 
 @dataclass(frozen=True)
+class AttestationAssessment:
+    """Private observations available to the issuer from this grading pass."""
+
+    format: str = field(repr=False)
+    aaguid: str | None = field(default=None, repr=False)
+    firmware_version: int | None = field(default=None, repr=False)
+    verified_chain: tuple[bytes, ...] = field(default=(), repr=False)
+
+
+@dataclass(frozen=True)
 class RegisteredCredential:
     credential_id: str
     public_key: bytes
@@ -65,6 +75,15 @@ class RegisteredCredential:
     grade: str
     snapshot: str | None
     client_data_json: bytes = field(repr=False)
+    assessment: InitVar[AttestationAssessment | None] = None
+
+    def __post_init__(self, assessment: AttestationAssessment | None):
+        # Keep private provenance out of dataclass serialization and repr.
+        object.__setattr__(self, "_attestation_assessment", assessment)
+
+    @property
+    def attestation_assessment(self) -> AttestationAssessment | None:
+        return self._attestation_assessment
 
     def binding_entry(self):
         return {
@@ -163,17 +182,17 @@ def _packed(certificate):
         raise Refused("attestation_certificate_invalid")
 
 
-def _hardware(snapshot, entry, chain, aaguid, firmware, has_aaguid, fmt, now):
+def _hardware(snapshot, entry, chain, aaguid, firmware, has_aaguid, now):
     if snapshot is None or entry is None or not chain:
-        return False
+        return False, ()
     statement = entry.get("metadataStatement", {})
     if not set(statement.get("attestationTypes", [])).intersection(
         {"basic_full", "attca"}
     ):
-        return False
+        return False, ()
     roots = statement.get("attestationRootCertificates", [])
     if not roots:
-        return False
+        return False, ()
     try:
         store = crypto.X509Store()
         store.set_time(now)
@@ -186,10 +205,10 @@ def _hardware(snapshot, entry, chain, aaguid, firmware, has_aaguid, fmt, now):
             [crypto.load_certificate(crypto.FILETYPE_ASN1, c) for c in chain[1:]],
         )
         context.verify_certificate()
-        verified = [
+        verified = tuple(
             crypto.dump_certificate(crypto.FILETYPE_ASN1, c)
             for c in context.get_verified_chain()
-        ]
+        )
         # An AAGUID-less certificate can identify a model only if its MDS
         # root is model-specific. Pure bounded snapshot lookup, no I/O loop.
         if not has_aaguid:
@@ -201,18 +220,16 @@ def _hardware(snapshot, entry, chain, aaguid, firmware, has_aaguid, fmt, now):
                 in e.get("metadataStatement", {}).get("attestationRootCertificates", [])
             }
             if models != {aaguid}:
-                return False
-        return (
-            snapshot.model(
-                aaguid,
-                now=now,
-                attestation_chain=verified,
-                authenticator_version=firmware,
-            )
-            is not None
+                return False, ()
+        model = snapshot.model(
+            aaguid,
+            now=now,
+            attestation_chain=verified,
+            authenticator_version=firmware,
         )
+        return model is not None, verified
     except (ValueError, TypeError, crypto.Error, crypto.X509StoreContextError):
-        return False
+        return False, ()
 
 
 def check_registration(
@@ -307,8 +324,15 @@ def check_registration(
         if verified.credential_id != decode(response["id"]):
             raise Refused("registration_credential_mismatch")
         entry = snapshot.by_aaguid.get(aaguid) if snapshot is not None else None
-        hardware = not flags & 0x18 and _hardware(
-            snapshot, entry, chain, aaguid, firmware, has_aaguid, fmt, now
+        hardware, verified_chain = False, ()
+        if not flags & 0x18:
+            hardware, verified_chain = _hardware(
+                snapshot, entry, chain, aaguid, firmware, has_aaguid, now
+            )
+        assessment = (
+            AttestationAssessment(fmt, aaguid, firmware, verified_chain)
+            if verified_chain
+            else AttestationAssessment(fmt)
         )
         return RegisteredCredential(
             response["id"],
@@ -318,6 +342,7 @@ def check_registration(
             "certified_hardware" if hardware else "passkey_uv",
             "sha256:" + snapshot.digest if hardware else None,
             client,
+            assessment=assessment,
         )
     except Refused:
         raise

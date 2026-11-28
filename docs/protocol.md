@@ -423,10 +423,11 @@ physical tamper resistance. Interpret certification/status applicability to the
 attested model/version/key; an unknown applicability cannot earn the hardware
 grade. The metadata semantics come from [FIDO MDS3.1.1](https://fidoalliance.org/specs/mds/fido-metadata-service-v3.1.1-ps-20260105.html#authenticatorstatus-enum).
 
-Grade/snapshot belong to the selected credential, never a maximum grade over
-the person's keys. The hardware grade is the issuer's signed claim, checked
-by the approval service at enrollment. Public v1 verifiers authenticate that
-claim and its binding to the assertion; they do not inspect private attestation.
+Grade and snapshot belong to the credential that signed the assertion.
+`certified_hardware` in B means the issuer verified the attestation and graded
+that credential at enrollment under the snapshot B names, and the approval
+service accepted that grade. Public v1 verifiers authenticate the signed
+claim and its binding to the assertion. The attestation stays private.
 The service/issuer's private attestation-check type is not a public verifier
 result. A compromised approval service cannot label a software key as hardware or
 reuse an attestation from another enrollment when the issuer performs the
@@ -456,13 +457,18 @@ configured, missing metadata likewise refuses attested registration
 current, while `/health` remains database-only liveness. Effective unscoped withdrawals end
 model eligibility regardless of firmware; certificate scope remains specific.
 
-Verify before installation; reject rollback, untrusted replacement and expired
-eligibility data. Do not fetch MDS during each approval. Preserve earlier
-snapshots for historical verification without letting them restore current
-eligibility after a trust withdrawal. The actual initial snapshot/hash and
-status/refresh policy are review inputs still to select; there is no fabricated
-snapshot in this document. Raw attestation remains private and scoped per
-enrollment. The v1 format source permits `none`, `packed` and `fido-u2f`.
+Verify each snapshot before installation. Reject rollback, untrusted
+replacement and expired eligibility data. MDS is used to grade a registration.
+Installing a newer pin changes later grading and leaves every existing B
+unchanged. An affected binding can still satisfy a hardware requirement while
+it remains current, until it is withdrawn or replaced. A historical proof
+retains its meaning under as-of Trust. A relying party that requires current
+hardware backing must require a valid P, the issuer's renewable personhood
+statement, for the relevant credential. Where P is unavailable, the v1
+approval proof establishes the enrollment grade only.
+
+Raw attestation remains private and scoped per enrollment. The v1 format
+source permits `none`, `packed` and `fido-u2f`.
 Other profiles, including `tpm` and `apple`, receive
 `attestation_profile_unsupported` before hardware grading. A client can use an
 authenticator that presents a supported profile. Unique device certificates
@@ -474,6 +480,25 @@ not the private hardware chain. A software authenticator proves only passkey
 grade in the acceptance journey. No proof promises that the person understood
 the act, that the page/computer displayed it honestly, or that the real service
 was uncompromised.
+
+### Responding to a FIDO withdrawal
+
+For the first organisation, the operator checks FIDO status reports as a
+required step of the daily metadata renewal review. Compare newly effective
+withdrawal reports with the issuer's private credential inventory. Unscoped
+withdrawals match by AAGUID. Certificate-scoped withdrawals also match the
+SHA-256 hash of a certificate in the verified chain. Schedule a check for any
+relevant withdrawal whose effective date is still in the future. Report
+matches privately to the organisation administrator and issuer. The
+automated inventory-matching alert is required before another organisation
+relies on hardware requirements.
+
+The organisation administrator pauses affected hardware-required effects.
+The issuer, acting for the namespace controller, withdraws or replaces the
+affected bindings through the existing identity-key and evidence transition.
+An issuer signing a new B for the same current identity key and certificate
+leaves the old B valid under current Trust. Resume affected effects after the
+withdrawal or replacement is current.
 
 ## 8. Acyclic enrollment/evidence commitments and verifier results
 

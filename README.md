@@ -52,6 +52,15 @@ There is no second registration; the separate enrollment_confirmation get
 assertion over B remains the public creation proof. Attestation certificates
 remain private and are never placed in a binding or public identity sidecar.
 
+`certified_hardware` in B means the issuer verified and graded that credential
+at enrollment under the snapshot named in B. Installing a newer pin affects
+later grading. An existing B keeps its signed grade, so a credential affected
+by a later withdrawal can still meet a hardware requirement until its binding
+is withdrawn or replaced. Historical proofs keep their as-of meaning.
+Relying parties that need current hardware backing must require a valid,
+renewable personhood statement P. The enrollment grade alone cannot
+establish current backing. See the [withdrawal procedure](docs/protocol.md#responding-to-a-fido-withdrawal).
+
 The v1 format source permits `none`, `packed` and `fido-u2f` registration profiles.
 The service and issuer refuse TPM and Apple attestation with
 `attestation_profile_unsupported` because their privacy properties have yet to

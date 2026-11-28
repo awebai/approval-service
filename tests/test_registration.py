@@ -6,12 +6,14 @@ Synthetic attestation proves the classification logic, not physical hardware.
 import hashlib
 import json
 import uuid
+from dataclasses import asdict
 from pathlib import Path
 
 import cbor2
 import pytest
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec, padding
+from cryptography.hazmat.primitives.serialization import Encoding
 from receipts import fixture
 from vendor import AAGUID, NOW, OTHER_AAGUID, Vendor
 
@@ -135,6 +137,11 @@ def test_real_software_registration_never_inherits_metadata_hardware_grade(
     assert result.public_key == decode(
         w["receipt"]["binding"]["binding"]["credentials"][0]["key"]
     )
+    assessment = result.attestation_assessment
+    assert assessment.format == fmt
+    assert assessment.aaguid is None
+    assert assessment.firmware_version is None
+    assert assessment.verified_chain == ()
     public = result.binding_entry()
     assert set(public) == {
         "id",
@@ -213,7 +220,6 @@ def test_real_x509_enterprise_marker_refuses_while_untrusted_batch_is_only_passk
     from datetime import timedelta
 
     from cryptography import x509
-    from cryptography.hazmat.primitives.serialization import Encoding
     from cryptography.x509.oid import NameOID, ObjectIdentifier
 
     response, challenge, w, obj = registration()
@@ -261,13 +267,33 @@ def test_synthetic_vendor_exercises_the_complete_hardware_classification(
     attestation_type,
 ):
     vendor = Vendor()
-    response, challenge = vendor.registration()
+    leaf = vendor.batch()
+    response, challenge = vendor.registration(batch=leaf)
     entry = vendor.entry()
     entry["metadataStatement"]["attestationTypes"] = [attestation_type]
     result = check(response, challenge, vendor.snapshot([entry]))
     assert result.grade == "certified_hardware"
     assert result.snapshot is not None
     assert result.binding_entry()["snapshot"] == result.snapshot
+    assessment = result.attestation_assessment
+    assert assessment.format == "packed"
+    assert assessment.aaguid == AAGUID
+    assert assessment.firmware_version == 10
+    assert assessment.verified_chain == (
+        leaf.public_bytes(Encoding.DER),
+        vendor.root.public_bytes(Encoding.DER),
+    )
+    assert set(asdict(result)) == {
+        "credential_id",
+        "public_key",
+        "algorithm",
+        "sign_count",
+        "grade",
+        "snapshot",
+        "client_data_json",
+    }
+    assert "attestation" not in repr(result)
+    assert "attestation" not in result.binding_entry()
 
 
 @pytest.mark.parametrize(
@@ -287,8 +313,6 @@ def test_synthetic_vendor_exercises_the_complete_hardware_classification(
 )
 def test_synthetic_vendor_hardware_near_misses(fault):
     import base64
-
-    from cryptography.hazmat.primitives.serialization import Encoding
 
     vendor = Vendor()
     entry = vendor.entry()
@@ -334,19 +358,36 @@ def test_synthetic_vendor_hardware_near_misses(fault):
     else:
         result = check(response, challenge, vendor.snapshot(entries))
         assert result.grade == "passkey_uv" and result.snapshot is None
+        if fault == "other-entry-root":
+            assert result.attestation_assessment.aaguid is None
+            assert result.attestation_assessment.verified_chain == ()
+        if fault == "this-batch-withdrawal":
+            assert result.attestation_assessment.verified_chain == (
+                batch.public_bytes(Encoding.DER),
+                vendor.root.public_bytes(Encoding.DER),
+            )
 
 
-def test_model_specific_root_accepts_a_batch_without_aaguid_extension():
+def test_model_specific_root_accepts_a_batch_without_aaguid_or_firmware_extension():
     vendor = Vendor()
-    response, challenge = vendor.registration(batch=vendor.batch(aaguid=None))
-    assert check(response, challenge, vendor.snapshot()).grade == "certified_hardware"
+    leaf = vendor.batch(aaguid=None, firmware=None)
+    response, challenge = vendor.registration(batch=leaf)
+    entry = vendor.entry()
+    del entry["statusReports"][0]["authenticatorVersion"]
+    result = check(response, challenge, vendor.snapshot([entry]))
+    assert result.grade == "certified_hardware"
+    assert result.attestation_assessment.aaguid == AAGUID
+    assert result.attestation_assessment.firmware_version is None
+    assert result.attestation_assessment.verified_chain == (
+        leaf.public_bytes(Encoding.DER),
+        vendor.root.public_bytes(Encoding.DER),
+    )
 
 
 def test_withdrawal_for_another_batch_does_not_revoke_this_batch():
     import base64
 
     from cryptography.hazmat.primitives.asymmetric import ec
-    from cryptography.hazmat.primitives.serialization import Encoding
     from vendor import certificate
 
     vendor = Vendor()
