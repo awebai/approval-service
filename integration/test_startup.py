@@ -4,6 +4,7 @@ import asyncio
 import os
 import re
 import uuid
+from contextlib import asynccontextmanager, suppress
 from importlib.resources import files
 from pathlib import Path
 
@@ -14,14 +15,50 @@ from pgdbm import AsyncMigrationManager
 from approval_service.store import Store
 
 
-async def listening_url(child):
-    startup_log = []
-    while line := await child.stderr.readline():
-        startup_log.append(line)
-        listening = re.search(rb"Uvicorn running on (http://127\.0\.0\.1:\d+)", line)
-        if listening:
-            return listening.group(1).decode()
-    raise AssertionError(b"".join(startup_log).decode(errors="replace"))
+async def read_stderr(stderr, listening, captured):
+    try:
+        while chunk := await stderr.read(65536):
+            captured.extend(chunk)
+            if not listening.done():
+                # Wait for the port delimiter in case a chunk splits the address.
+                address = re.search(
+                    rb"Uvicorn running on (http://127\.0\.0\.1:\d+)(?=\s)", captured
+                )
+                if address:
+                    listening.set_result(address.group(1).decode())
+    finally:
+        if not listening.done():
+            listening.set_result(None)
+
+
+async def stop_child(child, stderr_reader):
+    if child.returncode is None:
+        with suppress(ProcessLookupError):
+            child.terminate()
+    try:
+        await asyncio.wait_for(child.wait(), 10)
+    except TimeoutError:
+        with suppress(ProcessLookupError):
+            child.kill()
+        await asyncio.wait_for(child.wait(), 10)
+        raise
+    finally:
+        await asyncio.wait_for(stderr_reader, 10)
+
+
+@asynccontextmanager
+async def capture_child_stderr(child):
+    listening = asyncio.get_running_loop().create_future()
+    captured = bytearray()
+    stderr_reader = asyncio.create_task(read_stderr(child.stderr, listening, captured))
+    try:
+        try:
+            yield listening
+        finally:
+            await stop_child(child, stderr_reader)
+    except Exception as exc:
+        exc.add_note("awsign stderr:\n" + captured.decode(errors="replace"))
+        raise
 
 
 @pytest.mark.asyncio
@@ -116,29 +153,26 @@ async def test_locked_product_starts_and_reports_metadata_readiness(
         stdout=asyncio.subprocess.DEVNULL,
         stderr=asyncio.subprocess.PIPE,
     )
-    try:
-        # Use the port actually bound by the child and one deadline for readiness
-        # and sign-in. A short connection probe is not a budget for a database write.
-        async with (
-            asyncio.timeout(10),
-            httpx.AsyncClient(timeout=None, trust_env=False) as client,
-        ):
-            base = await listening_url(child)
-            response = await client.get(f"{base}/health")
-            assert response.status_code == 200
-            assert response.json()["enrollment_ready"] is (health_status == 200)
-            response = await client.get(f"{base}/health/enrollment")
-            assert response.status_code == health_status
-            assert response.json()["enrollment_ready"] is (health_status == 200)
-            # Missing hardware metadata must not take sign-in down.
-            response = await client.post(
-                f"{base}/browser/login/options",
-                json={},
-                headers={"Origin": env["AWSIGN_ORIGIN"]},
-            )
-            assert response.status_code == 200
-            assert response.json()["allowCredentials"] == []
-    finally:
-        if child.returncode is None:
-            child.terminate()
-        await asyncio.wait_for(child.communicate(), 10)
+    # Use the port actually bound by the child and one deadline for readiness
+    # and sign-in. A short connection probe is not a budget for a database write.
+    async with (
+        capture_child_stderr(child) as listening,
+        asyncio.timeout(10),
+        httpx.AsyncClient(timeout=None, trust_env=False) as client,
+    ):
+        base = await listening
+        assert base is not None, "awsign exited before reporting its bound port"
+        response = await client.get(f"{base}/health")
+        assert response.status_code == 200
+        assert response.json()["enrollment_ready"] is (health_status == 200)
+        response = await client.get(f"{base}/health/enrollment")
+        assert response.status_code == health_status
+        assert response.json()["enrollment_ready"] is (health_status == 200)
+        # Missing hardware metadata must not take sign-in down.
+        response = await client.post(
+            f"{base}/browser/login/options",
+            json={},
+            headers={"Origin": env["AWSIGN_ORIGIN"]},
+        )
+        assert response.status_code == 200
+        assert response.json()["allowCredentials"] == []
