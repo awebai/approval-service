@@ -1,0 +1,68 @@
+name: Approval service checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17@sha256:97fb53376be3e4fb1a8a61421daa69dcc3bf2fa39bda3259f5245f9a455af1a9
+        env:
+          POSTGRES_DB: approval_test
+          POSTGRES_USER: approval_test
+          POSTGRES_PASSWORD: approval_test
+        ports:
+          - 5432/tcp
+        options: >-
+          --health-cmd "pg_isready -U approval_test -d approval_test"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+      redis:
+        image: redis:7-alpine@sha256:7f7d30b7fdd09467bac58198a1f166dd69789d348d4fe859cccb20e0cf287fbe
+        ports:
+          - 6379/tcp
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version-file: go.mod
+          cache: false
+      - uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
+      - run: uv sync --frozen --python 3.13
+      - run: uv run --frozen --no-sync ruff check .
+      - run: go test ./...
+      - run: go vet ./...
+      - run: uv run --frozen --no-sync pytest -q tests
+      - name: Install pinned CoreDNS for per-test DNS zones
+        working-directory: ${{ runner.temp }}
+        run: |
+          curl --fail --silent --show-error --location --output coredns.tgz \
+            https://github.com/coredns/coredns/releases/download/v1.12.0/coredns_1.12.0_linux_amd64.tgz
+          echo 'c835bd5e9ba9a98df9631e5a3f0effc60f03ccb9c687c91ae2c85ebf7ab1fc34  coredns.tgz' | sha256sum --check
+          tar -xzf coredns.tgz coredns
+          ./coredns -version
+      - name: Run integration tests against disposable services
+        env:
+          APPROVAL_TEST_DATABASE_URL: postgresql://approval_test:approval_test@127.0.0.1:${{ job.services.postgres.ports['5432'] }}/approval_test
+          APPROVAL_TEST_REDIS_URL: redis://127.0.0.1:${{ job.services.redis.ports['6379'] }}/0
+          APPROVAL_TEST_COREDNS_BINARY: ${{ runner.temp }}/coredns
+          AWID_RATE_LIMIT_BACKEND: redis
+        run: |
+          export AWID_DATABASE_URL="$APPROVAL_TEST_DATABASE_URL"
+          export AWID_REDIS_URL="$APPROVAL_TEST_REDIS_URL"
+          APPROVAL_AWID_SOURCE=$(uv run --frozen --no-sync python -c 'from pathlib import Path; import awid; print(Path(awid.__file__).resolve().parent.parent)')
+          export APPROVAL_AWID_SOURCE
+          uv run --frozen --no-sync pytest -q integration
