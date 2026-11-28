@@ -58,12 +58,12 @@ def propose_pin(current, *, cache_dir, now=None):
             and proposed["next_update"] == current.get("next_update")
             and proposed["valid_until"] == current.get("valid_until")
         )
+        # The receipt revalidates these same verified inputs, even without a pin diff.
+        for raw in [blob, *crls]:
+            _atomic(cache / (hashlib.sha256(raw).hexdigest() + ".artifact"), raw)
         if unchanged:
             return copy.deepcopy(current)
         proposed["retrieved_at"] = now.isoformat()
-        # Cache only the fully verified bytes, outside Git, for local validation.
-        for raw in [blob, *crls]:
-            _atomic(cache / (hashlib.sha256(raw).hexdigest() + ".artifact"), raw)
         return proposed
 
 
@@ -75,7 +75,18 @@ def main():
     parser.add_argument("--cache-dir", type=Path, required=True)
     args = parser.parse_args()
     current = json.loads(args.manifest.read_text())
-    proposed = propose_pin(current, cache_dir=args.cache_dir)
+    try:
+        proposed = propose_pin(current, cache_dir=args.cache_dir)
+    except httpx.HTTPStatusError as error:
+        status = error.response.status_code
+        hint = (
+            "; Retry-After header present"
+            if status == 429 and "retry-after" in error.response.headers
+            else ""
+        )
+        parser.exit(1, f"FIDO metadata upstream unavailable (HTTP {status}{hint}).\n")
+    except httpx.RequestError:
+        parser.exit(1, "FIDO metadata upstream unavailable (request failed).\n")
     if proposed != current:
         args.manifest.write_text(json.dumps(proposed, indent=2) + "\n")
         print("Verified metadata pin update ready for review")

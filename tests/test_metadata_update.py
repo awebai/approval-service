@@ -1,6 +1,8 @@
 """The pin publisher verifies actual signatures before proposing any hashes."""
 
 import copy
+import json
+import sys
 from datetime import timedelta
 
 import pytest
@@ -8,7 +10,8 @@ from test_metadata_cache import manifest
 from vendor import NOW, Vendor, signed_metadata
 
 from approval_service.metadata import MetadataRefused
-from approval_service.metadata_update import propose_pin
+from approval_service.metadata_cache import fetch_and_pin
+from approval_service.metadata_update import main, propose_pin
 
 
 def test_unchanged_upstream_does_not_create_a_daily_pin_diff(transport, tmp_path):
@@ -18,7 +21,36 @@ def test_unchanged_upstream_does_not_create_a_daily_pin_diff(transport, tmp_path
         next_update="2026-11-16",
         valid_until="2026-11-16T00:00:00Z",
     )
-    assert propose_pin(current, cache_dir=tmp_path / "cache", now=NOW) == current
+    cache = tmp_path / "cache"
+    proposed = propose_pin(current, cache_dir=cache, now=NOW)
+    assert proposed == current
+    assert fetch_and_pin(cache, manifest=proposed, now=NOW).sequence == 1
+    assert transport[2] == ["/1/root", "/1/blob", "/1/crl"]
+
+
+@pytest.mark.parametrize("headers", [{}, {"Retry-After": "120"}])
+def test_rate_limit_stops_the_pin_cli_without_retry(
+    transport, tmp_path, monkeypatch, capsys, headers
+):
+    current = manifest(transport)
+    pin = tmp_path / "pin.json"
+    pin.write_text(json.dumps(current))
+    cache = tmp_path / "cache"
+    transport[1]["/1/blob"] = (429, headers)
+    monkeypatch.setattr(
+        sys, "argv", ["metadata_update", "--manifest", str(pin), "--cache-dir", str(cache)]
+    )
+
+    with pytest.raises(SystemExit) as failure:
+        main()
+
+    assert failure.value.code == 1
+    output = capsys.readouterr()
+    hint = "; Retry-After header present" if headers else ""
+    assert output.err == f"FIDO metadata upstream unavailable (HTTP 429{hint}).\n"
+    assert output.out == ""
+    assert pin.read_text() == json.dumps(current)
+    assert transport[2] == ["/1/root", "/1/blob"]
 
 
 def test_new_signed_blob_is_verified_and_proposed_without_changing_root(

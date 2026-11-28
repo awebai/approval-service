@@ -99,7 +99,7 @@ async def read_trust(
 ):
     """Use the configured AWID public resolver; no caller-provided status route.
 
-    SDK 0.5.40rc1 supplies this on the plain RegistryClient, without Redis.
+    SDK 0.5.40 supplies this on the plain RegistryClient, without Redis.
     The service may use its cached subclass; any original age is retained. No protected/freshness extension or
     mutation is involved. Registry failures remain unavailable, never legacy.
     """

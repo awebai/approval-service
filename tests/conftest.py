@@ -56,6 +56,13 @@ def transport(tmp_path, monkeypatch):
                 self.send_response(404)
                 self.end_headers()
                 return
+            if isinstance(raw, tuple):
+                status, headers = raw
+                self.send_response(status)
+                for name, value in headers.items():
+                    self.send_header(name, value)
+                self.end_headers()
+                return
             self.send_response(200)
             self.send_header("Content-Length", str(len(raw)))
             self.end_headers()

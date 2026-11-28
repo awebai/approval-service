@@ -29,9 +29,10 @@ pin-only PR. The approval-service maintainer reviews the latest head and lands
 it. The job never merges, tags, publishes a release or deploys. It never commits
 vendor data or follows a root/CRL URL discovered in the new blob. A root change,
 new CRL route, rollback, verification failure or unavailable upstream stops the
-job and needs the maintainer's attention. The repository owner must enable
-scheduled Actions and allow its token to open PRs; otherwise this mechanism is
-not running. The maintainer watches failed runs and pending pin PRs. The run
+job and needs the maintainer's attention. The run summary reports upstream HTTP
+failures such as 429. The next scheduled run checks upstream again. The
+repository owner must enable scheduled Actions and allow its token to open PRs.
+The maintainer watches failed runs and pending pin PRs. The run
 summary records the earliest cutoff from the verified proposal. Each proposal
 also records that verified deadline as `valid_until` beside its artifact pins.
 The run fails if the cutoff of the pin on main is under 72 hours away and a
@@ -76,9 +77,9 @@ uv run python -m approval_service.metadata_cache --check \
 The command re-verifies cached inputs against the host clock and emits only
 metadata health. This monitor sends the operator's alert; the approval service
 still sends nothing to people. Do not put a mail address or notice sender into
-the service. The initial blob's next update is 2026-12-01; its CRLs can expire
-earlier. The maintainer's reviewed renewal and the operator's monitored refresh
-are continuing requirements, not a one-time setup or a silent downgrade path.
+the service. The monitor reports the earliest blob or validation-input deadline.
+The maintainer's reviewed renewal and the operator's monitored refresh continue
+after setup.
 
 
 ## Process configuration
@@ -109,11 +110,10 @@ bytes and expired assertion slots; unactivated pending enrollments expire too.
 
 Receipt-only enforcers and self-hosted key holders need no Redis. This service
 uses a bounded 60-second in-process public observation cache which preserves
-original age. No unavailable read renews an observation. The standalone development lock selects the public post-deletion AWID SDK source
-at `9bbdd365d85ad6d476663a1484fe3060bb2b9679` (`awid` subdirectory). It supplies
-`get_team_certificate_status_fresh` in the normal installed environment.
-**Before the server release, replace this source pin with the released
-`awid-service` version.** SDK version numbers remain owned by the release.
+original age. No unavailable read renews an observation. The released
+`awid-service>=0.5.40,<0.6` dependency supplies
+`RegistryClient.get_team_certificate_status_fresh`. For a repository checkout,
+`uv sync --locked` installs the locked distribution.
 
 
 
@@ -186,7 +186,8 @@ Unattested registrations still receive passkey grade; an attested key is never
 silently downgraded. Sign-in and approvals continue. Metadata failures cannot
 stop the watcher from installing a later verified replacement.
 
-The bundled initial pin expires on 2026-12-01 (an input CRL may expire earlier).
+The [bundled manifest](../src/approval_service/data/mds-pin-v1.json) records its
+earliest verified expiry as `valid_until`.
 The maintainer's daily metadata-pin workflow verifies upstream changes under
 the existing pinned root and opens the review request. The service maintainer
 reviews/lands the pin; deployment operators install it before the earliest
