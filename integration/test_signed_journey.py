@@ -207,7 +207,8 @@ async def test_signed_http_enrollment_approval_and_foreign_organisation_fences(
             )
             opened = await browser(client, "enrollment/options", {"locator": locator})
             w = fixture()
-            registered, _ = Vendor().registration(
+            registration_time = datetime.now(UTC)
+            registered, _ = Vendor(now=registration_time).registration(
                 challenge=decode(intent_a["intent"]["challenge"]),
                 credential=w["receipt"]["binding"]["binding"]["credentials"][0],
             )
@@ -243,7 +244,7 @@ async def test_signed_http_enrollment_approval_and_foreign_organisation_fences(
                 origin=ORIGIN,
                 rp_id=RP,
                 snapshot=None,
-                now=datetime.now(UTC),
+                now=registration_time,
             ).binding_entry()
             binding = sign_binding(
                 intent_a, Ed25519PrivateKey.from_private_bytes(root_a), [entry]
@@ -653,7 +654,8 @@ async def test_signed_http_enrollment_approval_and_foreign_organisation_fences(
                 client, "enrollment/options", {"locator": recovery_locator}
             )
             recovery_w = fixture()
-            raw, _ = Vendor().registration(
+            recovery_registration_time = datetime.now(UTC)
+            raw, _ = Vendor(now=recovery_registration_time).registration(
                 challenge=decode(recovery_intent["intent"]["challenge"]),
                 credential=recovery_w["receipt"]["binding"]["binding"]["credentials"][
                     0
@@ -690,7 +692,7 @@ async def test_signed_http_enrollment_approval_and_foreign_organisation_fences(
                 origin=ORIGIN,
                 rp_id=RP,
                 snapshot=None,
-                now=datetime.now(UTC),
+                now=recovery_registration_time,
             ).binding_entry()
             new_binding = sign_binding(
                 recovery_intent,

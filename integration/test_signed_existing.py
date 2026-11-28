@@ -78,7 +78,8 @@ async def test_signed_person_carries_only_their_enrollment(store, tmp_path, exis
             locator = response.json()["locator"]
             opened = await browser(client, "enrollment/options", {"locator": locator})
             w = fixture()
-            raw, _ = Vendor().registration(
+            registration_time = datetime.now(UTC)
+            raw, _ = Vendor(now=registration_time).registration(
                 challenge=decode(i["challenge"]),
                 credential=w["receipt"]["binding"]["binding"]["credentials"][0],
             )
@@ -102,7 +103,7 @@ async def test_signed_person_carries_only_their_enrollment(store, tmp_path, exis
                 origin=ORIGIN,
                 rp_id=RP,
                 snapshot=None,
-                now=datetime.now(UTC),
+                now=registration_time,
             ).binding_entry()
             binding = sign_binding(
                 intent, Ed25519PrivateKey.from_private_bytes(root), [entry]
