@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "cases": [
+    { "format": "tpm", "error": "attestation_profile_unsupported" },
+    { "format": "apple", "error": "attestation_profile_unsupported" }
+  ]
+}

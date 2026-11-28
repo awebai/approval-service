@@ -45,6 +45,11 @@ raw attestation, user handle, cross-person identifier or private app receipt.
 Transition/evidence-history consumers retain their separate supported-version
 checks; this first-path collection does not claim to check those later paths.
 
+`registration-profiles-v1.json` pins the TPM and Apple profile refusal code.
+The Python registration tests apply these cases to synthetic WebAuthn
+registration envelopes with test certificates. The cases check the refusal
+before grading. Go consumes the generated format schema for public proofs.
+
 `enforcer-requester-v1.json` pins the HTTP 428 `needs_human` answer carrying the
 unchanged canonical R, and receipt presentation by the original requester.
 The configured approval origin is checked at both exchanges. Enforcer nonce,

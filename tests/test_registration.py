@@ -4,7 +4,9 @@ Synthetic attestation proves the classification logic, not physical hardware.
 """
 
 import hashlib
+import json
 import uuid
+from pathlib import Path
 
 import cbor2
 import pytest
@@ -15,6 +17,7 @@ from vendor import AAGUID, NOW, OTHER_AAGUID, Vendor
 
 from approval_service.canonical import canonical
 from approval_service.encoding import decode, encode
+from approval_service.grading import EnrollmentGrading
 from approval_service.registration import check_registration
 from approval_service.verify import Refused
 
@@ -82,6 +85,40 @@ def check(response, challenge, snapshot):
         snapshot=snapshot,
         now=NOW,
     )
+
+
+@pytest.mark.parametrize(
+    "profile",
+    [
+        pytest.param(case, id=case["format"])
+        for case in json.loads(
+            (Path(__file__).parents[1] / "vectors" / "registration-profiles-v1.json")
+            .read_text()
+        )["cases"]
+    ],
+)
+def test_unsupported_attestation_profile_refuses_before_grading(profile):
+    response, challenge = Vendor().registration()
+    obj = cbor2.loads(decode(response["attestation_object"]))
+    obj["fmt"] = profile["format"]
+    statement = obj["attStmt"]
+    if profile["format"] == "tpm":
+        # Only the envelope is under test. These are synthetic TPM fields.
+        statement.update(ver="2.0", certInfo=b"test", pubArea=b"test")
+    else:
+        obj["attStmt"] = {"x5c": statement["x5c"]}
+    response["attestation_object"] = encode(cbor2.dumps(obj))
+    grading = EnrollmentGrading("hardware", None)
+
+    with pytest.raises(Refused) as rejected:
+        grading.check(
+            response,
+            expected_challenge=challenge,
+            origin="https://approval.example.test",
+            rp_id="approval.example.test",
+            now=NOW,
+        )
+    assert rejected.value.code == profile["error"]
 
 
 @pytest.mark.parametrize("algorithm", [-7, -8, -257])
@@ -387,8 +424,6 @@ def test_loaded_snapshot_cannot_outlive_its_verified_revocation_inputs():
 def test_unattested_passkeys_remain_available_without_current_hardware_metadata(
     snapshot, fmt, state
 ):
-    from approval_service.grading import EnrollmentGrading
-
     response, challenge, _, _ = registration(fmt=fmt)
     grading = EnrollmentGrading("hardware", snapshot if state == "expired" else None)
     result = grading.check(
@@ -407,8 +442,6 @@ def test_unattested_passkeys_remain_available_without_current_hardware_metadata(
 
 
 def test_attested_registration_without_hardware_metadata_refuses():
-    from approval_service.grading import EnrollmentGrading
-
     response, challenge = Vendor().registration()
     grading = EnrollmentGrading("hardware", None)
     with pytest.raises(Refused, match="snapshot_unavailable"):

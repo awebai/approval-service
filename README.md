@@ -52,11 +52,12 @@ There is no second registration; the separate enrollment_confirmation get
 assertion over B remains the public creation proof. Attestation certificates
 remain private and are never placed in a binding or public identity sidecar.
 
-The v1 registration profiles are listed in the format source. Formats whose
-privacy has not been established are refused rather than silently importing
-enterprise identifiers. A software authenticator or a claimed model identifier
-alone earns passkey grade only; genuine hardware qualification still requires
-a real device ceremony.
+The v1 format source permits `none`, `packed` and `fido-u2f` registration profiles.
+The service and issuer refuse TPM and Apple attestation with
+`attestation_profile_unsupported` because their privacy properties have yet to
+be established for v1. Use an authenticator that supplies a supported profile.
+A software authenticator or a claimed model identifier alone earns passkey
+grade at most. Hardware qualification requires a real device ceremony.
 
 Metadata is fetched and pinned, never distributed in this repository. The hosted
 process and issuer install a snapshot through the same loader:
