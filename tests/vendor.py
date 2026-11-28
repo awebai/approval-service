@@ -39,6 +39,7 @@ def certificate(
     san=None,
     aaguid=None,
     firmware=None,
+    now=NOW,
 ):
     issuer = issuer or subject
     issuer_key = issuer_key or key
@@ -48,8 +49,8 @@ def certificate(
         .issuer_name(issuer)
         .public_key(key.public_key())
         .serial_number(x509.random_serial_number())
-        .not_valid_before(NOW - timedelta(days=30))
-        .not_valid_after(NOW + timedelta(days=730))
+        .not_valid_before(now - timedelta(days=30))
+        .not_valid_after(now + timedelta(days=730))
     )
     builder = (
         builder.add_extension(
@@ -102,12 +103,12 @@ def certificate(
 
 
 @lru_cache(maxsize=1)
-def metadata_signer():
+def metadata_signer(now):
     root_key = ec.generate_private_key(ec.SECP256R1())
     root_name = x509.Name(
         [x509.NameAttribute(NameOID.COMMON_NAME, "Test metadata root")]
     )
-    root = certificate(root_name, root_key, ca=True)
+    root = certificate(root_name, root_key, ca=True, now=now)
     signer_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     signer = certificate(
         x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "Test metadata signer")]),
@@ -115,12 +116,13 @@ def metadata_signer():
         issuer=root.subject,
         issuer_key=root_key,
         san="mds.fidoalliance.org",
+        now=now,
     )
     crl = (
         x509.CertificateRevocationListBuilder()
         .issuer_name(root.subject)
-        .last_update(NOW - timedelta(days=1))
-        .next_update(NOW + timedelta(days=7))
+        .last_update(now - timedelta(days=1))
+        .next_update(now + timedelta(days=7))
         .add_extension(
             x509.AuthorityKeyIdentifier.from_issuer_public_key(root_key.public_key()),
             critical=False,
@@ -130,15 +132,15 @@ def metadata_signer():
     return root, signer, signer_key, crl
 
 
-def signed_metadata(entries, *, sequence=1, next_update=None):
-    root, signer, key, crl = metadata_signer()
+def signed_metadata(entries, *, sequence=1, next_update=None, now=NOW):
+    root, signer, key, crl = metadata_signer(now)
     header = {
         "alg": "RS256",
         "x5c": [base64.b64encode(signer.public_bytes(Encoding.DER)).decode()],
     }
     body = {
         "no": sequence,
-        "nextUpdate": (next_update or NOW + timedelta(days=1)).strftime("%Y-%m-%d"),
+        "nextUpdate": (next_update or now + timedelta(days=1)).strftime("%Y-%m-%d"),
         "entries": entries,
     }
     preimage = (
@@ -157,17 +159,18 @@ def signed_metadata(entries, *, sequence=1, next_update=None):
         "blob_sha256": hashlib.sha256(blob).hexdigest(),
         "root_sha256": hashlib.sha256(root_der).hexdigest(),
         "minimum_sequence": 1,
-        "now": NOW,
+        "now": now,
     }
 
 
 class Vendor:
-    def __init__(self):
+    def __init__(self, *, now=NOW):
+        self.now = now
         self.root_key = ec.generate_private_key(ec.SECP256R1())
         self.root_name = x509.Name(
             [x509.NameAttribute(NameOID.COMMON_NAME, "Test vendor batch root")]
         )
-        self.root = certificate(self.root_name, self.root_key, ca=True)
+        self.root = certificate(self.root_name, self.root_key, ca=True, now=now)
         self.batch_key = ec.generate_private_key(ec.SECP256R1())
         self.subject = x509.Name(
             [
@@ -207,6 +210,7 @@ class Vendor:
             issuer_key=issuer.root_key,
             aaguid=aaguid,
             firmware=firmware,
+            now=self.now,
         )
 
     def registration(
@@ -266,4 +270,4 @@ class Vendor:
         }, challenge
 
     def snapshot(self, entries=None):
-        return load_snapshot(**signed_metadata(entries or [self.entry()]))
+        return load_snapshot(**signed_metadata(entries or [self.entry()], now=self.now))

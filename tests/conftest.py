@@ -2,6 +2,7 @@
 
 import ssl
 import threading
+from datetime import UTC, datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
@@ -18,7 +19,8 @@ def transport(tmp_path, monkeypatch):
     # interface. Neither transport nor metadata verification is replaced.
     key = ec.generate_private_key(ec.SECP256R1())
     name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "Test HTTPS CA")])
-    ca = certificate(name, key, ca=True)
+    now = datetime.now(UTC)
+    ca = certificate(name, key, ca=True, now=now)
     server_key = ec.generate_private_key(ec.SECP256R1())
     leaf = certificate(
         x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "localhost")]),
@@ -26,6 +28,7 @@ def transport(tmp_path, monkeypatch):
         issuer=ca.subject,
         issuer_key=key,
         san="localhost",
+        now=now,
     )
     ca_path = tmp_path / "ca.pem"
     ca_path.write_bytes(ca.public_bytes(serialization.Encoding.PEM))
