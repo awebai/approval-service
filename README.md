@@ -11,10 +11,10 @@ Any origin/RP change after enrollment requires reenrollment.
 Receipt verifiers take independently checked `Trust`; a binding carried in a
 receipt is not its own trust anchor. Python `approval_service.trust.read_trust`
 and Go `verify.ReadTrust` obtain public ID status and DNS authority through the
-configured AWID SDK resolver (Python 0.5.40rc1 supports the plain client
-without Redis; the service may use its cached subclass), then use the single chain-to-trust implementation
-in that language. Enforcers use this path rather than extracting keys from a
-receipt or writing their own chain/status interpretation.
+configured AWID SDK resolver, then use the shared chain-to-trust implementation
+in that language. The plain Python client in `awid-service` 0.5.40 and later
+supports exact-certificate status reads without Redis. Enforcers call these
+entry points to verify the chain and public status before trusting a receipt.
 
 The pure `derive_trust` / `DeriveTrust` entry points accept **trusted acquisition
 inputs only**. Their observation records never come from a request or receipt.
@@ -65,23 +65,25 @@ process and issuer install a snapshot through the same loader:
 uv run python -m approval_service.metadata_cache --cache-dir /private/path/mds-cache
 ```
 
-`data/mds-pin-v1.json` pins the published blob, root and required CRLs by SHA256.
+The [bundled manifest](src/approval_service/data/mds-pin-v1.json) pins the
+published blob, root and required CRLs by SHA-256.
 The cache must be outside the repository with mode 0700; artifact files are 0600.
 Every installation checks the pins, root, signer, signature, CRLs, original
 next-update date and the highest previously installed sequence. Network errors
 and changed/expired inputs refuse installation. Updating the operator manifest
 is deliberate; the loader never trusts a newly fetched root or silently follows
-a changing upstream blob. Loading occurs at process startup or explicit refresh,
-not per approval. Attested registration refuses an unavailable or expired
-snapshot rather than silently downgrading. Unattested passkeys remain available
+a changing upstream blob. The process loads metadata at startup and checks the
+configured manifest for changes once a minute. Attested registration refuses
+an unavailable or expired snapshot. Unattested passkeys remain available
 independently of hardware metadata. Explicit passkey-only grading supplies no
 snapshot and never claims certified hardware. An effective unscoped withdrawal disqualifies
 the model regardless of firmware version; a certificate-scoped withdrawal
 affects only that batch.
 
-The default pins record snapshot 301 (retrieved 2026-11-15, next update 2026-12-01);
-its CRLs have their own earlier deadlines. Operators must replace the reviewed
-pins and refresh before any input expires; there is no automatic downgrade.
+The 0.1.0 readiness baseline pins sequence 303, retrieved on 2026-11-27, with
+a cutoff of 2026-12-01 at 00:00 UTC. The bundled manifest's `valid_until` is
+the earliest expiry across the blob and its validation inputs. Operators must
+install the reviewed replacement before that cutoff.
 Ordinary tests use real signatures under a synthetic vendor trust anchor and
 exercise an actual HTTPS fetch. They distribute no FIDO data. To check the real
 downloaded pinned artifact as of its recorded date:
@@ -154,11 +156,9 @@ the new issuer. The holder has no automatic rotation/re-signing hook yet; this
 is not a requirement to repeat the person's registration ceremony. Historical
 verification uses explicit as-of authority inputs.
 
-The development lock pins the reviewed post-deletion AWID source so the service
-starts with its required exact-certificate status reader. This root-only UV
-override does not propagate to library consumers. At the server release,
-replace that Git pin with the released `awid-service` version. Requester routes
-also apply an operator-configured per-IP budget before processing input.
+The package requires the released `awid-service>=0.5.40,<0.6` for exact-certificate
+status reads. Use `uv sync --locked` to reproduce the repository's installation.
+Requester routes apply an operator-configured per-IP budget before processing input.
 For metadata renewal without restarting, install reviewed pins in
 `AWSIGN_MDS_MANIFEST`; see [deployment](docs/deployment.md#installing-metadata-without-restarting).
 

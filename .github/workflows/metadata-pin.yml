@@ -17,7 +17,6 @@ jobs:
     env:
       PIN_BRANCH: automation/metadata-pin
       PIN_FILE: src/approval_service/data/mds-pin-v1.json
-      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -31,9 +30,17 @@ jobs:
           # Capture main before updating the manifest or switching branches.
           main_cutoff=$(git show "HEAD:$PIN_FILE" | jq -er '.valid_until | fromdateiso8601')
           printf '%s\n' "$main_cutoff" > "$RUNNER_TEMP/main-metadata-cutoff"
-          uv run python -m approval_service.metadata_update \
+          if ! verification=$(uv run python -m approval_service.metadata_update \
             --manifest "$PIN_FILE" \
-            --cache-dir "$RUNNER_TEMP/verified-metadata"
+            --cache-dir "$RUNNER_TEMP/verified-metadata" 2>&1); then
+            printf '%s\n' "$verification" >&2
+            {
+              printf '%s\n\n' 'FIDO metadata renewal stopped before preparing a pin.'
+              printf '%s\n' "$verification" | sed 's/^/    /'
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          printf '%s\n' "$verification"
           receipt=$(uv run python -m approval_service.metadata_cache \
             --manifest "$PIN_FILE" \
             --cache-dir "$RUNNER_TEMP/verified-metadata")
@@ -43,6 +50,8 @@ jobs:
       - name: Open or update the review request; never merge or deploy
         id: proposal
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           if git diff --quiet -- "$PIN_FILE"; then exit 0; fi
@@ -77,6 +86,8 @@ jobs:
           printf 'updated=true\n' >> "$GITHUB_OUTPUT"
       - name: Fail when a near-expiry renewal still awaits review
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           read -r main_cutoff < "$RUNNER_TEMP/main-metadata-cutoff"
           now=$(date -u +%s)
@@ -91,4 +102,6 @@ jobs:
       - name: Queue checks on the proposed pin
         if: ${{ !cancelled() && steps.proposal.outputs.updated == 'true' }}
         # GitHub holds pull_request runs created by GITHUB_TOKEN for approval.
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: gh workflow run checks.yml --ref "$PIN_BRANCH"
