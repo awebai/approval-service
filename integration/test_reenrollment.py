@@ -149,7 +149,8 @@ async def pending_ceremony(service, intent, issuer, caller, w, *, current=None):
         else None,
     )
     opened = await service.browser_options(started["locator"])
-    raw, _ = Vendor().registration(
+    now = datetime.now(UTC)
+    raw, _ = Vendor(now=now).registration(
         challenge=decode(intent["intent"]["challenge"]),
         credential=w["receipt"]["binding"]["binding"]["credentials"][0],
     )
@@ -164,7 +165,7 @@ async def pending_ceremony(service, intent, issuer, caller, w, *, current=None):
         origin=ORIGIN,
         rp_id=RP,
         snapshot=None,
-        now=datetime.now(UTC),
+        now=now,
     ).binding_entry()
     b = sign_binding(intent, issuer, [entry])
     r = confirmation_request(intent, b)

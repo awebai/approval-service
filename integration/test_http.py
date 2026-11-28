@@ -63,15 +63,21 @@ async def test_browser_origin_and_closed_bodies_are_checked_before_login_or_requ
 
 @pytest.mark.asyncio
 async def test_database_liveness_stays_healthy_while_hardware_readiness_alerts(store):
-    from datetime import timedelta
+    from datetime import UTC, datetime, timedelta
 
-    from vendor import NOW, Vendor, signed_metadata
+    from vendor import Vendor, signed_metadata
 
     from approval_service.metadata import load_snapshot
 
-    inputs = signed_metadata([Vendor().entry()], next_update=NOW)
-    inputs["now"] = NOW - timedelta(hours=23)
-    snapshot = load_snapshot(**inputs)
+    now = datetime.now(UTC)
+    signed_at = now - timedelta(days=2)
+    snapshot = load_snapshot(
+        **signed_metadata(
+            [Vendor(now=signed_at).entry()],
+            next_update=now - timedelta(days=1),
+            now=signed_at,
+        )
+    )
     grading = EnrollmentGrading("hardware", snapshot)
     assert grading.status()["enrollment_ready"] is False
     app = create_app(

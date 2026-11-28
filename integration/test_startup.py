@@ -2,7 +2,7 @@
 
 import asyncio
 import os
-import socket
+import re
 import uuid
 from importlib.resources import files
 from pathlib import Path
@@ -12,6 +12,16 @@ import pytest
 from pgdbm import AsyncMigrationManager
 
 from approval_service.store import Store
+
+
+async def listening_url(child):
+    startup_log = []
+    while line := await child.stderr.readline():
+        startup_log.append(line)
+        listening = re.search(rb"Uvicorn running on (http://127\.0\.0\.1:\d+)", line)
+        if listening:
+            return listening.group(1).decode()
+    raise AssertionError(b"".join(startup_log).decode(errors="replace"))
 
 
 @pytest.mark.asyncio
@@ -91,9 +101,6 @@ async def test_locked_product_starts_and_reports_metadata_readiness(
     # check must use the standalone project's actual installed resolution.
     env.pop("PYTHONPATH", None)
     root = Path(__file__).parents[1]
-    with socket.socket() as reserved:
-        reserved.bind(("127.0.0.1", 0))
-        port = reserved.getsockname()[1]
     child = await asyncio.create_subprocess_exec(
         "uv",
         "run",
@@ -103,34 +110,29 @@ async def test_locked_product_starts_and_reports_metadata_readiness(
         "--bind",
         "127.0.0.1",
         "--port",
-        str(port),
+        "0",
         cwd=root,
         env=env,
         stdout=asyncio.subprocess.DEVNULL,
         stderr=asyncio.subprocess.PIPE,
     )
     try:
-        deadline = asyncio.get_running_loop().time() + 10
-        async with httpx.AsyncClient(timeout=0.3, trust_env=False) as client:
-            while (
-                asyncio.get_running_loop().time() < deadline
-                and child.returncode is None
-            ):
-                try:
-                    response = await client.get(f"http://127.0.0.1:{port}/health")
-                    break
-                except httpx.TransportError:
-                    await asyncio.sleep(0.02)
-            else:
-                raise AssertionError("normal locked service did not start")
+        # Use the port actually bound by the child and one deadline for readiness
+        # and sign-in. A short connection probe is not a budget for a database write.
+        async with (
+            asyncio.timeout(10),
+            httpx.AsyncClient(timeout=None, trust_env=False) as client,
+        ):
+            base = await listening_url(child)
+            response = await client.get(f"{base}/health")
             assert response.status_code == 200
             assert response.json()["enrollment_ready"] is (health_status == 200)
-            response = await client.get(f"http://127.0.0.1:{port}/health/enrollment")
+            response = await client.get(f"{base}/health/enrollment")
             assert response.status_code == health_status
             assert response.json()["enrollment_ready"] is (health_status == 200)
             # Missing hardware metadata must not take sign-in down.
             response = await client.post(
-                f"http://127.0.0.1:{port}/browser/login/options",
+                f"{base}/browser/login/options",
                 json={},
                 headers={"Origin": env["AWSIGN_ORIGIN"]},
             )

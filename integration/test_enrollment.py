@@ -168,7 +168,8 @@ async def confirmed_person(
         browser["public_key"]["authenticatorSelection"]["userVerification"]
         == "required"
     )
-    registered, _ = (vendor or Vendor()).registration(
+    now = vendor.now if vendor is not None else datetime.now(UTC)
+    registered, _ = (vendor or Vendor(now=now)).registration(
         challenge=decode(intent["intent"]["challenge"]),
         credential=w["receipt"]["binding"]["binding"]["credentials"][0],
     )
@@ -185,7 +186,7 @@ async def confirmed_person(
         origin=ORIGIN,
         rp_id=RP,
         snapshot=issuer_grading,
-        now=datetime.now(UTC),
+        now=now,
     )
     binding = sign_binding(intent, issuer, [checked.binding_entry()])
     r = confirmation_request(intent, binding)
@@ -432,7 +433,7 @@ async def test_registration_requires_original_browser_token_and_discoverability(
         observation=creation_status(intent),
     )
     browser = await service.browser_options(started["locator"])
-    registered, _ = Vendor().registration(
+    registered, _ = Vendor(now=datetime.now(UTC)).registration(
         challenge=decode(intent["intent"]["challenge"])
     )
     for csrf, extensions, code in [
@@ -464,7 +465,8 @@ async def test_issuer_cannot_upgrade_the_services_private_registration_grade(sto
         intent, issuer=public, requester=caller, observation=creation_status(intent)
     )
     browser = await service.browser_options(started["locator"])
-    registered, _ = Vendor().registration(
+    now = datetime.now(UTC)
+    registered, _ = Vendor(now=now).registration(
         challenge=decode(intent["intent"]["challenge"])
     )
     await service.register(
@@ -476,7 +478,7 @@ async def test_issuer_cannot_upgrade_the_services_private_registration_grade(sto
         origin=ORIGIN,
         rp_id=RP,
         snapshot=None,
-        now=datetime.now(UTC),
+        now=now,
     )
     entry = {
         **checked.binding_entry(),
