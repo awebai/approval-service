@@ -76,6 +76,16 @@ def _url64(raw):
     return value
 
 
+def _effective(report, now):
+    date = report.get("effectiveDate")
+    return not date or datetime.fromisoformat(date).replace(tzinfo=UTC) <= now
+
+
+def _withdrawal_scope(report):
+    scoped = report.get("batchCertificate") or report.get("certificate")
+    return base64.b64decode(scoped, validate=True) if scoped else None
+
+
 @dataclass(frozen=True)
 class Snapshot:
     digest: str
@@ -84,6 +94,24 @@ class Snapshot:
     entries: tuple[dict, ...]
     by_aaguid: dict[str, dict]
     valid_until: datetime
+
+    def has_effective_withdrawal(self, aaguid, *, now, certificate_hashes):
+        """Check explicit withdrawals for an inventoried model and verified chain."""
+        if now >= min(self.next_update, self.valid_until):
+            raise MetadataRefused("metadata_expired")
+        reports = self.by_aaguid.get(aaguid.lower(), {}).get("statusReports", [])
+        try:
+            for report in reports:
+                if report.get("status") not in POLICY["withdrawals"]:
+                    continue
+                if not _effective(report, now):
+                    continue
+                scope = _withdrawal_scope(report)
+                if scope is None or hashlib.sha256(scope).digest() in certificate_hashes:
+                    return True
+        except (AttributeError, TypeError, ValueError) as exc:
+            raise MetadataRefused("metadata_withdrawal_invalid") from exc
+        return False
 
     def model(self, aaguid, *, now, attestation_chain=(), authenticator_version=None):
         """Return one eligible model, or None (only passkey grade is established)."""
@@ -98,14 +126,11 @@ class Snapshot:
         certified = False
         for report in entry.get("statusReports", []):
             status = report.get("status")
-            date = report.get("effectiveDate")
-            if date:
-                try:
-                    effective = datetime.fromisoformat(date).replace(tzinfo=UTC)
-                except ValueError:
-                    return None
-                if effective > now:
+            try:
+                if not _effective(report, now):
                     continue
+            except ValueError:
+                return None
             if status in POLICY["certifications"]:
                 minimum = report.get("authenticatorVersion")
                 if minimum is not None:
@@ -115,12 +140,11 @@ class Snapshot:
                         continue
                 certified = True
             elif status in POLICY["withdrawals"]:
-                scoped = report.get("batchCertificate") or report.get("certificate")
-                if scoped:
-                    try:
-                        scope = base64.b64decode(scoped, validate=True)
-                    except ValueError:
-                        return None
+                try:
+                    scope = _withdrawal_scope(report)
+                except ValueError:
+                    return None
+                if scope is not None:
                     if not attestation_chain:
                         return None
                     if scope not in attestation_chain:
