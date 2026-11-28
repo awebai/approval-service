@@ -58,7 +58,10 @@ def require_supported_entry(assessed, declared):
 
 @dataclass(frozen=True)
 class AttestationAssessment:
-    """Private observations available to the issuer from this grading pass."""
+    """Private issuer inventory for withdrawal matching and P assessment.
+
+    The credential grade is the only eligibility signal.
+    """
 
     format: str = field(repr=False)
     aaguid: str | None = field(default=None, repr=False)
