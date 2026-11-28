@@ -291,7 +291,8 @@ def create_app(store, *, public, origin, rp_id, grading, requests_per_ip=600):
                 while pending:
                     for name, value in pending.pop().items():
                         if name == "person":
-                            validate_stable_id(value)
+                            if validate_stable_id(value) != value:
+                                raise ValueError("noncanonical person ID")
                         elif name == "identity_key":
                             public_key_from_did(value)
                         elif isinstance(value, dict):
