@@ -6,6 +6,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write
 concurrency:
   group: metadata-pin-renewal
   cancel-in-progress: false
@@ -40,6 +41,7 @@ jobs:
           cutoff=$(jq -er '.valid_until | strings | select(length > 0)' <<< "$receipt")
           printf 'Verified FIDO metadata cutoff (UTC): `%s`\n' "$cutoff" >> "$GITHUB_STEP_SUMMARY"
       - name: Open or update the review request; never merge or deploy
+        id: proposal
         shell: bash
         run: |
           set -euo pipefail
@@ -72,6 +74,7 @@ jobs:
           BODY
             gh pr create --head "$PIN_BRANCH" --base main --title 'Renew verified FIDO metadata pins' --body-file "$RUNNER_TEMP/metadata-pr.md"
           fi
+          printf 'updated=true\n' >> "$GITHUB_OUTPUT"
       - name: Fail when a near-expiry renewal still awaits review
         shell: bash
         run: |
@@ -85,3 +88,7 @@ jobs:
               exit 1
             fi
           fi
+      - name: Queue checks on the proposed pin
+        if: ${{ !cancelled() && steps.proposal.outputs.updated == 'true' }}
+        # GitHub holds pull_request runs created by GITHUB_TOKEN for approval.
+        run: gh workflow run checks.yml --ref "$PIN_BRANCH"
