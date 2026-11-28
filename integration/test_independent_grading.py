@@ -1,5 +1,6 @@
 """Issuer and service independently grade the same signed vendor registration."""
 
+import json
 from datetime import UTC, datetime, timedelta
 
 import pytest
@@ -46,6 +47,16 @@ async def test_independent_grading_can_activate_a_weaker_or_different_snapshot(
     assert entry["grade"] == ("certified_hardware" if issuer_hardware else "passkey_uv")
     if issuer_hardware:
         assert entry["snapshot"] != "sha256:" + service_snapshot.digest
+    public_fields = {"id", "key", "algorithm", "grade", "snapshot", "grade_policy"}
+    assert entry.keys() == public_fields
+    credential = await store.db.fetch_one(
+        "SELECT registration, client_extension_results, binding_entry "
+        "FROM {{tables.approval_credentials}} WHERE credential_id=$1",
+        entry["id"],
+    )
+    assert credential["registration"] is None
+    assert credential["client_extension_results"] is None
+    assert json.loads(credential["binding_entry"]).keys() == public_fields
 
 
 @pytest.mark.asyncio
